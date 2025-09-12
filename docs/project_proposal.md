@@ -4,8 +4,9 @@
 ---
 
 ## 1. Introduction
+The dataset contain 7432 medical cases with a total of 40 900 medical images combination of images and clinical text.  Each case includes multiple related medical images (radiology, X-ray, CT scans, MRI, ultrasound) as well as detailed real-world diagnostic. These include patient history, physical examination findings, imaging interpretations, differential diagnoses, final diagnoses, and treatment plans. This provides a holistic view of each medical scenario. Dataset retrieved from Kaggle while the data originally comes from MedPix, which is an open database from National Institutes of Health (NIH). 
 
-This project focuses on developing a visual analytics system for medical diagnostic pattern discovery using the MedPix dataset from the National Institutes of Health (NIH). The dataset combines medical images with detailed physician-written case analyses, creating a rich multimodal resource that simulates real-world diagnostic scenarios.
+This project focuses on developing a visual analytics system for medical diagnostic pattern discovery. The goal is to support users in exploring complex medical cases by integrating and analyzing both visual and textual data.
 
 ### Data Source
 The data originates from MedPix, a free open-access online database of medical cases developed by the Uniformed Services University of the Health Sciences. Each case includes:
