@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest'
-import { createRouter, createWebHistory } from 'vue-router'
 import router from '../../router'
 
 describe('Router', () => {
