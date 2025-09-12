@@ -292,7 +292,7 @@ Implement computational methods to validate discovered patterns against establis
 ### Software Architecture
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Frontend (React)                    │
+│                        Frontend (Vue)                    │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐│
 │  │ Image Gallery   │  │ Network View    │  │ Case Details    ││
 │  │ Component       │  │ Component       │  │ Component       ││
