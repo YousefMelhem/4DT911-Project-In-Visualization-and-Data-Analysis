@@ -1,4 +1,4 @@
-# ML Notebook Requirements
+# ML Notebook Requirements for Data Processing
 numpy>=1.24.0
 pandas>=2.0.0
 matplotlib>=3.7.0
@@ -7,6 +7,5 @@ scikit-learn>=1.3.0
 jupyter>=1.0.0
 notebook>=6.5.0
 ipykernel>=6.25.0
-pytest>=7.4.0
-nbformat>=5.9.0
-nbconvert>=7.7.0
+plotly>=5.15.0
+scipy>=1.11.0
