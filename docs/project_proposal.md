@@ -4,9 +4,13 @@
 ---
 
 ## 1. Introduction
-The dataset contain 7432 medical cases with a total of 40 900 medical images combination of images and clinical text.  Each case includes multiple related medical images (radiology, X-ray, CT scans, MRI, ultrasound) as well as detailed real-world diagnostic. These include patient history, physical examination findings, imaging interpretations, differential diagnoses, final diagnoses, and treatment plans. This provides a holistic view of each medical scenario. Dataset retrieved from Kaggle while the data originally comes from MedPix, which is an open database from National Institutes of Health (NIH). 
+The dataset contain 7432 medical cases with a total of 40 900 medical images combined with clinical text.  Each case includes several related medical images as well as detailed real-world diagnostic information. This information include patient history, physical examination findings, imaging interpretations, differential diagnoses, final diagnoses, and treatment plans. This provides a complete view of each medical scenario. Dataset retrieved from Kaggle while the original source is MedPix, an open database from National Institutes of Health (NIH). 
 
-This project focuses on developing a visual analytics system for medical diagnostic pattern discovery. The goal is to support users in exploring complex medical cases by integrating and analyzing both visual and textual data.
+This project focuses on design and develop an interactive visual analytics system that helps users discover diagnostic pattern medical cases. The system will allow users to explore and compare cases by linking medical images with thier clinical descriptions. We will also use methods such as classification, clustering, and anomaly detection to group similar cases, highlight unusual findings, or predict diagnoses. 
+
+To make the system more useful, we will design multiple interactive views such as charts, images galleries and case summaries that are linked togather.  When a user interacte with one view e.g. selecting a diagnosis, the related information in the other views will update automatically. 
+
+The goal is to make it easier for medical students and physicians to learn from real-world data and improve diagnostic accuracy.  
 
 ### Data Source
 The data originates from MedPix, a free open-access online database of medical cases developed by the Uniformed Services University of the Health Sciences. Each case includes:
@@ -23,7 +27,9 @@ The dataset represents authentic medical diagnostic workflows where physicians a
 ## 2. Motivation
 
 ### Problem Statement
-Medical diagnosis is a complex cognitive process that requires integrating visual pattern recognition from medical imaging with clinical reasoning based on patient history, symptoms, and examination findings. Medical students, residents, and even experienced physicians can benefit from tools that help them:
+Imagine yourself as a physician faced with a puzzling case, the symptoms are unclear, the images are complicated and a patient wating for answers. Medical diagnosis is a complex cognitive process that requires integrating visual pattern recognition from medical imaging with clinical reasoning based on patient history, symptoms, and examination findings. 
+
+What if you could quickly compare this case to thousands of real-world cases and learn of other doctors experiences?  Medical students, residents, and even experienced physicians can benefit from tools that help them:
 
 1. **Discover diagnostic patterns** across similar cases
 2. **Learn from visual similarities** in medical imaging
