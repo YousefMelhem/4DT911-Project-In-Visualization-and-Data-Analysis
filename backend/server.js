@@ -11,6 +11,7 @@ import casesRouter from './routes/cases.js';
 import healthRouter from './routes/health.js';
 import statsRouter from './routes/stats.js';
 import mlRouter from './routes/ml.js';
+import clusteringRouter from './routes/clustering.js';
 
 // Load environment variables
 dotenv.config();
@@ -52,6 +53,7 @@ app.use('/api/health', healthRouter);
 app.use('/api/cases', casesRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/ml', mlRouter);
+app.use('/api/clustering', clusteringRouter);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -63,7 +65,8 @@ app.get('/', (req, res) => {
       health: '/api/health',
       cases: '/api/cases',
       stats: '/api/stats',
-      ml: '/api/ml'
+      ml: '/api/ml',
+      clustering: '/api/clustering'
     }
   });
 });

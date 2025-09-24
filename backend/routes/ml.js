@@ -7,6 +7,8 @@ const router = express.Router();
 
 // Path to ML outputs directory
 const ML_OUTPUTS_PATH = path.join(process.cwd(), '../Ml-Notebook/outputs');
+// Path to refined cases data
+const REFINED_CASES_PATH = path.join(process.cwd(), 'data/refined_cases.json');
 
 // Validation schemas
 const similaritySchema = Joi.object({
@@ -21,6 +23,15 @@ const clusterSchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).default(20)
 });
 
+const kmeansSchema = Joi.object({
+  k: Joi.number().integer().min(2).max(20).default(3),
+  features: Joi.array().items(Joi.string().valid(
+    'body_system', 'imaging_modality', 'complexity_score', 
+    'title_length', 'has_multiple_images'
+  )).min(1).default(['body_system', 'imaging_modality']),
+  max_cases: Joi.number().integer().min(100).max(5000).default(1000)
+});
+
 // Helper function to load ML model outputs
 async function loadMLData(filename) {
   try {
@@ -30,6 +41,17 @@ async function loadMLData(filename) {
   } catch (error) {
     console.error(`Error loading ML data from ${filename}:`, error);
     return null;
+  }
+}
+
+// Helper function to load refined cases data
+async function loadRefinedCasesData() {
+  try {
+    const data = await fs.readFile(REFINED_CASES_PATH, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error loading refined cases data:', error);
+    throw new Error('Failed to load refined medical cases data');
   }
 }
 
@@ -308,5 +330,191 @@ router.get('/status', async (req, res) => {
     });
   }
 });
+
+// POST /api/ml/kmeans - Perform K-means clustering on refined cases
+router.post('/kmeans', async (req, res) => {
+  try {
+    // Validate request body
+    const { error, value } = kmeansSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        error: 'Invalid clustering parameters',
+        details: error.details[0].message
+      });
+    }
+
+    const { k, features, max_cases } = value;
+
+    // Load refined cases data
+    let casesData = await loadRefinedCasesData();
+
+    // Limit cases for performance
+    if (casesData.length > max_cases) {
+      casesData = casesData.slice(0, max_cases);
+    }
+
+    // Simple feature encoding for clustering
+    const encodedData = casesData.map((case_, index) => {
+      const encoded = { case_id: case_.case_id, original_index: index };
+      
+      features.forEach(feature => {
+        switch (feature) {
+          case 'body_system':
+            // One-hot encoding for body systems
+            const systems = ['Neurological', 'Cardiovascular', 'Respiratory', 'Abdominal', 'Musculoskeletal', 'Reproductive', 'Other'];
+            systems.forEach(system => {
+              encoded[`body_system_${system}`] = case_.body_system === system ? 1 : 0;
+            });
+            break;
+          
+          case 'imaging_modality':
+            // One-hot encoding for imaging modalities
+            const modalities = ['CT', 'MRI', 'X-Ray', 'Ultrasound', 'Nuclear Medicine', 'Mammography', 'Other'];
+            modalities.forEach(modality => {
+              encoded[`imaging_modality_${modality}`] = case_.imaging_modality === modality ? 1 : 0;
+            });
+            break;
+          
+          case 'complexity_score':
+            encoded.complexity_score = case_.complexity_score || 0;
+            break;
+          
+          case 'title_length':
+            encoded.title_length = (case_.title_length || 0) / 1000; // Normalize
+            break;
+          
+          case 'has_multiple_images':
+            encoded.has_multiple_images = case_.has_multiple_images ? 1 : 0;
+            break;
+        }
+      });
+      
+      return encoded;
+    });
+
+    // Simple K-means implementation (basic centroid-based clustering)
+    const clusters = performSimpleKMeans(encodedData, k);
+
+    // Add cluster assignments back to original data
+    const clusteredCases = casesData.map((case_, index) => ({
+      ...case_,
+      cluster_id: clusters.assignments[index],
+      cluster_distance: clusters.distances[index]
+    }));
+
+    // Generate cluster statistics
+    const clusterStats = Array.from({ length: k }, (_, clusterId) => {
+      const clusterCases = clusteredCases.filter(c => c.cluster_id === clusterId);
+      return {
+        cluster_id: clusterId,
+        size: clusterCases.length,
+        avg_complexity: clusterCases.reduce((sum, c) => sum + c.complexity_score, 0) / clusterCases.length,
+        dominant_body_system: getMostCommon(clusterCases.map(c => c.body_system)),
+        dominant_imaging: getMostCommon(clusterCases.map(c => c.imaging_modality)),
+        multi_image_percentage: (clusterCases.filter(c => c.has_multiple_images).length / clusterCases.length) * 100
+      };
+    });
+
+    res.json({
+      success: true,
+      clustering_params: { k, features, cases_processed: casesData.length },
+      clusters: clusterStats,
+      cases: clusteredCases,
+      centroids: clusters.centroids,
+      inertia: clusters.inertia,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Error performing K-means clustering:', error);
+    res.status(500).json({
+      error: 'Failed to perform K-means clustering',
+      message: error.message
+    });
+  }
+});
+
+// Helper function for simple K-means clustering
+function performSimpleKMeans(data, k, maxIterations = 100) {
+  const featureKeys = Object.keys(data[0]).filter(key => 
+    key !== 'case_id' && key !== 'original_index'
+  );
+  const numFeatures = featureKeys.length;
+  
+  // Initialize centroids randomly
+  let centroids = Array.from({ length: k }, () => {
+    const centroid = {};
+    featureKeys.forEach(key => {
+      const values = data.map(point => point[key]).filter(v => v !== undefined);
+      centroid[key] = values[Math.floor(Math.random() * values.length)];
+    });
+    return centroid;
+  });
+
+  let assignments = new Array(data.length);
+  let distances = new Array(data.length);
+  
+  for (let iteration = 0; iteration < maxIterations; iteration++) {
+    let changed = false;
+    
+    // Assign points to closest centroid
+    for (let i = 0; i < data.length; i++) {
+      let minDistance = Infinity;
+      let closestCentroid = 0;
+      
+      for (let j = 0; j < k; j++) {
+        const distance = euclideanDistance(data[i], centroids[j], featureKeys);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCentroid = j;
+        }
+      }
+      
+      if (assignments[i] !== closestCentroid) {
+        changed = true;
+        assignments[i] = closestCentroid;
+      }
+      distances[i] = minDistance;
+    }
+    
+    // Update centroids
+    for (let j = 0; j < k; j++) {
+      const clusterPoints = data.filter((_, i) => assignments[i] === j);
+      if (clusterPoints.length > 0) {
+        featureKeys.forEach(key => {
+          const values = clusterPoints.map(point => point[key]).filter(v => v !== undefined);
+          centroids[j][key] = values.reduce((sum, val) => sum + val, 0) / values.length;
+        });
+      }
+    }
+    
+    if (!changed) break;
+  }
+  
+  // Calculate inertia (within-cluster sum of squares)
+  const inertia = distances.reduce((sum, dist) => sum + dist * dist, 0);
+  
+  return { assignments, distances, centroids, inertia };
+}
+
+// Helper function to calculate Euclidean distance
+function euclideanDistance(point1, point2, featureKeys) {
+  let sum = 0;
+  featureKeys.forEach(key => {
+    const val1 = point1[key] || 0;
+    const val2 = point2[key] || 0;
+    sum += Math.pow(val1 - val2, 2);
+  });
+  return Math.sqrt(sum);
+}
+
+// Helper function to get most common value
+function getMostCommon(arr) {
+  const counts = {};
+  arr.forEach(item => {
+    counts[item] = (counts[item] || 0) + 1;
+  });
+  return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+}
 
 export default router;
