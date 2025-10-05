@@ -89,7 +89,9 @@ const offset = ref(0)
 const limit = 24
 const hasMore = ref(true)
 
-const API_URL = 'http://localhost:8000'
+// Use environment variable instead of hardcoded URL
+const config = useRuntimeConfig()
+const API_URL = config.public.apiUrl
 
 const loadCases = async () => {
   try {
