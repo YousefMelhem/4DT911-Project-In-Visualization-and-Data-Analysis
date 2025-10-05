@@ -22,3 +22,43 @@ logs
 .env
 .env.*
 !.env.example
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Data files (large datasets - keep structure but not files)
+data/archive/medpix_data_final/
+data/archive/Cases.json
+*.jpg
+*.jpeg
+*.png
+*.dcm
+*.nii
+*.nii.gz
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+*.egg-info/
