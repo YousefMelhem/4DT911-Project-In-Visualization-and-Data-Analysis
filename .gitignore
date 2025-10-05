@@ -9,6 +9,9 @@ dist
 # Node dependencies
 node_modules
 
+# Lock files (keep package-lock.json, ignore pnpm)
+pnpm-lock.yaml
+
 # Logs
 logs
 *.log
@@ -37,6 +40,9 @@ __pycache__/
 # Jupyter Notebook
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+
+# Old/archived project structures
+medpix-explorer/
 
 # Data files (large datasets - keep structure but not files)
 data/archive/medpix_data_final/
