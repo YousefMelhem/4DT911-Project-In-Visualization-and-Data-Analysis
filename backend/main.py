@@ -5,8 +5,17 @@ from pathlib import Path
 import json
 from typing import List, Optional
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="MedPix Explorer API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Load data when server starts
+    load_data()
+    yield
+    # Shutdown: cleanup if needed
+    pass
+
+app = FastAPI(title="MedPix Explorer API", version="1.0.0", lifespan=lifespan)
 
 # Configure CORS
 app.add_middleware(
@@ -79,11 +88,6 @@ class CaseDetail(BaseModel):
     caseFolder: str
 
 # API Endpoints
-@app.on_event("startup")
-async def startup_event():
-    """Load data when server starts"""
-    load_data()
-
 @app.get("/")
 async def root():
     """API health check"""
@@ -156,4 +160,4 @@ async def get_statistics():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
