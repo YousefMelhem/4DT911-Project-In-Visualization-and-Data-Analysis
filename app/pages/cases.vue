@@ -36,7 +36,7 @@
           <div class="case-image">
             <img 
               v-if="caseItem.thumbnail"
-              :src="`http://localhost:8000/images/${caseItem.thumbnail.split('/').slice(-2).join('/')}`"
+              :src="`${API_URL}/images/${caseItem.thumbnail.split('/').slice(-2).join('/')}`"
               :alt="caseItem.diagnosis"
               @error="handleImageError"
             />
