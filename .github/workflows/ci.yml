@@ -69,8 +69,18 @@ jobs:
       - name: Check for common security issues
         run: |
           echo "🔍 Checking for common security issues..."
-          # Check for hardcoded secrets patterns in app/ and other source directories
-          if find . -name "*.js" -o -name "*.ts" -o -name "*.vue" | grep -E "(app/|components/|pages/|composables/)" | xargs grep -l "password\|secret\|key\|token" | grep -v "test" | grep -v "spec" | grep -v "node_modules"; then
+          # Check for hardcoded secrets patterns, excluding common false positives
+          # Exclude: :key (Vue), @keyframes (CSS), runtimeConfig/apiUrl (framework patterns)
+          if find . -name "*.js" -o -name "*.ts" -o -name "*.vue" | \
+             grep -E "(app/|components/|pages/|composables/)" | \
+             xargs grep -i "password\|secret\|api.*key\|access.*token\|bearer.*token" | \
+             grep -v "test" | \
+             grep -v "spec" | \
+             grep -v "node_modules" | \
+             grep -v ":key=" | \
+             grep -v "@keyframes" | \
+             grep -v "apiUrl" | \
+             grep -v "runtimeConfig"; then
             echo "⚠️  Potential hardcoded secrets found"
             exit 1
           else
