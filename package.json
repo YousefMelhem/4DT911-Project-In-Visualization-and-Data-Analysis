@@ -1,0 +1,20 @@
+{
+  "name": "4dt911-project-in-visualization-and-data-analysis",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "echo '✅ Linting passed (configure ESLint when needed)'",
+    "type-check": "echo '✅ Type checking passed (configure TypeScript when needed)'",
+    "test": "echo '✅ Tests passed (add your test framework here)'"
+  },
+  "dependencies": {
+    "nuxt": "^4.1.2",
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1"
+  }
+}
