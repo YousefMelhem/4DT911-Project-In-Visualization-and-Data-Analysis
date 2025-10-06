@@ -1,161 +1,72 @@
-# Ignore Python cache files
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
 
-# Virtual environments
+# Node dependencies
+node_modules
+
+# Lock files (keep package-lock.json, ignore pnpm)
+pnpm-lock.yaml
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+.env.local
+.env.*.local
+!.env.example
+
+# Python virtual environments
 venv/
 env/
 ENV/
-env.bak/
-venv.bak/
+.venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
 
-# IDEs
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Old/archived project structures
+medpix-explorer/
+
+# Data files (large datasets - keep structure but not files)
+data/archive/medpix_data_final/
+data/archive/Cases.json
+*.jpg
+*.jpeg
+*.png
+*.dcm
+*.nii
+*.nii.gz
+
+# IDE
 .vscode/
-.idea/
 *.swp
 *.swo
 *~
 
-# OS files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output/
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# Data files (large datasets)
-data/archive/
-data/uploads/
-data/processed/
-
-# Model files
-models/*.pth
-models/*.pkl
-models/*.h5
-
-# Temporary files
-temp/
-tmp/
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# Build outputs
+dist/
+build/
+*.egg-info/

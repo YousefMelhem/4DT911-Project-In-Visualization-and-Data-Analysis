@@ -1,438 +1,405 @@
-# Visual Analytics for Medical Diagnostic Pattern Discovery
-## 4DT911 Project Proposal
-
----
-
-## 1. Introduction
-
-This project focuses on developing a visual analytics system for medical diagnostic pattern discovery using the MedPix dataset from the National Institutes of Health (NIH). The dataset combines medical images with detailed physician-written case analyses, creating a rich multimodal resource that simulates real-world diagnostic scenarios.
-
-### Data Source
-The data originates from MedPix, a free open-access online database of medical cases developed by the Uniformed Services University of the Health Sciences. Each case includes:
-- Multiple related medical images (radiology, CT scans, MRI, X-rays, ultrasounds)
-- Comprehensive clinical narratives including patient history, physical examination findings, imaging results, differential diagnoses, final diagnoses, and treatment plans
-- Verified medical case sources with URLs linking to original documentation
-- Physician-written diagnostic reasoning and clinical discussions
-
-### Real-World Representation
-The dataset represents authentic medical diagnostic workflows where physicians analyze visual data (medical images) alongside clinical narratives (patient records, examination findings, lab results) to reach diagnostic conclusions. This mirrors the cognitive process of medical diagnosis that combines pattern recognition from medical imaging with clinical reasoning based on patient history and symptoms.
-
----
-
-## 2. Motivation
-
-### Problem Statement
-Medical diagnosis is a complex cognitive process that requires integrating visual pattern recognition from medical imaging with clinical reasoning based on patient history, symptoms, and examination findings. Medical students, residents, and even experienced physicians can benefit from tools that help them:
-
-1. **Discover diagnostic patterns** across similar cases
-2. **Learn from visual similarities** in medical imaging
-3. **Understand diagnostic reasoning** through case-based learning
-4. **Explore differential diagnoses** by examining similar presentations
-
-### Why This Problem Matters
-- **Medical Education**: Current medical education relies heavily on individual case studies. A system that can reveal patterns across thousands of cases would accelerate learning and improve diagnostic accuracy.
-- **Clinical Decision Support**: Physicians could benefit from rapid access to similar cases when facing challenging diagnoses.
-- **Diagnostic Quality**: Pattern discovery across large medical datasets could reveal subtle diagnostic insights that individual case analysis might miss.
-- **Knowledge Discovery**: Understanding relationships between clinical presentations, imaging findings, and diagnoses could lead to new medical insights.
-
-### Broader Applications
-The solution approach can be applied to:
-- **Pathology slide analysis** for cancer diagnosis
-- **Dermatology image databases** for skin condition diagnosis
-- **Veterinary medicine** case databases
-- **Legal case analysis** combining documents and evidence
-- **Any domain** requiring multimodal pattern discovery combining images and textual narratives
-
----
-
-## 3. Data Report
-
-### Dataset Scale
-- **Total Cases**: 7,432 medical cases
-- **Total Images**: 40,900 medical images
-- **Coverage**: 99.9% of cases include medical images
-- **Data Quality**: 100% of cases include verified source URLs and case folders
-
-### Image Characteristics
-- **Images per Case**: 
-  - Average: 5.5 images per case
-  - Median: 4.0 images per case
-  - Range: 1-184 images per case
-- **Image Types**: JPEG format medical images including CT scans, MRI, X-rays, ultrasounds, angiography, PET scans, mammography
-
-### Clinical Data Dimensions
-
-#### Textual Features
-- **Diagnosis Coverage**: 99.7% of cases (7,406 cases) include extracted diagnoses
-- **Text Content**: 
-  - Average case description: 1,583 characters
-  - Median case description: 851 characters
-  - Range: 37-62,497 characters
-- **Clinical Sections**: Case title, patient history, physical examination, imaging findings, differential diagnosis, final diagnosis, treatment plans, clinical discussions
-
-#### Demographics
-- **Age Information**: Available for 60.6% of cases (4,502 cases)
-  - Age Range: 1-94 years
-  - Average Age: 34.3 years
-  - Distribution: Pediatric (29.6%), Young Adult (32.1%), Middle Age (27.1%), Elderly (11.2%)
-- **Gender Information**: Available for 81.6% of cases
-  - Male: 52.8%, Female: 47.2%
-
-#### Medical Specialties
-**Top Anatomical Regions** (by frequency):
-1. Disc-related conditions (4,180 cases)
-2. Head/Neurological (1,391 cases)
-3. Bone/Orthopedic (1,272 cases)
-4. Chest/Pulmonary (880 cases)
-5. Abdominal (870 cases)
-
-**Imaging Modalities**:
-- CT: 4,868 mentions
-- MRI: 3,655 mentions  
-- Ultrasound: 1,115 mentions
-- Radiography: 677 mentions
-- Angiography: 238 mentions
-
-**Top Diagnoses**:
-1. Osteochondroma (84 cases)
-2. Meningioma (30 cases)
-3. Osteosarcoma (28 cases)
-4. Bicornuate Uterus (24 cases)
-5. Osteomyelitis (24 cases)
-
-### Data Preprocessing Status
-The dataset is relatively clean but requires preprocessing for analysis:
-- **Text normalization**: Standardizing medical terminology and diagnosis names
-- **Image standardization**: Resizing and normalizing medical images for computer vision analysis
-- **Feature extraction**: Converting clinical text into structured features
-- **Data linking**: Ensuring proper relationships between images and clinical narratives
-
----
-
-## 4. Research Questions and Goals
-
-### Primary Research Questions
-
-**RQ1: Pattern Discovery**
-"What visual and clinical patterns exist across similar medical diagnoses, and how can these patterns be discovered and visualized to support diagnostic learning?"
-
-**RQ2: Multimodal Similarity**
-"How can we effectively combine medical image similarity with clinical text similarity to identify cases that are diagnostically relevant to a given query case?"
-
-**RQ3: Diagnostic Reasoning Support**
-"Can visualization of similar cases and their diagnostic pathways improve medical students' and physicians' diagnostic accuracy and confidence?"
-
-### Secondary Goals
-
-**G1: Interactive Exploration**
-Enable users to interactively explore the medical case database through multiple entry points (symptoms, images, diagnoses, patient demographics) with seamless navigation between related cases.
-
-**G2: Educational Workflow Support**
-Provide progressive case revelation functionality that supports medical education by allowing students to work through diagnostic reasoning step-by-step.
-
-**G3: Pattern Validation**
-Implement computational methods to validate discovered patterns against established medical knowledge and identify potentially novel diagnostic insights.
-
----
-
-## 5. Solution Design
-
-### Visualization Methods and Interactions
-
-#### Primary Visualizations
-
-**1. Case Similarity Network**
-- **Method**: Force-directed graph layout showing case relationships
-- **Interactions**: 
-  - Node selection reveals case details
-  - Edge filtering by similarity type (visual vs. textual)
-  - Zoom and pan for multi-scale exploration
-  - Clustering controls to group similar cases
-
-**2. Medical Image Gallery with Smart Filtering**
-- **Method**: Grid-based image layout with hierarchical organization
-- **Interactions**:
-  - Multi-dimensional filtering (diagnosis, body system, imaging modality, demographics)
-  - Image comparison mode (side-by-side viewing)
-  - Magnification and annotation overlay
-  - Similarity-based sorting
-
-**3. Diagnostic Pathway Visualization**
-- **Method**: Sankey diagrams showing symptom→finding→diagnosis flows
-- **Interactions**:
-  - Path highlighting for specific diagnostic journeys
-  - Statistical overlays showing probability distributions
-  - Filtering by patient demographics or case complexity
-
-**4. Feature Space Exploration**
-- **Method**: t-SNE/UMAP embeddings of image and text features
-- **Interactions**:
-  - Brushing and linking between feature space and case details
-  - Dynamic clustering with adjustable parameters
-  - Overlay categorical variables (diagnosis, age group, etc.)
-
-#### Secondary Visualizations
-
-**5. Case Timeline and Progression**
-- **Method**: Horizontal timeline showing diagnostic workflow
-- **Interactions**: Step-by-step revelation for educational use
-
-**6. Comparative Analysis Dashboard**
-- **Method**: Small multiples for case comparison
-- **Interactions**: Synchronized views across multiple cases
-
-### Machine Learning and Computational Methods
-
-#### Image Analysis Pipeline
-**1. Deep Learning Feature Extraction**
-- **Method**: Pre-trained Convolutional Neural Networks (ResNet-50, VGG-16) fine-tuned on medical images
-- **Purpose**: Extract visual features for similarity computation
-- **Implementation**: Transfer learning from ImageNet with medical image fine-tuning
-
-**2. Image Similarity Clustering**
-- **Method**: K-means and hierarchical clustering on CNN features
-- **Purpose**: Group visually similar medical images
-- **Validation**: Medical expert review of clustering quality
-
-#### Text Analysis Pipeline
-**1. Natural Language Processing**
-- **Method**: BERT-based embeddings for medical text (ClinicalBERT, BioBERT)
-- **Purpose**: Convert clinical narratives to semantic vectors
-- **Features**: Symptom extraction, diagnosis standardization, clinical entity recognition
-
-**2. Topic Modeling**
-- **Method**: Latent Dirichlet Allocation (LDA) and BERTopic
-- **Purpose**: Discover thematic patterns in clinical descriptions
-- **Application**: Identify common diagnostic patterns and symptom clusters
-
-#### Multimodal Integration
-**1. Case Similarity Computation**
-- **Method**: Weighted combination of image and text similarity scores
-- **Algorithm**: Cosine similarity with learnable weights
-- **Optimization**: User feedback-based weight adjustment
-
-**2. Recommendation System**
-- **Method**: Collaborative filtering combined with content-based recommendations
-- **Purpose**: Suggest similar cases for educational and diagnostic support
-- **Evaluation**: Medical expert assessment of recommendation relevance
-
-#### Dimensionality Reduction and Visualization
-**1. Embedding Computation**
-- **Method**: t-SNE and UMAP for high-dimensional feature visualization
-- **Purpose**: Create 2D representations of case similarity space
-- **Parameters**: Adaptive perplexity and nearest neighbors based on data structure
-
-### Implementation Architecture
-
-#### Technology Stack
-**Frontend**: 
-- React.js for component-based UI development
-- D3.js for custom medical visualizations
-- Three.js for 3D network visualization
-- Material-UI for consistent design system
-
-**Backend**:
-- Python Flask/FastAPI for REST API development
-- PostgreSQL for structured medical data storage
-- Redis for caching similarity computations
-- Elasticsearch for fast text search and filtering
-
-**Machine Learning**:
-- PyTorch for deep learning model development
-- Scikit-learn for traditional ML algorithms
-- Transformers library for BERT-based text analysis
-- OpenCV for medical image preprocessing
-
-**Infrastructure**:
-- Docker containerization for deployment
-- AWS/Google Cloud for scalable hosting
-- GPU acceleration for model inference
-
-#### Software Architecture Components
-
-**Data Layer**:
-- Medical case database (PostgreSQL)
-- Image storage with CDN (AWS S3 + CloudFront)
-- Precomputed similarity matrices (Redis)
-- Search indices (Elasticsearch)
-
-**API Layer**:
-- Case retrieval and filtering endpoints
-- Similarity computation services
-- Image processing pipeline
-- User interaction logging
-
-**Computation Layer**:
-- Image feature extraction service
-- Text embedding computation
-- Similarity matrix updates
-- Machine learning model training
-
-**Frontend Layer**:
-- Interactive visualization components
-- Case detail views
-- Filtering and search interfaces
-- Educational workflow management
-
----
-
-## 6. Sketches
-
-### Data Analysis Pipeline
-```
-[Medical Images] → [CNN Feature Extraction] → [Image Embeddings]
-                                                      ↓
-[Clinical Text] → [BERT Text Processing] → [Text Embeddings]
-                                                      ↓
-[Image + Text Embeddings] → [Similarity Computation] → [Case Relationships]
-                                                      ↓
-[Dimensionality Reduction] → [Interactive Visualizations]
-```
-
-### Software Architecture
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Frontend (Vue)                    │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐│
-│  │ Image Gallery   │  │ Network View    │  │ Case Details    ││
-│  │ Component       │  │ Component       │  │ Component       ││
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘│
-└─────────────────────────────────────────────────────────────┘
-                              │ HTTP/WebSocket
-┌─────────────────────────────────────────────────────────────┐
-│                     API Layer (Flask/FastAPI)               │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐│
-│  │ Case API        │  │ Similarity API  │  │ Search API      ││
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘│
-└─────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                   Computation Layer                         │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐│
-│  │ ML Models       │  │ Similarity      │  │ Feature         ││
-│  │ (PyTorch)       │  │ Engine          │  │ Extraction      ││
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘│
-└─────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                      Data Layer                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐│
-│  │ PostgreSQL      │  │ Image Storage   │  │ Redis Cache     ││
-│  │ (Cases/Meta)    │  │ (AWS S3)        │  │ (Similarities)  ││
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘│
-└─────────────────────────────────────────────────────────────┘
-```
-
-### User Interaction Flow
-```
-User Query → [Search Interface] → [Filter Processing] → [Similarity Computation]
-                                                              ↓
-User Selection ← [Results Display] ← [Ranking & Filtering] ← [Similar Cases]
-      ↓
-[Case Detail View] → [Image Viewer] → [Related Cases] → [Educational Mode]
-      ↓
-[Annotation/Notes] → [Learning Progress] → [Performance Analytics]
-```
-
-### Component Data Flow
-```
-1. User searches for "chest pain" 
-   → Text search in Elasticsearch
-   → Returns matching case IDs
-
-2. User selects a case
-   → Triggers similarity computation
-   → Backend computes image + text similarities
-   → Returns ranked similar cases
-
-3. User explores similar cases
-   → Frontend updates network visualization
-   → Highlights related nodes and edges
-   → Updates image gallery with similar images
-
-4. User compares cases
-   → Loads case details in parallel
-   → Synchronizes image viewers
-   → Displays diagnostic comparison table
-```
-
----
-
-## 7. Assignment of Responsibilities and Tasks
-
-*Note: This section would be filled based on your team composition. Here's a template structure:*
-
-### Team Member Roles
-
-#### Frontend Developer(s)
-**Primary Responsibilities:**
-- React.js application development
-- D3.js visualization implementation
-- User interface design and usability testing
-- Integration with backend APIs
-
-**Key Tasks:**
-- Implement interactive medical image gallery
-- Develop case similarity network visualization
-- Create responsive case detail views
-- Design educational workflow interfaces
-
-#### Backend Developer(s)
-**Primary Responsibilities:**
-- REST API development and optimization
-- Database design and management
-- Image processing pipeline
-- System architecture and deployment
-
-**Key Tasks:**
-- Build case retrieval and filtering APIs
-- Implement image storage and serving
-- Design efficient similarity computation
-- Set up cloud infrastructure
-
-#### Machine Learning Engineer(s)
-**Primary Responsibilities:**
-- Model development and training
-- Feature extraction pipelines
-- Similarity algorithm optimization
-- Performance evaluation
-
-**Key Tasks:**
-- Fine-tune CNN models for medical images
-- Implement BERT-based text analysis
-- Develop multimodal similarity metrics
-- Validate model performance with domain experts
-
-#### Data Engineer/Analyst
-**Primary Responsibilities:**
-- Data preprocessing and cleaning
-- Feature engineering
-- Quality assurance
-- Performance monitoring
-
-**Key Tasks:**
-- Clean and standardize medical text data
-- Implement image preprocessing pipeline
-- Create data validation frameworks
-- Monitor system performance metrics
-
-### Shared Responsibilities
-- Weekly team meetings and progress reviews
-- Code review and quality assurance
-- Documentation and testing
-- User evaluation planning and execution
-- Final presentation and demonstration preparation
-
-### Project Timeline
-- **Weeks 1-2**: Data preprocessing and initial analysis
-- **Weeks 3-4**: Core ML model development and API foundation
-- **Weeks 5-6**: Frontend visualization development
-- **Weeks 7-8**: Integration and system testing
-- **Weeks 9-10**: User evaluation and refinement
-- **Weeks 11-12**: Final documentation and presentation
-
----
-
-## Conclusion
-
-This project addresses a significant challenge in medical education and clinical decision support by combining advanced machine learning techniques with intuitive visualization methods. The comprehensive MedPix dataset provides an ideal foundation for developing and evaluating novel approaches to multimodal medical data analysis. The proposed solution has the potential to advance both visual analytics research and medical education practice, while providing a framework applicable to other domains requiring complex pattern discovery across multimodal data.
+ 
+ 
+Project Proposal 
+Group A 
+ 
+ 
+ 
+  
+ 
+ 
+
+
+Introduction  
+This project proposes the design and implementation of a visual analytics 
+system that enables medical students and practitioners to explore diagnostic 
+cases in an interactive and data-driven way. The focus is on multimodal data, 
+combining medical images with clinical narratives and patient metadata. The 
+datasets used originate from MedPix (NIH) and a complementary Kaggle 
+medical analysis dataset, both of which provide thousands of real-world 
+diagnostic cases across a wide range of modalities such as CT, MRI, X-ray, 
+and ultrasound. 
+ 
+The primary aim of the system is to combine computational methods—such 
+as clustering, similarity search, and dimensionality reduction—with 
+interactive visualizations. In doing so, it will support users in identifying 
+diagnostic patterns, retrieving similar cases, and developing a deeper 
+understanding of how different clinical and demographic factors relate to 
+medical diagnoses. 
+ 
+Motivation 
+Medical diagnosis is a cognitively demanding task because it requires the 
+integration of visual inspection of images with contextual information 
+derived from patient history, demographics, and examination notes. For 
+students, the ability to explore and compare large case collections can 
+accelerate the learning of diagnostic reasoning. For practitioners, access to 
+similar cases can support decision-making in complex scenarios. 
+ 
+Currently, searching for relevant diagnostic cases is often limited to 
+keyword-based queries or static case collections. This approach fails to 
+capture the richness of multimodal data and makes it difficult to uncover 
+hidden structures or relationships in the dataset. A visual analytics system 
+that allows users to interactively explore both the statistical distributions of 
+cases and their similarity relationships has the potential to enhance both 
+education and clinical practice. 
+ 
+Data Report 
+The dataset represents authentic medical diagnostic workflows where 
+physicians analyze visual data (medical images) alongside clinical narratives 
+(patient records, examination findings, lab results) to reach diagnostic 
+conclusions. This mirrors the cognitive process of medical diagnosis that 
+ 
+ 
+ 
+ 
+ 
+
+
+combines pattern recognition from medical imaging with clinical reasoning 
+based on patient history and symptoms 
+ 
+Data Source 
+The data originates from MedPix, a free open-access online database of 
+medical cases developed by the Uniformed Services University of the Health 
+Sciences. Each case includes: 
+1. Multiple related medical images  
+2. Comprehensive clinical narratives including patient history, physical 
+examination findings, imaging results, differential diagnoses, final 
+diagnoses, and treatment plans 
+3. Verified medical case sources with URLs linking to original 
+documentation 
+4. Physician-written diagnostic reasoning and clinical discussions
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Dataset Scale 
+The dataset comprises 7,432 medical cases and 40,900 medical images, with 
+nearly complete image coverage (99.9%). Each case is supported by verified 
+source URLs and case folders, ensuring data reliability and quality. 
+ 
+Textual Features 
+Diagnosis Coverage: 99.7% of cases (7,406 cases) include extracted 
+diagnoses.  To understand the scale and quality of the dataset, we analyzed 
+the length of the textual descriptions. This helps us see how detailed the 
+clinical information is and how reliable the data will be for our project. 
+ 
+Figure 1: Distribution of case description lengths 
+ 
+In addition to the extensive image coverage and high-quality metadata, each 
+case is organized into structured clinical sections, including the case title, 
+patient history, physical examination, imaging findings, differential 
+diagnosis, final diagnosis, treatment plans, and clinical discussions. Together, 
+these components ensure that the dataset provides not only breadth and depth 
+of clinical information but also a consistent framework for comprehensive 
+analysis.
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+Medical Specialties 
+To better understand the dataset, we looked at the distribution of cases across 
+medical specialties. The figure below shows the top anatomical regions 
+represented in the data. 
+ 
+ 
+Figure 2: Distribution of cases across the top anatomical regions 
+ 
+1. Disc-related conditions (4,180 cases) 
+2. Head/Neurological (1,391 cases) 
+3. Bone/Orthopedic (1,272 cases) 
+4. Chest/Pulmonary (880 cases) 
+5. Abdominal (870 cases) 
+ 
+ 
+ 
+Images per Case 
+ 
+- 
+Average: 5.5 images per case 
+- 
+Median: 4.0 images per case 
+- 
+Range: 0-184 images per case 
+Where Image Types are JPEG format medical images including CT scans, 
+MRI, X-rays, ultrasounds, angiography, PET scans, mammography. 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Figure 3: Distribution of images per case 
+ 
+Demographics Overview 
+ 
+Age data were available for 60.6% of cases (4,502 in total), with patients 
+ranging from 1 to 94 years and an average age of 34.3 years. The distribution 
+was as follows: pediatric (17.9%), young adult (19.5%), middle-aged 
+(16.4%), elderly (6.8%), and unknown (39.4%). Gender information was 
+available for 81.6% of cases, showing a near-balanced distribution between 
+males (43.1%) and females (38.5%), as well as 18.4% unknown. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Figure 4: Age distribution of cases 
+                                        Figure 5: Gender distribution of cases 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Research Questions and Goals 
+The project is structured around three main research questions: 
+ 
+a. Research Questions 
+1. What visual and clinical patterns can we find in the MedPix dataset 
+(like X-rays, CT scans, MRIs)? How can we show these patterns to 
+help with diagnosis and learning? 
+ 
+2.  How can we combine medical images and clinical notes to find 
+similar, relevant cases for any given patient? 
+ 
+3. How are diagnoses connected to different body regions and patient 
+details like age and gender? 
+ 
+ 
+b. Goals 
+G1: Develop a system that simulates the clinical diagnostic workflow, 
+from patient presentation and image review, to differential diagnosis 
+and final reasoning. 
+ 
+G2: Combine image features and clinical text to create meaningful 
+similarity measures, enabling users to find diagnostically relevant 
+cases for any given query. 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Solution Design 
+The solution combines computational methods with interactive visualization 
+in a tightly integrated system. On the computational side, textual case 
+descriptions will be transformed into embeddings using language models, 
+while image embeddings will be derived from pretrained convolutional or 
+transformer-based networks. These will be combined with encoded metadata 
+into multimodal vectors. Based on these representations, the system will 
+support similarity search through cosine distance, clustering using algorithms 
+such as K-means or DBSCAN, and dimensionality reduction with UMAP or 
+t-SNE for visualization purposes. Cluster validation measures such as 
+silhouette score will provide users with feedback about the quality of 
+groupings. 
+ 
+On the visualization side, the system will provide several coordinated views. 
+A case gallery will allow users to search and filter cases based on attributes 
+such as age, gender, body region, or modality. An embedding map will 
+project cases into two dimensions, allowing clusters and similarity 
+relationships to be explored interactively. A similarity panel will return cases 
+most related to a selected query, with sliders enabling the user to balance the 
+influence of textual versus visual features. Finally, a dashboard of statistical 
+charts will highlight demographic and regional distributions, while a case 
+detail panel will provide drill-down access to individual cases, including both 
+images and clinical notes. 
+ 
+Interaction is a central part of the design: filtering and brushing in one view 
+will update the others, similarity searches will dynamically recompute based 
+on user-selected parameters, and parameter sliders for clustering and feature 
+weighting will trigger computational updates in real time. This tight coupling 
+of computation and visualization will support exploratory workflows where 
+users move seamlessly from broad overviews to detailed case inspections. 
+Visualization Methods and Interactions 
+ 
+1. Image Gallery (Starting View) 
+- 
+What: Displays a grid of case thumbnails. 
+- 
+ How to use: Use the search bar and filters (modality, body 
+region, diagnosis, age, gender) to narrow results. Click a card 
+to view a case. 
+- 
+Why: It lets you quickly explore and spot visual patterns in the 
+dataset. (Addresses RQ1 & RQ3) 
+2. Similar Cases Panel 
+ 
+ 
+ 
+ 
+ 
+
+
+- 
+What: Shows a list or grid of cases similar to the one you’re 
+viewing. 
+- 
+How to use: Adjust a slider to balance similarity by image or 
+text; click to jump to another case. 
+- 
+Why: Helps you find relevant cases using both images and 
+notes. (Addresses RQ2) 
+3. Trend Dashboard 
+- 
+What: Presents small charts, such as a bar chart for diagnoses 
+by body region, an age histogram, and gender distribution. 
+- 
+How to use: Click on any bar or bin to filter the image gallery. 
+- 
+Why: Quickly reveals demographic and regional trends, while 
+allowing focused exploration. (Addresses RQ3) 
+ 
+ 
+Computational Methods 
+1. Text analysis: Clinical notes will be converted into sentence 
+embeddings, producing a fixed-length vector that represents the 
+medical meaning of each case. 
+ 
+2. Image analysis: Features will be extracted from medical images and 
+aggregated into a single vector per case, capturing relevant visual 
+patterns. 
+ 
+3. Similarity search: Combined text and image embeddings will be 
+compared using distance measures to retrieve cases most similar to a 
+selected query. 
+ 
+4. Clustering: Case embeddings will be grouped to reveal recurring 
+diagnostic patterns across patient demographics, body regions, and 
+specialties. 
+ 
+5. Dimensionality reduction: High-dimensional embeddings will be 
+projected into two dimensions, enabling interactive visualization of 
+relationships between cases. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+Implementation Plan 
+The system will follow a client–server architecture. The frontend, developed 
+in Vue.js with D3.js, will implement the coordinated visualizations. The 
+backend, built with FastAPI in Python, will handle requests for clustering, 
+similarity search, and case data retrieval. Computational components will rely 
+on libraries such as PyTorch for embedding extraction and scikit-learn for 
+clustering and dimensionality reduction. Case metadata will be stored in 
+JSON or CSV files, while images will be stored on disk. 
+Implementation Details 
+Frontend Web App 
+- 
+What: Vue UI for Gallery, Case page, Similar Cases, and 
+Trends. 
+- 
+Why: Vue is simple, fast, and integrates well with Node.js, 
+keeping a clear separation from the Python backend 
+ 
+ 
+Backend  
+- 
+What: We use FastAPI (Python) to provide endpoints for 
+cases, case details, similar cases, and trend statistics. 
+- 
+Why: FastAPI is lightweight, works well with Python data and 
+machine learning libraries, and easily connects our MedPix 
+dataset to the frontend. 
+ 
+ 
+Data & Storage 
+- 
+What: Case metadata stored in CSV or JSON files, and 
+medical images stored on disk in an images/ folder. 
+- 
+Why: Easiest setup, no database server needed, just files that 
+can be read directly by the backend. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Sketches 
+ 
+Computational Pipeline 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+FrontEnd 
+ 
+User Interactions and Data Flow 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+Assignment of Responsibilities and Tasks  
+ 
+Our team will work together at every stage of the project, instead of splitting 
+tasks by front-end, back-end, or machine learning. This way, everyone learns 
+all aspects of the workflow and knowledge is shared. 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+The URL to the data:  
+A. Ahmed, Medical Analysis Dataset, Kaggle, 2022. [Online]. Available: 
+https://www.kaggle.com/datasets/ahmedsta/medical-analysis/data  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
