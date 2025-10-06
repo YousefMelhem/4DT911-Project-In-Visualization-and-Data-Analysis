@@ -127,11 +127,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const caseId = route.params.id as string
 
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
@@ -170,17 +169,25 @@ const tabs = [
 ]
 
 const loadCaseDetails = async () => {
+  const caseId = route.params.id as string
+  
   try {
     loading.value = true
     error.value = null
     
+    console.log('Loading case with ID:', caseId)
+    console.log('API URL:', `${API_URL}/api/cases/${caseId}`)
+    
     const response = await fetch(`${API_URL}/api/cases/${caseId}`)
+    
+    console.log('Response status:', response.status)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
     
     const data = await response.json()
+    console.log('Case data loaded:', data)
     caseData.value = data
     
     // Set the first image as selected
@@ -195,6 +202,11 @@ const loadCaseDetails = async () => {
     loading.value = false
   }
 }
+
+// Watch for route changes and reload data
+watch(() => route.params.id, () => {
+  loadCaseDetails()
+})
 
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement

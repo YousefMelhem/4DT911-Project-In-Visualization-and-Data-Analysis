@@ -71,6 +71,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { navigateTo } from '#app'
 
 interface CaseSummary {
   id: string
