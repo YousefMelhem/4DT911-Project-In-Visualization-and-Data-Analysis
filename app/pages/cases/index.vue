@@ -2,44 +2,31 @@
   <div class="cases-page">
     <div class="page-header">
       <h1>Medical Cases Gallery</h1>
-      <p>Browse {{totalCases}} diagnostic cases from MedPix</p>
-      
+      <p>Browse {{ totalCases }} diagnostic cases from MedPix</p>
+
       <div class="search-bar">
-        <input 
-          v-model="searchQuery" 
-          type="text" 
-          placeholder="Search by diagnosis..." 
-          @input="handleSearch"
-          class="search-input"
-        />
+        <input v-model="searchQuery" type="text" placeholder="Search by diagnosis..." @input="handleSearch"
+          class="search-input" />
       </div>
     </div>
-    
+
     <div class="cases-container">
       <div v-if="loading" class="loading">
         <div class="loader"></div>
         <p>Loading cases...</p>
       </div>
-      
+
       <div v-else-if="error" class="error">
         <p>❌ Error loading cases: {{ error }}</p>
         <button @click="loadCases" class="retry-btn">Retry</button>
       </div>
-      
+
       <div v-else class="cases-grid">
-        <div 
-          v-for="caseItem in cases" 
-          :key="caseItem.id" 
-          class="case-card"
-          @click="viewCase(caseItem.id)"
-        >
+        <div v-for="caseItem in cases" :key="caseItem.id" class="case-card" @click="viewCase(caseItem.id)">
           <div class="case-image">
-            <img 
-              v-if="caseItem.thumbnail"
-              :src="`${API_URL}/images/${caseItem.thumbnail.split('/').slice(-2).join('/')}`"
-              :alt="caseItem.diagnosis"
-              @error="handleImageError"
-            />
+            <img v-if="caseItem.thumbnail"
+              :src="`${API_URL}/images/${caseItem.thumbnail.split('/').slice(-2).join('/')}`" :alt="caseItem.diagnosis"
+              @error="handleImageError" />
             <div v-else class="no-image">
               <span>📋</span>
               <p>No Image</p>
@@ -48,29 +35,33 @@
               <span>🖼️ {{ caseItem.imageCount }}</span>
             </div>
           </div>
-          
+
           <div class="case-info">
             <h3>{{ truncate(caseItem.diagnosis, 60) }}</h3>
             <p class="case-id">Case ID: {{ caseItem.id }}</p>
           </div>
         </div>
       </div>
-      
+
       <div v-if="!loading && cases.length === 0" class="no-results">
         <p>No cases found</p>
       </div>
-      
-      <div v-if="hasMore && !loading" class="load-more">
-        <button @click="loadMore" class="load-more-btn">
-          Load More Cases
+
+      <div v-if="hasMore" class="load-more">
+        <button @click="loadMore" class="load-more-btn"
+          :disabled="moreLoading" :aria-busy=" moreLoading ? 'true' : 'false' "
+          > 
+          <span v-if="!moreLoading"> Load More Cases</span>
+          <span v-else>"loading">Loading...</span>
         </button>
       </div>
+      <div v-show="hasMore && !loading" ref="sentinel" class="infinite-sentinel" aria-hidden="true"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { navigateTo } from '#app'
 
 interface CaseSummary {
@@ -98,30 +89,30 @@ const loadCases = async () => {
   try {
     loading.value = true
     error.value = null
-    
+
     const response = await fetch(
       `${API_URL}/api/cases/summary?limit=${limit}&offset=${offset.value}`
     )
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
-    
+
     const data = await response.json()
-    
+
     if (offset.value === 0) {
       cases.value = data
     } else {
       cases.value = [...cases.value, ...data]
     }
-    
+
     hasMore.value = data.length === limit
-    
+
     // Get total count
     const statsResponse = await fetch(`${API_URL}/api/stats`)
     const stats = await statsResponse.json()
     totalCases.value = stats.total_cases
-    
+
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
     console.error('Error loading cases:', e)
@@ -129,52 +120,113 @@ const loadCases = async () => {
     loading.value = false
   }
 }
+const moreLoading = ref(false)
+const bottomHits = ref(0)
+let bottomHitResetTimer: number | null = null
 
-const loadMore = () => {
+const loadMore = async () => {
+  if (moreLoading.value || !hasMore.value) return
+  moreLoading.value = true
   offset.value += limit
-  loadCases()
-}
 
-const handleSearch = async () => {
-  if (!searchQuery.value.trim()) {
-    offset.value = 0
-    loadCases()
-    return
-  }
-  
   try {
-    loading.value = true
     const response = await fetch(
-      `${API_URL}/api/cases/search?q=${encodeURIComponent(searchQuery.value)}&limit=50`
+      `${API_URL}/api/cases/summary?limit=${limit}&offset=${offset.value}`
     )
+    if (!response.ok) 
+      throw new Error(`HTTP error! status: ${response.status}`)
     const data = await response.json()
-    cases.value = data
-    hasMore.value = false
+    cases.value = [...cases.value, ...data]
+    hasMore.value = data.length === limit
+    
+    await nextTick()
+
+    // window.scrollTo({
+      // top: scrollPosition,
+      // behavior: 'smooth'
+    // })
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
   } finally {
-    loading.value = false
+    moreLoading.value = false
+  } 
+}
+
+const handleSearch = async () => {
+    if (!searchQuery.value.trim()) {
+      offset.value = 0
+      loadCases()
+      return
+    }
+
+    try {
+      loading.value = true
+      const response = await fetch(
+        `${API_URL}/api/cases/search?q=${encodeURIComponent(searchQuery.value)}&limit=50`
+      )
+      const data = await response.json()
+      cases.value = data
+      hasMore.value = false
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Unknown error'
+    } finally {
+      loading.value = false
+    }
   }
-}
 
-const viewCase = (caseId: string) => {
-  // Navigate to case detail page
-  navigateTo(`/cases/${caseId}`)
-}
+  const viewCase = (caseId: string) => {
+    // Navigate to case detail page
+    navigateTo(`/cases/${caseId}`)
+  }
 
-const truncate = (text: string, length: number) => {
-  if (!text) return 'Unknown'
-  return text.length > length ? text.substring(0, length) + '...' : text
-}
+  const truncate = (text: string, length: number) => {
+    if (!text) return 'Unknown'
+    return text.length > length ? text.substring(0, length) + '...' : text
+  }
 
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.style.display = 'none'
-}
+  const handleImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement
+    target.style.display = 'none'
+  }
+  const sentinel = ref<HTMLElement | null>(null)
+  let observer: IntersectionObserver | null = null
 
-onMounted(() => {
-  loadCases()
-})
+  const startObserver = async () => {
+    if (observer) observer.disconnect()
+    observer = new IntersectionObserver(async entries => {
+      const entry = entries[0]
+      if (!entry?.isIntersecting) 
+        return
+      if (!hasMore.value || moreLoading.value) 
+        return
+      bottomHits.value += 1
+      if (bottomHits.value==1){
+        if (bottomHitResetTimer) clearTimeout(bottomHitResetTimer)
+        bottomHitResetTimer = window.setTimeout(() => {
+          bottomHits.value = 0
+          bottomHitResetTimer = null
+        }, 3000)
+      return
+      }    
+      if(bottomHits.value>=2){
+        bottomHits.value=0
+        if (bottomHitResetTimer) {
+          clearTimeout(bottomHitResetTimer)
+          bottomHitResetTimer = null
+        }
+      await loadMore()
+      }
+    }, 
+    { root: null, rootMargin: '200px', threshold: 0 })
+    if (sentinel.value instanceof Element) observer.observe(sentinel.value)
+  }
+
+  onMounted(async () => {
+    await loadCases()
+    await startObserver()
+  })
+  onBeforeUnmount(() => observer?.disconnect())
+
 </script>
 
 <style scoped>
@@ -223,7 +275,9 @@ onMounted(() => {
   padding: 2rem;
 }
 
-.loading, .error, .no-results {
+.loading,
+.error,
+.no-results {
   text-align: center;
   padding: 4rem 2rem;
 }
@@ -239,8 +293,13 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error {
@@ -358,5 +417,10 @@ onMounted(() => {
 .load-more-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.infinite-sentinel {
+  height: 1px;
+  width: 100%;
 }
 </style>
