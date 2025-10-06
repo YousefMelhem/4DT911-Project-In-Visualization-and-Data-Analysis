@@ -157,8 +157,8 @@ const handleSearch = async () => {
 }
 
 const viewCase = (caseId: string) => {
-  // TODO: Navigate to case detail page
-  window.open(`${API_URL}/api/cases/${caseId}`, '_blank')
+  // Navigate to case detail page
+  navigateTo(`/cases/${caseId}`)
 }
 
 const truncate = (text: string, length: number) => {
