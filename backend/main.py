@@ -30,7 +30,7 @@ app.add_middleware(
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 PROCESSED_DIR = DATA_DIR / "processed"
-IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final" / "medpix_data_final"
+IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final"
 
 # Mount static files for images
 app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
