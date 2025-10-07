@@ -52,24 +52,7 @@ conclusions. This mirrors the cognitive process of medical diagnosis that
  
  
  
- 
 
-
-combines pattern recognition from medical imaging with clinical reasoning 
-based on patient history and symptoms 
- 
-Data Source 
-The data originates from MedPix, a free open-access online database of 
-medical cases developed by the Uniformed Services University of the Health 
-Sciences. Each case includes: 
-1. Multiple related medical images  
-2. Comprehensive clinical narratives including patient history, physical 
-examination findings, imaging results, differential diagnoses, final 
-diagnoses, and treatment plans 
-3. Verified medical case sources with URLs linking to original 
-documentation 
-4. Physician-written diagnostic reasoning and clinical discussions
- 
  
  
  
