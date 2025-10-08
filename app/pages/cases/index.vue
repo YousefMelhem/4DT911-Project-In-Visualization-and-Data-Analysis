@@ -49,10 +49,10 @@
 
       <div v-if="hasMore" class="load-more">
         <button @click="loadMore" class="load-more-btn"
-          :disabled="moreLoading" :aria-busy=" moreLoading ? 'true' : 'false' "
+          :disabled="moreLoading" :aria-busy="moreLoading ? 'true' : 'false'"
           > 
           <span v-if="!moreLoading"> Load More Cases</span>
-          <span v-else>"loading">Loading...</span>
+          <span v-else>Loading...</span>
         </button>
       </div>
       <div v-show="hasMore && !loading" ref="sentinel" class="infinite-sentinel" aria-hidden="true"></div>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { navigateTo } from '#app'
 
 interface CaseSummary {
@@ -139,12 +139,6 @@ const loadMore = async () => {
     cases.value = [...cases.value, ...data]
     hasMore.value = data.length === limit
     
-    await nextTick()
-
-    // window.scrollTo({
-      // top: scrollPosition,
-      // behavior: 'smooth'
-    // })
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
   } finally {
@@ -191,7 +185,11 @@ const handleSearch = async () => {
   const sentinel = ref<HTMLElement | null>(null)
   let observer: IntersectionObserver | null = null
 
-  const startObserver = async () => {
+  const startObserver = () => {
+    /*
+    watches the page and only loads more cases
+    if the user quickly reaches the bottom twice in a row. 
+    */
     if (observer) observer.disconnect()
     observer = new IntersectionObserver(async entries => {
       const entry = entries[0]
