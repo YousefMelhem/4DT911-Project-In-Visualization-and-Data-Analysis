@@ -30,7 +30,7 @@ app.add_middleware(
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 PROCESSED_DIR = DATA_DIR / "processed"
-IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final"
+IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final" 
 
 # Mount static files for images
 app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
@@ -66,26 +66,36 @@ def load_data():
 # Pydantic models
 class CaseSummary(BaseModel):
     id: str
-    diagnosis: str
+    title:str
+    diagnosis: Optional[str]= None
     imageCount: int
-    thumbnail: Optional[str]
-    url: str
+    patient_age: Optional[str] = None
+    gender: Optional[str] = None
+    modality_guess: Optional[str] = None
+    body_region: Optional[str] = None
+    thumbnail: Optional[str]=None
+    url: Optional[str]=None
 
 class CaseDetail(BaseModel):
     id: str
-    url: str
-    diagnosis: str
-    caseTitle: str
-    history: str
-    exam: str
-    findings: str
-    caseDiagnosis: str
-    treatment: str
-    discussion: str
-    differentialDiagnosis: str
-    imageCount: int
-    imagePaths: List[str]
-    caseFolder: str
+    url: Optional[str]= None
+    patient_age: Optional[str] = None
+    gender: Optional[str] = None
+    modality_guess: Optional[str] = None
+    body_region: Optional[str] = None
+    diagnosis: Optional[str] = None
+    title: Optional[str] = None
+    history: Optional[str] = None
+    exam: Optional[str] = None
+    findings: Optional[str] = None
+    caseDiagnosis: Optional[str] = None
+    treatment: Optional[str] = None
+    discussion: Optional[str] = None
+    differentialDiagnosis: Optional[str] = None
+    imageCount: int = 0
+    imagePaths: List[str] = []
+    caseFolder: Optional[str] = None
+    thumbnail: Optional[str] = None
 
 # API Endpoints
 @app.get("/")
@@ -97,7 +107,7 @@ async def root():
         "total_cases": len(cases_data)
     }
 
-@app.get("/api/cases/summary", response_model=List[CaseSummary])
+@app.get("/api/cases/summary", response_model=List[CaseSummary], response_model_exclude_none=True)
 async def get_cases_summary(
     limit: Optional[int] = 100,
     offset: Optional[int] = 0
