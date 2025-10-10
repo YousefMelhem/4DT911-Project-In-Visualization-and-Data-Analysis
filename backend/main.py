@@ -38,15 +38,16 @@ app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
 # Load processed cases
 CASES_FILE = PROCESSED_DIR / "cases_cleaned.json"
 SUMMARY_FILE = PROCESSED_DIR / "cases_summary.json"
+METADATA_FILE = PROCESSED_DIR / "cases_metadata.json"
 
 # Cache for cases data
 cases_data = []
 summary_data = []
-
+cases_metadata = []
 def load_data():
     """Load case data on startup"""
-    global cases_data, summary_data
-    
+    global cases_data, summary_data, cases_metadata
+
     try:
         with open(CASES_FILE, 'r', encoding='utf-8') as f:
             cases_data = json.load(f)
@@ -62,6 +63,14 @@ def load_data():
     except Exception as e:
         print(f"⚠️ Error loading summaries: {e}")
         summary_data = []
+    
+    try:
+        with open(METADATA_FILE, 'r', encoding='utf-8') as f:
+            cases_metadata = json.load(f)
+        print(f"✅ Loaded {len(cases_metadata)} metadata records")
+    except Exception as e:
+        print(f"⚠️ Error loading metadata: {e}")
+        cases_metadata = []
 
 # Pydantic models
 class CaseSummary(BaseModel):
@@ -97,6 +106,17 @@ class CaseDetail(BaseModel):
     caseFolder: Optional[str] = None
     thumbnail: Optional[str] = None
 
+class CaseMetadata(BaseModel):
+    case_id: str
+    added_on: Optional[str]
+    last_edited_on: Optional[str]
+    age: Optional[int]
+    gender: Optional[str]
+    modalities: List[str]
+    regions: List[str]
+    image_count: int
+    word_count: int
+
 # API Endpoints
 @app.get("/")
 async def root():
@@ -118,6 +138,27 @@ async def get_cases_summary(
     
     end = offset + limit
     return summary_data[offset:end]
+
+@app.get("/api/cases/metadata", response_model=List[CaseMetadata])
+async def get_all_cases_metadata():
+    """Return all case metadata (for analytics)."""
+    if not cases_metadata:
+        raise HTTPException(status_code=500, detail="No metadata available")
+    
+    return cases_metadata
+
+@app.get("/api/cases/{case_id}/metadata", response_model=CaseMetadata)
+async def get_metadata(case_id: str):
+    """Return metadata for a single case."""
+    if not cases_metadata:
+        raise HTTPException(status_code=500, detail="No metadata available")
+    
+    rec = next((m for m in cases_metadata if m.get("case_id") == case_id), None)
+
+    if not rec:
+        raise HTTPException(status_code=404, detail=f"Metadata for case {case_id} not found")
+    
+    return rec
 
 @app.get("/api/cases/{case_id}", response_model=CaseDetail)
 async def get_case_detail(case_id: str):
