@@ -15,6 +15,17 @@
       <div class="case-header">
         <NuxtLink to="/cases" class="back-link">← Back to Cases</NuxtLink>
         <h1>{{ caseData.diagnosis }}</h1>
+        <!-- ADD Metadata Chips -->
+        <div v-if="detailChips.length > 0" class="metadata-chips">
+          <div
+            v-for="chip in detailChips" 
+            :key="chip.label"
+            class="metadata-chip"
+          >
+            <span class="metadata-label ">{{ chip.label }}</span>
+            <span class="chip-label">{{ chip.value }}</span>
+          </div>
+        </div>
         <p class="case-id">Case ID: {{ caseData.id }}</p>
       </div>
 
@@ -127,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -151,6 +162,13 @@ interface CaseDetail {
   imageCount: number
   imagePaths: string[]
   caseFolder: string
+  patientAge?: number
+  patient_age?: string
+  gender?: string
+  modality?: string
+  modality_guess?: string
+  bodyRegion?: string
+  body_region?: string
 }
 
 const caseData = ref<CaseDetail | null>(null)
@@ -168,6 +186,44 @@ const tabs = [
   { id: 'discussion', label: 'Discussion' }
 ]
 
+const pick = (obj: any, ...keys: string[]): any => {
+  if (!obj) return null
+  for (const key of keys) {
+    if (obj[key] != null && obj[key] !== '') {
+      return obj[key]
+    }
+  }
+  return null
+}
+
+const detailChips = computed(() => {
+  if (!caseData.value) return []
+  
+  const chips = [
+    {
+      label: 'Age',
+      icon: '🗓️',
+      value: pick(caseData.value, 'patientAge', 'patient_age')
+    },
+    {
+      label: 'Gender',
+      icon: '👤',
+      value: pick(caseData.value, 'gender')
+    },
+    {
+      label: 'Modality',
+      icon: '🖥️',
+      value: pick(caseData.value, 'modality', 'modality_guess')
+    },
+    {
+      label: 'Region',
+      icon: '📍',
+      value: pick(caseData.value, 'bodyRegion', 'body_region')
+    }
+  ]
+  
+  return chips.filter(chip => chip.value != null && chip.value !== '')
+})
 const loadCaseDetails = async () => {
   const caseId = route.params.id as string
   
@@ -251,7 +307,7 @@ onMounted(() => {
 }
 
 .case-header {
-  margin-bottom: 2rem;
+  margin-bottom: 2rem;  
 }
 
 .back-link {
@@ -271,12 +327,53 @@ onMounted(() => {
 .case-header h1 {
   font-size: 2.5rem;
   color: #2d3748;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.metadata-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgb(230, 241, 250);
+  color: #2d3748;
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.metadata-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-color: #667eea;
+}
+
+.chip-label {
+  font-size: 0.7rem;
+  color: #718096;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.chip-value {
+  font-size: 1rem;
+  color: #2d3748;
+  font-weight: 700;
 }
 
 .case-id {
   color: #718096;
   font-size: 0.95rem;
+  font-style: italic;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
 }
 
 .image-gallery {
