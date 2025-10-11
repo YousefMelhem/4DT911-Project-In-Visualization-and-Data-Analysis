@@ -1,0 +1,16 @@
+{
+  "num_cases": 7404,
+  "num_features": 2000,
+  "sparsity": 0.9817973392760669,
+  "vectorizer_params": {
+    "max_features": 2000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 3,
+    "max_df": 0.8
+  },
+  "mean_similarity": 0.03331402324592914,
+  "median_similarity": 0.023169896046027524
+}

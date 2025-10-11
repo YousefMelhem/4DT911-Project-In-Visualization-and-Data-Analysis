@@ -1,0 +1,33 @@
+{
+  "dataset_info": {
+    "total_cases": 7432,
+    "ml_ready_cases": 7404,
+    "total_images": 40900
+  },
+  "text_statistics": {
+    "avg_combined_text_length": 498.0998385360603,
+    "avg_word_count": 75.76843379978472,
+    "unique_vocabulary_size": 6230
+  },
+  "image_statistics": {
+    "avg_images_per_case": 5.503229278794403,
+    "median_images_per_case": 4.0,
+    "max_images_per_case": 184
+  },
+  "field_coverage": {
+    "diagnosis": 99.63670613562971,
+    "history": 98.72174381054897,
+    "findings": 85.53552206673842,
+    "exam": 78.45801937567278,
+    "treatment": 44.44294940796556,
+    "discussion": 41.91334768568353,
+    "differentialDiagnosis": 69.91388589881593
+  },
+  "quality_metrics": {
+    "total_cases": 7432,
+    "cases_with_diagnosis": 7405,
+    "cases_with_images": 7425,
+    "cases_with_text_and_images": 7404,
+    "cases_with_rich_text": 4073
+  }
+}

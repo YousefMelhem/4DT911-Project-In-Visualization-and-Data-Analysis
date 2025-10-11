@@ -1,0 +1,10 @@
+{
+  "model_name": "all-MiniLM-L6-v2",
+  "embedding_dimension": 384,
+  "num_cases": 7404,
+  "normalized": true,
+  "mean_similarity": 0.23238419530476584,
+  "median_similarity": 0.22739892452955246,
+  "extraction_time_seconds": 4.108353137969971,
+  "batch_size": 32
+}
