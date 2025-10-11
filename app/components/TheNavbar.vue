@@ -19,6 +19,11 @@
           <span>Cases</span>
         </NuxtLink>
         
+        <NuxtLink to="/similarity" class="nav-link" active-class="active">
+          <span class="nav-icon">🔍</span>
+          <span>Similarity Search</span>
+        </NuxtLink>
+        
         <NuxtLink to="/analytics" class="nav-link" active-class="active">
           <span class="nav-icon">📊</span>
           <span>Analytics</span>

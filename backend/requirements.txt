@@ -7,3 +7,12 @@ python-dotenv>=1.0.0
 
 # CORS for frontend integration
 fastapi-cors>=0.0.6
+
+# ML/AI for Similarity Search
+numpy>=1.24.0
+scikit-learn>=1.3.0
+scipy>=1.11.0
+joblib>=1.3.0
+sentence-transformers>=2.2.0
+transformers>=4.30.0
+torch>=2.0.0

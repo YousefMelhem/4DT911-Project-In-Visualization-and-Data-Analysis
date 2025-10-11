@@ -7,6 +7,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
+# Import similarity API
+from api.similarity import router as similarity_router
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Load data when server starts
@@ -34,6 +37,9 @@ IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final"
 
 # Mount static files for images
 app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
+
+# Include routers
+app.include_router(similarity_router, prefix="/api/similarity", tags=["similarity"])
 
 # Load processed cases
 CASES_FILE = PROCESSED_DIR / "cases_cleaned.json"
