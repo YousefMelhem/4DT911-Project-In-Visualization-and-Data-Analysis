@@ -45,15 +45,13 @@ app.include_router(similarity_router, prefix="/api/similarity", tags=["similarit
 # Load processed cases
 CASES_FILE = ML_Ready_DIR / "cases_ml_ready.json"
 SUMMARY_FILE = PROCESSED_DIR / "cases_summary.json"
-METADATA_FILE = PROCESSED_DIR / "cases_metadata.json"
 
 # Cache for cases data
 cases_data = []
 summary_data = []
-cases_metadata = []
 def load_data():
     """Load case data on startup"""
-    global cases_data, summary_data, cases_metadata
+    global cases_data, summary_data
 
     try:
         with open(CASES_FILE, 'r', encoding='utf-8') as f:
@@ -70,14 +68,6 @@ def load_data():
     except Exception as e:
         print(f"⚠️ Error loading summaries: {e}")
         summary_data = []
-    
-    try:
-        with open(METADATA_FILE, 'r', encoding='utf-8') as f:
-            cases_metadata = json.load(f)
-        print(f"✅ Loaded {len(cases_metadata)} metadata records")
-    except Exception as e:
-        print(f"⚠️ Error loading metadata: {e}")
-        cases_metadata = []
 
 # Pydantic models
 class CaseSummary(BaseModel):
@@ -85,20 +75,23 @@ class CaseSummary(BaseModel):
     title:str
     diagnosis: Optional[str]= None
     imageCount: int
-    patient_age: Optional[str] = None
+    patient_age: Optional[int] = None
     gender: Optional[str] = None
-    modality_guess: Optional[str] = None
-    body_region: Optional[str] = None
+    modalities: List[str]
+    regions: List[str]
+    added_on: Optional[str] = None
+    last_edited_on: Optional[str] = None
+    word_count: int
     thumbnail: Optional[str]=None
     url: Optional[str]=None
 
 class CaseDetail(BaseModel):
     id: str
     url: Optional[str]= None
-    patient_age: Optional[str] = None
+    patient_age: Optional[int] = None
     gender: Optional[str] = None
-    modality_guess: Optional[str] = None
-    body_region: Optional[str] = None
+    modalities: List[str]
+    regions: List[str]
     diagnosis: Optional[str] = None
     title: Optional[str] = None
     history: Optional[str] = None
@@ -108,21 +101,13 @@ class CaseDetail(BaseModel):
     treatment: Optional[str] = None
     discussion: Optional[str] = None
     differentialDiagnosis: Optional[str] = None
+    added_on: Optional[str] = None
+    last_edited_on: Optional[str] = None
+    word_count: int
     imageCount: int = 0
     imagePaths: List[str] = []
     caseFolder: Optional[str] = None
     thumbnail: Optional[str] = None
-
-class CaseMetadata(BaseModel):
-    case_id: str
-    added_on: Optional[str]
-    last_edited_on: Optional[str]
-    age: Optional[int]
-    gender: Optional[str]
-    modalities: List[str]
-    regions: List[str]
-    image_count: int
-    word_count: int
 
 # API Endpoints
 @app.get("/")
@@ -146,26 +131,13 @@ async def get_cases_summary(
     end = offset + limit
     return summary_data[offset:end]
 
-@app.get("/api/cases/metadata", response_model=List[CaseMetadata])
-async def get_all_cases_metadata():
-    """Return all case metadata (for analytics)."""
-    if not cases_metadata:
-        raise HTTPException(status_code=500, detail="No metadata available")
-    
-    return cases_metadata
+@app.get("/api/cases/summary_all", response_model=List[CaseSummary], response_model_exclude_none=True)
+async def get_cases_summary_all():
+    """Get all case summaries for analytics dashboard"""
+    if not summary_data:
+        raise HTTPException(status_code=500, detail="No case data available")
 
-@app.get("/api/cases/{case_id}/metadata", response_model=CaseMetadata)
-async def get_metadata(case_id: str):
-    """Return metadata for a single case."""
-    if not cases_metadata:
-        raise HTTPException(status_code=500, detail="No metadata available")
-    
-    rec = next((m for m in cases_metadata if m.get("case_id") == case_id), None)
-
-    if not rec:
-        raise HTTPException(status_code=404, detail=f"Metadata for case {case_id} not found")
-    
-    return rec
+    return summary_data
 
 @app.get("/api/cases/{case_id}", response_model=CaseDetail)
 async def get_case_detail(case_id: str):

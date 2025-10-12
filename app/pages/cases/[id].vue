@@ -18,14 +18,20 @@
         <!-- ADD Metadata Chips -->
         <div v-if="detailChips.length > 0" class="metadata-chips">
           <div
-            v-for="chip in detailChips" 
+            v-for="chip in detailChips"
             :key="chip.label"
             class="metadata-chip"
           >
-            <span class="metadata-label ">{{ chip.label }}</span>
-            <span class="chip-label">{{ chip.value }}</span>
+            <span class="metadata-label">{{ chip.label }}</span>
+
+            <!-- If value is an array, show each as a mini chip; otherwise show single value -->
+            <div v-if="Array.isArray(chip.value)" class="chip-list">
+              <span v-for="(v, i) in chip.value" :key="i" class="chip-pill">{{ v }}</span>
+            </div>
+            <span v-else class="chip-label">{{ chip.value }}</span>
           </div>
         </div>
+
         <p class="case-id">Case ID: {{ caseData.id }}</p>
       </div>
 
@@ -162,13 +168,10 @@ interface CaseDetail {
   imageCount: number
   imagePaths: string[]
   caseFolder: string
-  patientAge?: number
-  patient_age?: string
+  patient_age?: number
   gender?: string
-  modality?: string
-  modality_guess?: string
-  bodyRegion?: string
-  body_region?: string
+  modalities: string[]
+  regions: string[]
 }
 
 const caseData = ref<CaseDetail | null>(null)
@@ -198,7 +201,7 @@ const pick = (obj: any, ...keys: string[]): any => {
 
 const detailChips = computed(() => {
   if (!caseData.value) return []
-  
+
   const chips = [
     {
       label: 'Age',
@@ -211,19 +214,23 @@ const detailChips = computed(() => {
       value: pick(caseData.value, 'gender')
     },
     {
-      label: 'Modality',
+      label: 'Modalities',
       icon: '🖥️',
-      value: pick(caseData.value, 'modality', 'modality_guess')
+      value: Array.isArray(caseData.value.modalities) ? caseData.value.modalities.filter(Boolean) : []
     },
     {
-      label: 'Region',
+      label: 'Regions',
       icon: '📍',
-      value: pick(caseData.value, 'bodyRegion', 'body_region')
+      value: Array.isArray(caseData.value.regions) ? caseData.value.regions.filter(Boolean) : []
     }
   ]
-  
-  return chips.filter(chip => chip.value != null && chip.value !== '')
+
+  // Keep only chips that have content (strings/numbers or non-empty arrays)
+  return chips.filter(chip =>
+    Array.isArray(chip.value) ? chip.value.length > 0 : chip.value != null && chip.value !== ''
+  )
 })
+
 const loadCaseDetails = async () => {
   const caseId = route.params.id as string
   
@@ -366,6 +373,25 @@ onMounted(() => {
   color: #2d3748;
   font-weight: 700;
 }
+
+.metadata-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip-pill {
+  background: #edf2f7;
+  border: 1px solid #d5dbe4;
+  border-radius: 12px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 600;
+}
+
 
 .case-id {
   color: #718096;

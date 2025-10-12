@@ -13,16 +13,20 @@ import MultiSelect from '~/components/ui/MultiSelect.vue'
 /* =========================
  * Types
  * =======================*/
-type CaseMeta = {
-  case_id: string
+type CaseSummary = {
+  id: string
+  title: string | null
+  diagnosis: string | null
   added_on: string | null
   last_edited_on: string | null
-  age: number | null
+  patient_age: number | null
   gender: string | null
   modalities: string[]
   regions: string[]
-  image_count: number
-  word_count: number
+  imageCount: number
+  word_count: number | null
+  thumbnail: string | null
+  url: string | null
 }
 
 type Bin = { binStart: number; binEnd: number; count: number }
@@ -92,7 +96,7 @@ const joinArr = (arr?: string[]) =>
 /* =========================
  * State
  * =======================*/
-const rawData = ref<CaseMeta[]>([])
+const rawData = ref<CaseSummary[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const totalCases = ref(0)
@@ -139,10 +143,10 @@ const filteredData = computed(() => {
     const min = filters.value.ageMin
     const max = filters.value.ageMax
     if (isFiniteNum(min)) {
-      if (row.age == null || row.age < min) return false
+      if (row.patient_age == null || row.patient_age < min) return false
     }
     if (isFiniteNum(max)) {
-      if (row.age == null || row.age > max) return false
+      if (row.patient_age == null || row.patient_age > max) return false
     }
 
     // Date range
@@ -197,7 +201,7 @@ const summaryStats = computed<SummaryStats>(() => {
 
   // Median age
   const ages = filteredData.value
-    .map(c => c.age)
+    .map(c => c.patient_age)
     .filter((a): a is number => typeof a === 'number' && Number.isFinite(a))
   ages.sort((a, b) => a - b)
 
@@ -211,7 +215,7 @@ const summaryStats = computed<SummaryStats>(() => {
 
   // Averages
   const avgImages =
-    filteredData.value.reduce((sum, c) => sum + (c.image_count || 0), 0) / n
+    filteredData.value.reduce((sum, c) => sum + (c.imageCount || 0), 0) / n
   const avgWords =
     filteredData.value.reduce((sum, c) => sum + (c.word_count || 0), 0) / n
 
@@ -230,8 +234,8 @@ const genderCounts = computed<Item[]>(() => {
 const ageBins = computed<Bin[]>(() => {
   const bins = makeBins()
   for (const row of filteredData.value) {
-    if (row.age == null || isNaN(Number(row.age))) continue
-    const a = Number(row.age)
+    if (row.patient_age == null || isNaN(Number(row.patient_age))) continue
+    const a = Number(row.patient_age)
     for (let i = 0; i < AGE_EDGES.length - 1; i++) {
       const start = AGE_EDGES[i]
       const end = AGE_EDGES[i + 1]
@@ -245,7 +249,7 @@ const ageBins = computed<Bin[]>(() => {
 })
 
 const unknownAgeCount = computed(() =>
-  filteredData.value.filter(r => r.age == null || isNaN(Number(r.age))).length
+  filteredData.value.filter(r => r.patient_age == null || isNaN(Number(r.patient_age))).length
 )
 
 const modalityCounts = computed<Item[]>(() => {
@@ -335,11 +339,11 @@ const loadData = async () => {
   try {
     loading.value = true
     error.value = null
-    const res = await fetch(`${API_URL}/api/cases/metadata`)
+    const res = await fetch(`${API_URL}/api/cases/summary_all`)
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
     const json = await res.json()
     if (!Array.isArray(json)) throw new Error('Unexpected response shape')
-    rawData.value = json as CaseMeta[]
+    rawData.value = json as CaseSummary[]
     totalCases.value = rawData.value.length
     fetchedAt.value = new Date()
   } catch (e) {
@@ -489,7 +493,7 @@ onMounted(loadData)
             <table class="cases-table" :key="filtersSignature">
               <thead>
                 <tr>
-                  <th>Case ID</th>
+                  <th>Diagnosis</th>
                   <th>Added</th>
                   <th>Age</th>
                   <th>Gender</th>
@@ -500,16 +504,16 @@ onMounted(loadData)
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(row, i) in visibleRows" :key="row.case_id + ':' + i">
-                  <td class="id">
-                    <NuxtLink :to="`/cases/${row.case_id}`">{{ row.case_id }}</NuxtLink>
+                <tr v-for="(row, i) in visibleRows" :key="row.id + ':' + i">
+                  <td class="id wrap" :title="row.diagnosis ?? undefined">
+                    <NuxtLink :to="`/cases/${row.id}`">{{ row.diagnosis }}</NuxtLink>
                   </td>
                   <td>{{ fmtDate(row.added_on) }}</td>
-                  <td>{{ row.age ?? '—' }}</td>
+                  <td>{{ row.patient_age ?? '—' }}</td>
                   <td>{{ row.gender ?? '—' }}</td>
                   <td class="wrap" :title="joinArr(row.modalities)">{{ joinArr(row.modalities) }}</td>
                   <td class="wrap" :title="joinArr(row.regions)">{{ joinArr(row.regions) }}</td>
-                  <td class="num">{{ row.image_count ?? 0 }}</td>
+                  <td class="num">{{ row.imageCount ?? 0 }}</td>
                   <td class="num">{{ row.word_count ?? 0 }}</td>
                 </tr>
                 <tr v-if="visibleRows.length === 0">
@@ -660,7 +664,7 @@ onMounted(loadData)
   padding: .55rem .75rem; border-bottom: 1px solid #edf2f7; color: #2d3748; font-size: .92rem; vertical-align: top;
 }
 .cases-table tbody tr:last-child td { border-bottom: none; }
-.cases-table td.wrap { white-space: nowrap; max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+.cases-table td.wrap { white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
 .cases-table td.num { text-align: right; }
 .cases-table td.id a { color: #4c51bf; text-decoration: none; font-weight: 600; }
 .cases-table td.id a:hover { text-decoration: underline; }
