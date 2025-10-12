@@ -113,7 +113,7 @@ Medical Images (JPEG)
 │ Pre-trained CNN        │
 │ (Choose one)           │
 ├────────────────────────┤
-│ • ResNet50 (2048-dim)  │
+│ •   │
 │ • EfficientNet         │
 │ • Vision Transformer   │
 └───────────┬────────────┘

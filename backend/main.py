@@ -33,6 +33,7 @@ app.add_middleware(
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 PROCESSED_DIR = DATA_DIR / "processed"
+ML_Ready_DIR = DATA_DIR / "ml_ready"
 IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final" 
 
 # Mount static files for images
@@ -42,7 +43,7 @@ app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
 app.include_router(similarity_router, prefix="/api/similarity", tags=["similarity"])
 
 # Load processed cases
-CASES_FILE = PROCESSED_DIR / "cases_cleaned.json"
+CASES_FILE = ML_Ready_DIR / "cases_ml_ready.json"
 SUMMARY_FILE = PROCESSED_DIR / "cases_summary.json"
 
 # Cache for cases data
