@@ -493,7 +493,7 @@ onMounted(loadData)
             <table class="cases-table" :key="filtersSignature">
               <thead>
                 <tr>
-                  <th>Case ID</th>
+                  <th>Diagnosis</th>
                   <th>Added</th>
                   <th>Age</th>
                   <th>Gender</th>
@@ -505,8 +505,8 @@ onMounted(loadData)
               </thead>
               <tbody>
                 <tr v-for="(row, i) in visibleRows" :key="row.id + ':' + i">
-                  <td class="id">
-                    <NuxtLink :to="`/cases/${row.id}`">{{ row.id }}</NuxtLink>
+                  <td class="id wrap" :title="row.diagnosis ?? undefined">
+                    <NuxtLink :to="`/cases/${row.id}`">{{ row.diagnosis }}</NuxtLink>
                   </td>
                   <td>{{ fmtDate(row.added_on) }}</td>
                   <td>{{ row.patient_age ?? '—' }}</td>
@@ -664,7 +664,7 @@ onMounted(loadData)
   padding: .55rem .75rem; border-bottom: 1px solid #edf2f7; color: #2d3748; font-size: .92rem; vertical-align: top;
 }
 .cases-table tbody tr:last-child td { border-bottom: none; }
-.cases-table td.wrap { white-space: nowrap; max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+.cases-table td.wrap { white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
 .cases-table td.num { text-align: right; }
 .cases-table td.id a { color: #4c51bf; text-decoration: none; font-weight: 600; }
 .cases-table td.id a:hover { text-decoration: underline; }
