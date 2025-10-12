@@ -30,6 +30,7 @@ logs
 
 # Python virtual environments
 venv/
+backVenv/
 env/
 ENV/
 .venv/
