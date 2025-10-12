@@ -25,7 +25,7 @@
         <div v-for="caseItem in cases" :key="caseItem.id" class="case-card" @click="viewCase(caseItem.id)">
           <div class="case-image">
             <img v-if="caseItem.thumbnail"
-              :src="`${API_URL}/images/${caseItem.thumbnail.split('/').slice(-2).join('/')}`" :alt="caseItem.diagnosis"
+              :src="`${API_URL}/images/${caseItem.thumbnail}`" :alt="caseItem.diagnosis"
               @error="handleImageError" />
             <div v-else class="no-image">
               <span>📋</span>
