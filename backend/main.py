@@ -130,6 +130,14 @@ async def get_cases_summary(
     end = offset + limit
     return summary_data[offset:end]
 
+@app.get("/api/cases/summary_all", response_model=List[CaseSummary], response_model_exclude_none=True)
+async def get_cases_summary_all():
+    """Get all case summaries for analytics dashboard"""
+    if not summary_data:
+        raise HTTPException(status_code=500, detail="No case data available")
+
+    return summary_data
+
 @app.get("/api/cases/{case_id}", response_model=CaseDetail)
 async def get_case_detail(case_id: str):
     """Get detailed information for a specific case"""
