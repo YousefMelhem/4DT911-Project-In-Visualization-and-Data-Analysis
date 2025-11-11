@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: '2025-10-01',
   devtools: { enabled: true },
   
   // Runtime configuration
@@ -15,7 +15,14 @@ export default defineNuxtConfig({
   ignore: [
     '**/data/**',
     '**/Ml-Notebook/venv/**',
-    '**/node_modules/**'
+    '**/node_modules/**',
+    '**/.git/**',
+    '**/.nuxt/**',
+    '**/dist/**',
+    '**/backend/**',
+    '**/*.log',
+    '**/*.pyc',
+    '**/__pycache__/**'
   ],
   
   vite: {
@@ -24,7 +31,14 @@ export default defineNuxtConfig({
         ignored: [
           '**/data/**', 
           '**/Ml-Notebook/venv/**',
-          '**/node_modules/**'
+          '**/node_modules/**',
+          '**/.git/**',
+          '**/.nuxt/**',
+          '**/dist/**',
+          '**/backend/**',
+          '**/*.log',
+          '**/*.pyc',
+          '**/__pycache__/**'
         ]
       }
     }
