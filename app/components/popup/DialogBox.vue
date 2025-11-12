@@ -58,7 +58,8 @@ const handleCancel = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,22 +69,24 @@ const handleCancel = () => {
 
 .dialog-box {
   background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 400px;
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 480px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1);
   position: relative;
+  transform-origin: center;
+
 }
 
 .dialog-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: none;
+  background: #f7fafc;
   border: none;
   font-size: 28px;
-  color: #a0aec0;
+  color: #718096;
   cursor: pointer;
   width: 32px;
   height: 32px;
@@ -91,50 +94,74 @@ const handleCancel = () => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  font-weight: 300;
 }
 
 .dialog-close:hover {
-  background: #f7fafc;
-  color: #4a5568;
+  background: #e2e8f0;
+  color: #2d3748;
+  transform: rotate(90deg);
 }
 
 .dialog-icon {
   display: flex;
   justify-content: center;
   margin-bottom: 1.5rem;
+  animation: iconBounce 0.5s ease-out;
+}
+
+@keyframes iconBounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .icon-circle {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 700;
   color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .icon-warning {
   background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+  box-shadow: 0 8px 24px rgba(246, 173, 85, 0.4);
+
 }
 
 .icon-success {
   background: linear-gradient(135deg, #68d391 0%, #38a169 100%);
+  box-shadow: 0 8px 24px rgba(104, 211, 145, 0.4);
+
 }
 
 .icon-error {
   background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
+  box-shadow: 0 8px 24px rgba(252, 129, 129, 0.4);
 }
 
 .dialog-title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 1rem;
-  color: #2d3748;
+  color: #1a202c;
+  letter-spacing: -0.02em;
 }
 
 .dialog-message {

@@ -9,6 +9,7 @@ import ModalityBar from '~/components/charts/ModalityBar.vue'
 import RegionBar from '~/components/charts/RegionBar.vue'
 import CasesOverTime from '~/components/charts/CasesOverTime.vue'
 import MultiSelect from '~/components/ui/MultiSelect.vue'
+import DialogBox from '~/components/popup/DialogBox.vue'
 
 /* =========================
  * Types
@@ -105,6 +106,8 @@ const fetchedAt = ref<Date | null>(null)
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
+const { warning, success, error: showError } = useDialog()
+
 const filters = ref<Filters>({
   genders: [],
   ageMin: null,
@@ -178,31 +181,35 @@ const filteredData = computed(() => {
 /* =========================
  * Filters actions
  * =======================*/
-const resetFilters = () => {
-  console.log('🔵 [DEBUG] Reset Filters!')
-  const confirmed = confirm('Reset Filters\n\nThis will clear all active filters and show all cases. Continue?')
+const resetFilters = async () => {
+  try{
+    const confirmed = await warning(
+      'Reset Filters',
+      'This will clear all active filters and show all cases. Continue?'
+    )
 
-  console.log('🔵 [DEBUG] User response:', confirmed)
-
-  if (confirmed) {
-    console.log('🔵 [DEBUG] Resetting filters...')
-
-    filters.value = {
-      genders: [],
-      ageMin: null,
-      ageMax: null,
-      dateMin: null,
-      dateMax: null,
-      modalities: [],
-      regions: [],
+    if (confirmed){
+      filters.value = {
+        genders: [],
+        ageMin: null,
+        ageMax: null,
+        dateMin: null,
+        dateMax: null,
+        modalities: [],
+        regions: [],
+      }
+      success('Filters Reset', 'All filters have been cleared.')
     }
-    console.log('🔵 [DEBUG] Filters reset! New value:', filters.value)
-    alert('Filters Reset\n\nAll filters have been cleared.')
+    } catch (e) {
 
-    console.log('🔵 [DEBUG] Done!')
-  } else {
-    console.log('🔵 [DEBUG] User cancelled')
-
+    // Show error dialog if something goes wrong
+    showError(
+      'Reset Failed',
+      'An error occurred while resetting filters. Would you like to try again?',
+      {
+        onConfirm: () => resetFilters()
+      }
+    )
   }
 }
 
@@ -366,12 +373,55 @@ const loadData = async () => {
     rawData.value = json as CaseSummary[]
     totalCases.value = rawData.value.length
     fetchedAt.value = new Date()
+
+    success('Refresh Complete', `Successfully loaded ${totalCases.value.toLocaleString()} cases!`)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Unknown error'
+    const errorMessage= e instanceof Error ? e.message : 'Unknown error'
+    error.value = errorMessage
+    // Determine error type and show appropriate dialog
+    if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+      // Network error
+      showError(
+        'Connection Error',
+        'Unable to connect. Would you like to retry?',
+        {
+          onConfirm: () => loadData()
+        }
+      )
+    } else if (errorMessage.includes('HTTP error! status:')) {
+      // Server error
+      const status = errorMessage.split('status: ')[1]
+      showError(
+        'Load Failed',
+        `Server returned status ${status}. Would you like to retry?`,
+        {
+          onConfirm: () => loadData()
+        }
+      )
+    } else {
+      // Other error
+      showError(
+        'Load Failed',
+        `${errorMessage}. Would you like to retry?`,
+        {
+          onConfirm: () => loadData()
+        }
+      )
+    }
   } finally {
     loading.value = false
   }
 }
+// Refresh button handler with confirmation dialog
+const handleRefreshClick = async () => {
+  // Show confirmation dialog using the dialog composable
+  const confirmed = await warning('Refresh Data', 'Continue?')
+  
+  if (confirmed) {
+    await loadData()
+  }
+}
+
 
 onMounted(() => {
   console.log('🔵 [DEBUG] Analytics page mounted')
@@ -387,7 +437,7 @@ onMounted(() => {
         <h1>Analytics</h1>
         <p v-if="!loading && !error">
           Loaded <strong>{{ totalCases }}</strong> cases • Fetched at {{ fetchedAt?.toLocaleString() }}
-          <button class="refresh-btn" @click="loadData" :disabled="loading" title="Refresh data">⟳ Refresh</button>
+          <button class="refresh-btn" @click="handleRefreshClick" :disabled="loading" title="Refresh data">⟳ Refresh</button>
         </p>
       </div>
 
@@ -559,6 +609,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <DialogBox/>
   </div>
 </template>
 
