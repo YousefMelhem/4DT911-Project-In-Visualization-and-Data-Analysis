@@ -86,7 +86,6 @@ interface CaseSummary {
 const cases = ref<CaseSummary[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-const searchQuery = ref('')
 const totalCases = ref(0)
 const offset = ref(0)
 const limit = 24
@@ -157,29 +156,7 @@ const loadMore = async () => {
   } 
 }
 
-const handleSearch = async () => {
-    if (!searchQuery.value.trim()) {
-      offset.value = 0
-      loadCases()
-      return
-    }
-
-    try {
-      loading.value = true
-      const response = await fetch(
-        `${API_URL}/api/cases/search?q=${encodeURIComponent(searchQuery.value)}&limit=50`
-      )
-      const data = await response.json()
-      cases.value = data
-      hasMore.value = false
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : 'Unknown error'
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const viewCase = (caseId: string) => {
+const viewCase = (caseId: string) => {
     // Navigate to case detail page
     navigateTo(`/cases/${caseId}`)
   }
