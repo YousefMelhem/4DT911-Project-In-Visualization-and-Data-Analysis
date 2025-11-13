@@ -43,7 +43,7 @@ app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
 app.include_router(similarity_router, prefix="/api/similarity", tags=["similarity"])
 
 # Load processed cases
-CASES_FILE = ML_Ready_DIR / "cases_ml_ready.json"
+CASES_FILE = PROCESSED_DIR / "cases_cleaned.json"
 SUMMARY_FILE = PROCESSED_DIR / "cases_summary.json"
 
 # Cache for cases data

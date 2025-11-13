@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="page-header">
       <h1>🔍 Medical Case Similarity Search</h1>
-      <p class="subtitle">Test TF-IDF vs BERT text similarity models</p>
+      <p class="subtitle">Search by text, images, or both using AI-powered similarity models</p>
     </div>
 
     <!-- Search Methods Toggle -->
@@ -14,7 +14,8 @@
           v-for="method in methods" 
           :key="method.value"
           :class="['method-btn', { active: selectedMethod === method.value }]"
-          @click="selectedMethod = method.value"
+          @click="selectMethod(method.value)"
+          :title="method.description"
         >
           {{ method.label }}
         </button>
@@ -33,6 +34,37 @@
       </div>
     </div>
 
+    <!-- Hybrid Weight Slider (only for hybrid mode) -->
+    <div v-if="selectedMethod === 'hybrid'" class="hybrid-controls">
+      <div class="weight-slider">
+        <label>
+          <span class="slider-label">
+            Text Weight: <strong>{{ (textWeight * 100).toFixed(0) }}%</strong>
+            <span class="slider-hint">Image: {{ ((1 - textWeight) * 100).toFixed(0) }}%</span>
+          </span>
+        </label>
+        <input 
+          v-model.number="textWeight" 
+          type="range" 
+          min="0" 
+          max="1" 
+          step="0.1"
+          class="weight-range"
+        >
+        <div class="weight-presets">
+          <button @click="textWeight = 0.3" :class="{ active: textWeight === 0.3 }">
+            🖼️ Visual Focus
+          </button>
+          <button @click="textWeight = 0.5" :class="{ active: textWeight === 0.5 }">
+            ⚖️ Balanced
+          </button>
+          <button @click="textWeight = 0.7" :class="{ active: textWeight === 0.7 }">
+            📝 Text Focus
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Search Input -->
     <div class="search-section">
       <div class="search-box">
@@ -41,12 +73,22 @@
           type="text" 
           placeholder="Enter diagnosis, symptoms, or select a case below..."
           @keyup.enter="handleTextSearch"
+          :disabled="selectedMethod === 'image'"
         >
-        <button @click="handleTextSearch" :disabled="!searchQuery.trim() || isLoading">
+        <button 
+          @click="handleTextSearch" 
+          :disabled="!searchQuery.trim() || isLoading || selectedMethod === 'image' || selectedMethod === 'hybrid'"
+        >
           {{ isLoading ? '⏳ Searching...' : '🔍 Search' }}
         </button>
       </div>
-      <p class="search-hint">
+      <p class="search-hint" v-if="selectedMethod === 'image'">
+        ⚠️ Image search requires selecting a case below (cannot search from text)
+      </p>
+      <p class="search-hint" v-else-if="selectedMethod === 'hybrid'">
+        ⚠️ Hybrid search requires selecting a case below (combines text + images from that case)
+      </p>
+      <p class="search-hint" v-else>
         💡 Try: "pneumonia", "fracture humerus", "brain tumor", etc.
       </p>
     </div>
@@ -77,7 +119,7 @@
       <!-- Query Info -->
       <div class="query-info">
         <div class="info-card">
-          <h3>📋 Query</h3>
+          <h3>Query</h3>
           <p v-if="results.query_case_id">
             <strong>Case ID:</strong> {{ results.query_case_id }}
           </p>
@@ -93,7 +135,7 @@
       <!-- Similar Cases -->
       <div class="similar-cases">
         <h2>
-          🎯 Top {{ results.results.length }} Similar Cases 
+          Top {{ results.results.length }} Similar Cases 
           <span class="method-badge">{{ results.method.toUpperCase() }}</span>
         </h2>
         
@@ -108,6 +150,18 @@
               <span :class="['similarity-score', getSimilarityClass(similarCase.similarity)]">
                 {{ (similarCase.similarity * 100).toFixed(1) }}% match
               </span>
+            </div>
+
+            <!-- Hybrid Breakdown (if available) -->
+            <div v-if="similarCase.text_similarity !== null && similarCase.image_similarity !== null" class="similarity-breakdown">
+              <div class="breakdown-bar">
+                <div class="bar-segment text-segment" :style="{ width: (similarCase.text_similarity * 100) + '%' }">
+                  <span>📝 {{ (similarCase.text_similarity * 100).toFixed(0) }}%</span>
+                </div>
+                <div class="bar-segment image-segment" :style="{ width: (similarCase.image_similarity * 100) + '%' }">
+                  <span>🖼️ {{ (similarCase.image_similarity * 100).toFixed(0) }}%</span>
+                </div>
+              </div>
             </div>
             
             <div class="case-content">
@@ -134,75 +188,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Comparison Mode -->
-    <div v-if="comparisonResults" class="comparison-section">
-      <h2>⚖️ TF-IDF vs BERT Comparison</h2>
-      
-      <div class="comparison-stats">
-        <div class="stat-card">
-          <h4>Overlap</h4>
-          <p class="big-number">{{ comparisonResults.overlap_count }}/{{ topK }}</p>
-          <p class="percentage">{{ comparisonResults.overlap_percentage }}%</p>
-        </div>
-        <div class="stat-card">
-          <h4>Search Time</h4>
-          <p class="big-number">{{ comparisonResults.search_time_ms }}ms</p>
-        </div>
-      </div>
-
-      <div class="comparison-grid">
-        <!-- TF-IDF Results -->
-        <div class="method-column">
-          <h3>🔤 TF-IDF Results</h3>
-          <div class="mini-cases">
-            <div v-for="(c, idx) in comparisonResults.tfidf_results" :key="'tfidf-' + idx" class="mini-card">
-              <span class="rank">{{ c.rank }}</span>
-              <span class="score">{{ (c.similarity * 100).toFixed(1) }}%</span>
-              <p>{{ c.diagnosis.substring(0, 60) }}...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- BERT Results -->
-        <div class="method-column">
-          <h3>🧠 BERT Results</h3>
-          <div class="mini-cases">
-            <div v-for="(c, idx) in comparisonResults.bert_results" :key="'bert-' + idx" class="mini-card">
-              <span class="rank">{{ c.rank }}</span>
-              <span class="score">{{ (c.similarity * 100).toFixed(1) }}%</span>
-              <p>{{ c.diagnosis.substring(0, 60) }}...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Model Stats -->
-    <div v-if="modelStats" class="stats-section">
-      <h2>📊 Model Statistics</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <h4>TF-IDF Model</h4>
-          <ul>
-            <li><strong>Features:</strong> {{ modelStats.tfidf.num_features.toLocaleString() }}</li>
-            <li><strong>Sparsity:</strong> {{ (modelStats.tfidf.sparsity * 100).toFixed(1) }}%</li>
-            <li><strong>Mean Similarity:</strong> {{ modelStats.tfidf.mean_similarity }}</li>
-            <li><strong>Median Similarity:</strong> {{ modelStats.tfidf.median_similarity }}</li>
-          </ul>
-        </div>
-        
-        <div class="stat-box">
-          <h4>BERT Model</h4>
-          <ul>
-            <li><strong>Model:</strong> {{ modelStats.bert.model_name }}</li>
-            <li><strong>Dimension:</strong> {{ modelStats.bert.embedding_dimension }}</li>
-            <li><strong>Mean Similarity:</strong> {{ modelStats.bert.mean_similarity }}</li>
-            <li><strong>Median Similarity:</strong> {{ modelStats.bert.median_similarity }}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -212,20 +197,28 @@ import { ref, onMounted } from 'vue'
 // State
 const selectedMethod = ref('bert')
 const topK = ref(10)
+const textWeight = ref(0.5) // For hybrid search: 0.0 = all image, 1.0 = all text
 const searchQuery = ref('')
 const isLoading = ref(false)
 const results = ref(null)
-const comparisonResults = ref(null)
-const modelStats = ref(null)
 const totalCases = ref(7404)
 const sampleCases = ref([])
 
 // Methods config
 const methods = [
-  { label: '🔤 TF-IDF', value: 'tfidf' },
-  { label: '🧠 BERT', value: 'bert' },
-  { label: '⚖️ Compare Both', value: 'compare' }
+  { label: '🔤 TF-IDF', value: 'tfidf', description: 'Keyword-based text matching' },
+  { label: '🧠 BERT', value: 'bert', description: 'Semantic text understanding' },
+  { label: '🖼️ Image', value: 'image', description: 'Visual similarity from medical images' },
+  { label: '🔬 Hybrid', value: 'hybrid', description: 'Combined text + image similarity' }
 ]
+
+// Method selection handler
+const selectMethod = (method) => {
+  selectedMethod.value = method
+  // Reset results when changing method
+  results.value = null
+  comparisonResults.value = null
+}
 
 // Utility function
 const getSimilarityClass = (score) => {
@@ -240,14 +233,13 @@ const handleTextSearch = async () => {
   
   isLoading.value = true
   results.value = null
-  comparisonResults.value = null
   
   try {
     const response = await $fetch('http://localhost:8000/api/similarity/search', {
       method: 'POST',
       body: {
         text: searchQuery.value,
-        method: selectedMethod.value === 'compare' ? 'bert' : selectedMethod.value,
+        method: selectedMethod.value,
         top_k: topK.value
       }
     })
@@ -263,35 +255,26 @@ const handleTextSearch = async () => {
 const handleCaseSearch = async (caseId) => {
   isLoading.value = true
   results.value = null
-  comparisonResults.value = null
   
   try {
-    if (selectedMethod.value === 'compare') {
-      // Comparison mode
-      const response = await $fetch(`http://localhost:8000/api/similarity/compare/${caseId}?top_k=${topK.value}`)
-      comparisonResults.value = response
-    } else {
-      // Single method
-      const response = await $fetch(
-        `http://localhost:8000/api/similarity/similar/${caseId}?method=${selectedMethod.value}&top_k=${topK.value}`
-      )
-      results.value = response
+    // Single method (including image and hybrid)
+    let url = `http://localhost:8000/api/similarity/similar/${caseId}?method=${selectedMethod.value}&top_k=${topK.value}`
+    
+    // Add text_weight for hybrid search
+    if (selectedMethod.value === 'hybrid') {
+      url += `&text_weight=${textWeight.value}`
     }
+    
+    console.log('Fetching from URL:', url)
+    const response = await $fetch(url)
+    console.log('Response received:', response)
+    console.log('Results count:', response.results?.length)
+    results.value = response
   } catch (error) {
     console.error('Search error:', error)
     alert('Search failed. Make sure backend is running!')
   } finally {
     isLoading.value = false
-  }
-}
-
-const loadModelStats = async () => {
-  try {
-    const stats = await $fetch('http://localhost:8000/api/similarity/stats')
-    modelStats.value = stats
-    totalCases.value = stats.total_cases
-  } catch (error) {
-    console.error('Failed to load stats:', error)
   }
 }
 
@@ -306,7 +289,6 @@ const loadSampleCases = async () => {
 
 // Lifecycle
 onMounted(() => {
-  loadModelStats()
   loadSampleCases()
 })
 </script>
@@ -400,6 +382,18 @@ onMounted(() => {
   font-size: 1.1rem;
 }
 
+.search-box input:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #ddd;
+}
+
+.search-box input:focus:not(:disabled) {
+  outline: none;
+  border-color: #3498db;
+}
+
 .search-box button {
   padding: 1rem 2rem;
   background: #3498db;
@@ -423,6 +417,16 @@ onMounted(() => {
 .search-hint {
   color: #7f8c8d;
   font-style: italic;
+  margin: 0.5rem 0;
+}
+
+.search-hint:has(⚠️) {
+  color: #e67e22;
+  font-weight: 500;
+  background: #fff3cd;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 4px solid #e67e22;
 }
 
 .quick-cases {
@@ -617,86 +621,6 @@ onMounted(() => {
   color: #2980b9;
 }
 
-.comparison-section {
-  margin-top: 3rem;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.comparison-stats {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  flex: 1;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.big-number {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #3498db;
-  margin: 0.5rem 0;
-}
-
-.percentage {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-}
-
-.comparison-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-.method-column h3 {
-  margin-bottom: 1rem;
-}
-
-.mini-cases {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.mini-card {
-  background: white;
-  padding: 0.75rem;
-  border-radius: 6px;
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.mini-card .rank {
-  font-weight: bold;
-  color: #2c3e50;
-  min-width: 30px;
-}
-
-.mini-card .score {
-  background: #3498db;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  min-width: 50px;
-  text-align: center;
-}
-
-.mini-card p {
-  margin: 0;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
 .stats-section {
   margin-top: 3rem;
   padding: 2rem;
@@ -734,5 +658,148 @@ onMounted(() => {
 
 .stat-box li:last-child {
   border-bottom: none;
+}
+
+/* Hybrid Controls */
+.hybrid-controls {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.weight-slider {
+  color: white;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.slider-label strong {
+  font-size: 1.3rem;
+}
+
+.slider-hint {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
+
+.weight-range {
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+  margin: 0.5rem 0 1rem 0;
+  -webkit-appearance: none;
+}
+
+.weight-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.weight-range::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.weight-range::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: none;
+  transition: transform 0.2s;
+}
+
+.weight-range::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.weight-presets {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.weight-presets button {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.weight-presets button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.weight-presets button.active {
+  background: white;
+  color: #667eea;
+  border-color: white;
+  font-weight: bold;
+}
+
+/* Similarity Breakdown */
+.similarity-breakdown {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.breakdown-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.bar-segment {
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  min-width: 60px;
+  transition: all 0.3s;
+}
+
+.text-segment {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.image-segment {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bar-segment span {
+  white-space: nowrap;
+  padding: 0 0.5rem;
 }
 </style>
