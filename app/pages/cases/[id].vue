@@ -140,17 +140,20 @@
         </a>
       </div>
     </div>
+    <DialogBox />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import DialogBox from '~/components/popup/DialogBox.vue'
 
 const route = useRoute()
 
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
+const { warning, success, error: showError } = useDialog()
 
 interface CaseDetail {
   id: string
@@ -257,10 +260,18 @@ const loadCaseDetails = async () => {
     if (data.imagePaths && data.imagePaths.length > 0) {
       selectedImage.value = data.imagePaths[0]
     }
-    
+    success('Case Loaded', `Successfully loaded case details for ${data.diagnosis}`)
+
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
     console.error('Error loading case details:', e)
+    showError(
+      'Load Failed',
+      'An error occurred while loading case details. Would you like to try again?',
+      {
+        onConfirm: () => loadCaseDetails()
+      }
+    )
   } finally {
     loading.value = false
   }
@@ -274,6 +285,27 @@ watch(() => route.params.id, () => {
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
   target.style.display = 'none'
+}
+
+const openMedPix = async () => {
+  if (!caseData.value?.url) return
+  
+  try {
+    const confirmed = await warning('External Link', 'This will open the MedPix website in a new tab. Continue?')
+    
+    if (confirmed) {
+      window.open(caseData.value.url, '_blank')
+      success('Link Opened', 'MedPix website opened in new tab')
+    }
+  } catch (e) {
+    showError(
+      'Link Open Failed',
+      'An error occurred while opening the external link. Would you like to try again?',
+      {
+        onConfirm: () => window.open(caseData.value?.url, '_blank')
+      }
+    )
+  }
 }
 
 onMounted(() => {
