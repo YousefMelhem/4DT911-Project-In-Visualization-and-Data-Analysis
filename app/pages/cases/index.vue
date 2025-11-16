@@ -64,12 +64,14 @@
       </div>
       <div v-show="hasMore && !loading" ref="sentinel" class="infinite-sentinel" aria-hidden="true"></div>
     </div>
+    <DialogBox />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { navigateTo } from '#app'
+import DialogBox from '~/components/popup/DialogBox.vue'
 
 interface CaseSummary {
   id: string
@@ -90,6 +92,7 @@ const totalCases = ref(0)
 const offset = ref(0)
 const limit = 24
 const hasMore = ref(true)
+const { warning, success, error: showError } = useDialog()
 
 // Use environment variable instead of hardcoded URL
 const config = useRuntimeConfig()
@@ -122,10 +125,19 @@ const loadCases = async () => {
     const statsResponse = await fetch(`${API_URL}/api/stats`)
     const stats = await statsResponse.json()
     totalCases.value = stats.total_cases
-
+    if (offset.value === 0) {
+      success('Cases Loaded', `Successfully loaded ${totalCases.value} cases from MedPix`)
+    }
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
     console.error('Error loading cases:', e)
+    showError(
+      'Load Failed',
+      'An error occurred while loading cases. Would you like to try again?',
+    {
+      onConfirm: () => loadCases()
+      }
+    )
   } finally {
     loading.value = false
   }
@@ -148,15 +160,23 @@ const loadMore = async () => {
     const data = await response.json()
     cases.value = [...cases.value, ...data]
     hasMore.value = data.length === limit
-    
+    success('More Cases Loaded', `Successfully loaded ${data.length} additional cases`)
+
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
+    showError(
+      'Load More Failed',
+      'An error occurred while loading more cases. Would you like to try again?',
+      {
+        onConfirm: () => loadMore()
+      }
+    )
   } finally {
     moreLoading.value = false
   } 
 }
 
-const viewCase = (caseId: string) => {
+const viewCase = async (caseId: string) => {
     // Navigate to case detail page
     navigateTo(`/cases/${caseId}`)
   }
@@ -169,6 +189,10 @@ const viewCase = (caseId: string) => {
   const handleImageError = (event: Event) => {
     const target = event.target as HTMLImageElement
     target.style.display = 'none'
+    showError(
+      'Image Load Failed',
+      'Unable to load the case image. The image may be unavailable or corrupted.',
+    )
   }
   const sentinel = ref<HTMLElement | null>(null)
   let observer: IntersectionObserver | null = null
