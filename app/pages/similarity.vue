@@ -188,11 +188,13 @@
         </div>
       </div>
     </div>
+    <DialogBox />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import DialogBox from '~/components/popup/DialogBox.vue'
 
 // State
 const selectedMethod = ref('bert')
@@ -203,6 +205,7 @@ const isLoading = ref(false)
 const results = ref(null)
 const totalCases = ref(7404)
 const sampleCases = ref([])
+const { warning, success, error: showError } = useDialog()
 
 // Methods config
 const methods = [
@@ -213,11 +216,22 @@ const methods = [
 ]
 
 // Method selection handler
-const selectMethod = (method) => {
+const selectMethod = async (method) => {
   selectedMethod.value = method
   // Reset results when changing method
   results.value = null
   comparisonResults.value = null
+  
+  // Show info dialog about the selected method
+  const methodInfo = methods.find(m => m.value === method)
+  try {
+    await warning(
+      'Search Method Changed',
+      `You've selected ${methodInfo.label}: ${methodInfo.description}`
+    )
+  } catch (e) {
+    // User closed the dialog
+  }
 }
 
 // Utility function
@@ -244,9 +258,16 @@ const handleTextSearch = async () => {
       }
     })
     results.value = response
+    success('Search Complete', `Found ${response.results.length} similar cases in ${response.search_time_ms}ms`)
   } catch (error) {
     console.error('Search error:', error)
-    alert('Search failed. Make sure backend is running!')
+    showError(
+      'Search Failed',
+      'The search request failed. Make sure the backend is running and try again.',
+      {
+        onConfirm: () => handleTextSearch()
+      }
+    )
   } finally {
     isLoading.value = false
   }
@@ -270,9 +291,16 @@ const handleCaseSearch = async (caseId) => {
     console.log('Response received:', response)
     console.log('Results count:', response.results?.length)
     results.value = response
+    success('Search Complete', `Found ${response.results.length} similar cases in ${response.search_time_ms}ms`)
   } catch (error) {
     console.error('Search error:', error)
-    alert('Search failed. Make sure backend is running!')
+    showError(
+      'Search Failed',
+      'The search request failed. Make sure the backend is running and try again.',
+      {
+        onConfirm: () => handleCaseSearch(caseId)
+      }
+    )
   } finally {
     isLoading.value = false
   }
@@ -284,6 +312,10 @@ const loadSampleCases = async () => {
     sampleCases.value = response
   } catch (error) {
     console.error('Failed to load sample cases:', error)
+    showError(
+      'Failed to Load Sample Cases',
+      'Unable to load sample cases. The backend may be unavailable.'
+    )
   }
 }
 
