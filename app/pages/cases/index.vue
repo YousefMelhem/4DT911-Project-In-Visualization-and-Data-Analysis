@@ -44,7 +44,7 @@
               </div>
               <div class="detail-row">
                 <span class="detail-label">Region:</span>
-                <span class="detail-value">{{ caseItem.regions || 'Not specified' }}</span>
+                <span class="detail-value">{{ caseItem.regions ? Object.keys(caseItem.regions).join(', ') : 'Not specified' }}</span>
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@ interface CaseSummary {
   patient_age?: number
   gender: string | null
   modalities: string | null
-  regions: string | null
+  regions: Record<string, string[]> | null
 }
 
 const cases = ref<CaseSummary[]>([])
