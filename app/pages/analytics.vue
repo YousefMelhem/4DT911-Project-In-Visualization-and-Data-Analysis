@@ -23,7 +23,7 @@ type CaseSummary = {
   patient_age: number | null
   gender: string | null
   modalities: string[]
-  regions: string[]
+  regions: Record<string, string[]>
   imageCount: number
   word_count: number | null
   thumbnail: string | null
@@ -66,6 +66,13 @@ const normalizeGender = (g: string | null): 'Female' | 'Male' | 'Unknown' => {
   if (s === 'male' || s === 'm') return 'Male'
   return 'Unknown'
 }
+
+const getCaseSubregions = (c: CaseSummary): string[] =>
+  c.regions ? Object.values(c.regions).flat().filter(Boolean) : []
+
+const getCaseMainRegions = (c: CaseSummary): string[] =>
+  c.regions ? Object.keys(c.regions) : []
+
 
 const isFiniteNum = (v: unknown): v is number =>
   typeof v === 'number' && Number.isFinite(v)
@@ -124,9 +131,31 @@ const filters = ref<Filters>({
 const allModalities = computed(() =>
   Array.from(new Set(rawData.value.flatMap(c => c.modalities || []))).sort()
 )
-const allRegions = computed(() =>
-  Array.from(new Set(rawData.value.flatMap(c => c.regions || []))).sort()
-)
+
+type RegionGroup = { label: string; options: string[] }
+
+// All main regions + their unique subregions
+const regionGroups = computed<RegionGroup[]>(() => {
+  const map = new Map<string, Set<string>>()
+
+  for (const c of rawData.value) {
+    const regions = c.regions || {}
+    for (const [main, subs] of Object.entries(regions)) {
+      if (!map.has(main)) map.set(main, new Set())
+      const set = map.get(main)!
+      for (const s of subs || []) {
+        if (s) set.add(s)
+      }
+    }
+  }
+
+  return Array.from(map.entries())
+    .map(([label, subs]) => ({
+      label,
+      options: Array.from(subs).sort(),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
 
 /* =========================
  * Filtered data
@@ -167,10 +196,10 @@ const filteredData = computed(() => {
       if (!hasAny) return false
     }
 
-    // Regions (match ANY selected)
+    // Regions (match ANY selected subregion)
     if (selRegs.size > 0) {
-      const regs = (row.regions || []).map(norm)
-      const hasAny = regs.some(r => selRegs.has(r))
+      const subs = getCaseSubregions(row).map(norm)
+      const hasAny = subs.some(r => selRegs.has(r))
       if (!hasAny) return false
     }
 
@@ -287,17 +316,37 @@ const modalityCounts = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const regionCounts = computed<Item[]>(() => {
+const regionCountsMain = computed<Item[]>(() => {
   const map = new Map<string, number>()
   for (const row of filteredData.value) {
-    for (const r of row.regions || []) {
-      if (r) map.set(r, (map.get(r) ?? 0) + 1)
+    for (const main of getCaseMainRegions(row)) {
+      if (main) map.set(main, (map.get(main) ?? 0) + 1)
     }
   }
   return Array.from(map.entries())
     .map(([label, count]) => ({ label, count }))
     .sort((a, b) => b.count - a.count)
 })
+
+const regionCountsSub = computed<Item[]>(() => {
+  const map = new Map<string, number>()
+  for (const row of filteredData.value) {
+    for (const sub of getCaseSubregions(row)) {
+      if (sub) map.set(sub, (map.get(sub) ?? 0) + 1)
+    }
+  }
+  return Array.from(map.entries())
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+})
+
+const regionChartMode = ref<'main' | 'sub'>('main')
+
+const regionCounts = computed<Item[]>(() =>
+  regionChartMode.value === 'main'
+    ? regionCountsMain.value
+    : regionCountsSub.value
+)
 
 const casesOverTime = computed<Point[]>(() => {
   const monthCounts = new Map<string, number>()
@@ -338,6 +387,19 @@ const tableLimit = ref(50)
 const visibleRows = computed(() => filteredData.value.slice(0, tableLimit.value))
 const hasMoreRows = computed(() => filteredData.value.length > tableLimit.value)
 const showMoreRows = () => { tableLimit.value += 50 }
+
+const formatRegionsCell = (row: CaseSummary): string => {
+  if (!row.regions) return '—'
+  const parts: string[] = []
+  for (const [main, subs] of Object.entries(row.regions)) {
+    if (!subs || subs.length === 0) {
+      parts.push(main)
+    } else {
+      parts.push(`${main} (${subs.join(', ')})`)
+    }
+  }
+  return parts.join('; ')
+}
 
 // Reset paging when filters change (nice UX + avoids stale pagination)
 watch(filters, () => { tableLimit.value = 50 }, { deep: true })
@@ -473,7 +535,11 @@ onMounted(() => {
 
         <!-- Regions -->
         <div class="filter-group push-bottom">
-          <MultiSelect label="Regions" :options="allRegions" v-model="filters.regions" />
+          <MultiSelect
+            label="Regions"
+            :groups="regionGroups"
+            v-model="filters.regions"
+          />
         </div>
 
         <!-- Date -->
@@ -553,8 +619,30 @@ onMounted(() => {
             </ClientOnly>
           </div>
           <div class="chart-card">
+            <div class="chart-card-mode-row">
+              <span class="mode-label">View:</span>
+              <div class="mode-pill-group">
+                <button
+                  type="button"
+                  class="mode-pill"
+                  :class="{ active: regionChartMode === 'main' }"
+                  @click="regionChartMode = 'main'"
+                >
+                  Main regions
+                </button>
+                <button
+                  type="button"
+                  class="mode-pill"
+                  :class="{ active: regionChartMode === 'sub' }"
+                  @click="regionChartMode = 'sub'"
+                >
+                  Subregions
+                </button>
+              </div>
+            </div>
+
             <ClientOnly>
-              <RegionBar :items="regionCounts" :max-visible="15" />
+              <RegionBar :items="regionCounts" />
             </ClientOnly>
           </div>
         </div>
@@ -592,7 +680,7 @@ onMounted(() => {
                   <td>{{ row.patient_age ?? '—' }}</td>
                   <td>{{ row.gender ?? '—' }}</td>
                   <td class="wrap" :title="joinArr(row.modalities)">{{ joinArr(row.modalities) }}</td>
-                  <td class="wrap" :title="joinArr(row.regions)">{{ joinArr(row.regions) }}</td>
+                  <td class="wrap" :title="formatRegionsCell(row)">{{ formatRegionsCell(row) }}</td>
                   <td class="num">{{ row.imageCount ?? 0 }}</td>
                   <td class="num">{{ row.word_count ?? 0 }}</td>
                 </tr>
@@ -741,6 +829,41 @@ onMounted(() => {
   .chart-card.full {
     grid-column: 1 / -1;
   }
+}
+
+.chart-card-mode-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.mode-label {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.mode-pill-group {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.mode-pill {
+  border: 1px solid #cbd5e0;
+  background: #edf2f7;
+  color: #4a5568;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mode-pill.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
 }
 
 /* Filters panel */
