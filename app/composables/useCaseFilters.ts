@@ -1,3 +1,4 @@
+import { image } from 'd3'
 import { ref, computed, watch, type Ref } from 'vue'
 
 export type CaseSummary = {
@@ -14,9 +15,16 @@ export type CaseSummary = {
   word_count: number | null
   thumbnail: string | null
   url: string | null
+  has_history: boolean
+  has_exam: boolean
+  has_findings: boolean
+  has_diagnosis: boolean
+  has_treatment: boolean
+  has_discussion: boolean
 }
 
 export type Filters = {
+  query: string
   genders: string[]
   ageMin: number | null
   ageMax: number | null
@@ -24,6 +32,16 @@ export type Filters = {
   dateMax: string | null
   modalities: string[]
   regions: string[]      // subregion names
+  hasHistory: boolean
+  hasExam: boolean
+  hasFindings: boolean
+  hasDiagnosis: boolean
+  hasTreatment: boolean
+  hasDiscussion: boolean
+  imageMin: number | null
+  imageMax: number | null
+  wordsMin: number | null
+  wordsMax: number | null
 }
 
 export type RegionGroup = { label: string; options: string[] }
@@ -66,6 +84,7 @@ const makeBins = () => {
 
 export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
   const filters = ref<Filters>({
+    query: '',
     genders: [],
     ageMin: null,
     ageMax: null,
@@ -73,6 +92,16 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
     dateMax: null,
     modalities: [],
     regions: [],
+    hasHistory: false,
+    hasExam: false,
+    hasFindings: false,
+    hasDiagnosis: false,
+    hasTreatment: false,
+    hasDiscussion: false,
+    imageMin: null,
+    imageMax: null,
+    wordsMin: null,
+    wordsMax: null,
   })
 
   // Options
@@ -107,8 +136,14 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
     const norm = (s: string) => s.trim().toLowerCase()
     const selMods = new Set(filters.value.modalities.map(norm))
     const selRegs = new Set(filters.value.regions.map(norm))
+    const q = filters.value.query.trim().toLowerCase()
 
     return rawData.value.filter(row => {
+      // Search query
+      if (q) {
+        const diag = (row.diagnosis || '').toLowerCase()
+        if (!diag.includes(q)) return false
+      }
       // Gender
       const g = normalizeGender(row.gender)
       if (filters.value.genders.length > 0 && !filters.value.genders.includes(g)) return false
@@ -121,6 +156,25 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
       }
       if (isFiniteNum(max)) {
         if (row.patient_age == null || row.patient_age > max) return false
+      }
+
+      // Image count
+      const imgMin = filters.value.imageMin
+      const imgMax = filters.value.imageMax
+      if (isFiniteNum(imgMin)) {
+        if (row.imageCount == null || row.imageCount < imgMin) return false
+      }
+      if (isFiniteNum(imgMax)) {
+        if (row.imageCount == null || row.imageCount > imgMax) return false
+      }
+      // Word count
+      const wMin = filters.value.wordsMin
+      const wMax = filters.value.wordsMax
+      if (isFiniteNum(wMin)) {
+        if (row.word_count == null || row.word_count < wMin) return false
+      }
+      if (isFiniteNum(wMax)) {
+        if (row.word_count == null || row.word_count > wMax) return false
       }
 
       // Date
@@ -144,6 +198,14 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
         const hasAny = subs.some(r => selRegs.has(r))
         if (!hasAny) return false
       }
+
+      // Text sections (AND)
+      if (filters.value.hasHistory && !row.has_history) return false
+      if (filters.value.hasExam && !row.has_exam) return false
+      if (filters.value.hasFindings && !row.has_findings) return false
+      if (filters.value.hasDiagnosis && !row.has_diagnosis) return false
+      if (filters.value.hasTreatment && !row.has_treatment) return false
+      if (filters.value.hasDiscussion && !row.has_discussion) return false
 
       return true
     })
@@ -203,6 +265,7 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
   // table helpers
   const filtersSignature = computed(() =>
     JSON.stringify({
+      query: filters.value.query.trim().toLowerCase(),
       genders: [...filters.value.genders].sort(),
       ageMin: filters.value.ageMin,
       ageMax: filters.value.ageMax,
@@ -210,11 +273,22 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
       dateMax: filters.value.dateMax,
       modalities: [...filters.value.modalities].map(s => s.trim().toLowerCase()).sort(),
       regions: [...filters.value.regions].map(s => s.trim().toLowerCase()).sort(),
+      hasHistory: filters.value.hasHistory,
+      hasExam: filters.value.hasExam,
+      hasFindings: filters.value.hasFindings,
+      hasDiagnosis: filters.value.hasDiagnosis,
+      hasTreatment: filters.value.hasTreatment,
+      hasDiscussion: filters.value.hasDiscussion,
+      imageMin: filters.value.imageMin,
+      imageMax: filters.value.imageMax,
+      wordsMin: filters.value.wordsMin,
+      wordsMax: filters.value.wordsMax,
     })
   )
 
   const resetFiltersLocal = () => {
     filters.value = {
+      query: '',
       genders: [],
       ageMin: null,
       ageMax: null,
@@ -222,6 +296,16 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
       dateMax: null,
       modalities: [],
       regions: [],
+      hasHistory: false,
+      hasExam: false,
+      hasFindings: false,
+      hasDiagnosis: false,
+      hasTreatment: false,
+      hasDiscussion: false,
+      imageMin: null,
+      imageMax: null,
+      wordsMin: null,
+      wordsMax: null,
     }
   }
 

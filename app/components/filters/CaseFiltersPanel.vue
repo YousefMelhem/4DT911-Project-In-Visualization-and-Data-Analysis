@@ -1,5 +1,15 @@
 <template>
   <div class="filters-panel">
+    <!-- Search -->
+    <div class="filter-group search-group">
+      <h4>Search</h4>
+      <input
+        type="text"
+        :value="modelValue.query"
+        placeholder="Search diagnoses..."
+        @input="onQueryInput(($event.target as HTMLInputElement).value)"
+      />
+    </div>
     <!-- Gender -->
     <div class="filter-group">
       <h4>Gender</h4>
@@ -73,6 +83,62 @@
       </div>
     </div>
 
+    <!-- Text sections -->
+    <div class="filter-group">
+        <h4>Required text sections</h4>
+        <div class="pill-group">
+            <button
+            v-for="section in sectionOptions"
+            :key="section.key"
+            type="button"
+            :class="['pill', modelValue[section.key] && 'active']"
+            @click="toggleSection(section.key)"
+            >
+            {{ section.label }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Word count -->
+    <div class="filter-group">
+    <h4>Number of words</h4>
+    <div class="range-group">
+        <input
+        type="number"
+        :value="modelValue.wordsMin ?? ''"
+        placeholder="Min"
+        @input="onWordsMinInput(($event.target as HTMLInputElement).value)"
+        />
+        <span>–</span>
+        <input
+        type="number"
+        :value="modelValue.wordsMax ?? ''"
+        placeholder="Max"
+        @input="onWordsMaxInput(($event.target as HTMLInputElement).value)"
+        />
+    </div>
+    </div>
+
+    <!-- Image count -->
+    <div class="filter-group">
+    <h4>Number of images</h4>
+    <div class="range-group">
+        <input
+        type="number"
+        :value="modelValue.imageMin ?? ''"
+        placeholder="Min"
+        @input="onImageMinInput(($event.target as HTMLInputElement).value)"
+        />
+        <span>–</span>
+        <input
+        type="number"
+        :value="modelValue.imageMax ?? ''"
+        placeholder="Max"
+        @input="onImageMaxInput(($event.target as HTMLInputElement).value)"
+        />
+    </div>
+    </div>
+
     <div class="filters-footer">
       <button class="reset-btn" @click="$emit('reset')">
         Reset filters
@@ -103,6 +169,10 @@ const update = (patch: Partial<Filters>) => {
   })
 }
 
+const onQueryInput = (val: string) => {
+  update({ query: val })
+}
+
 const toggleGender = (g: string) => {
   const genders = new Set(props.modelValue.genders)
   if (genders.has(g)) {
@@ -123,6 +193,27 @@ const onAgeMaxInput = (raw: string) => {
   update({ ageMax: Number.isFinite(num) ? num : null })
 }
 
+const onImageMinInput = (raw: string) => {
+  const num = raw === '' ? null : Number(raw)
+  update({ imageMin: Number.isFinite(num) ? num : null })
+}
+
+const onImageMaxInput = (raw: string) => {
+  const num = raw === '' ? null : Number(raw)
+  update({ imageMax: Number.isFinite(num) ? num : null })
+}
+
+const onWordsMinInput = (raw: string) => {
+  const num = raw === '' ? null : Number(raw)
+  update({ wordsMin: Number.isFinite(num) ? num : null })
+}
+
+const onWordsMaxInput = (raw: string) => {
+  const num = raw === '' ? null : Number(raw)
+  update({ wordsMax: Number.isFinite(num) ? num : null })
+}
+
+
 const onModalitiesChange = (vals: string[]) => {
   update({ modalities: vals })
 }
@@ -138,6 +229,21 @@ const onDateMinInput = (val: string) => {
 const onDateMaxInput = (val: string) => {
   update({ dateMax: val || null })
 }
+
+const sectionOptions = [
+  { key: 'hasHistory', label: 'History' },
+  { key: 'hasExam', label: 'Exam' },
+  { key: 'hasFindings', label: 'Findings' },
+  { key: 'hasDiagnosis', label: 'Diagnosis' },
+  { key: 'hasTreatment', label: 'Treatment' },
+  { key: 'hasDiscussion', label: 'Discussion' },
+] as const
+
+type SectionKey = typeof sectionOptions[number]['key']
+
+const toggleSection = (key: SectionKey) => {
+  update({ [key]: !props.modelValue[key] } as Pick<Filters, SectionKey>)
+}
 </script>
 
 <style scoped>
@@ -145,6 +251,7 @@ const onDateMaxInput = (val: string) => {
 .filters-panel {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-auto-flow: row;
   width: 100%;
   box-sizing: border-box;
   gap: 1.2rem;
@@ -166,6 +273,14 @@ const onDateMaxInput = (val: string) => {
   font-size: 0.95rem;
   font-weight: 700;
   color: #2d3748;
+}
+
+.search-group input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
 
 .range-group {
@@ -211,9 +326,7 @@ const onDateMaxInput = (val: string) => {
 }
 
 .push-bottom {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  margin-top: 24px;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -236,10 +349,11 @@ input[type="date"] {
 }
 
 .filters-footer {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
+  grid-column: -2 / -1;
+  justify-self: end;
   margin-top: 0.5rem;
+  display: flex;
+  align-items: flex-end;
 }
 
 .reset-btn {
