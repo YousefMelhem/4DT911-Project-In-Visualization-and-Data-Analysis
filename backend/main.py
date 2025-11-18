@@ -84,6 +84,12 @@ class CaseSummary(BaseModel):
     word_count: int
     thumbnail: Optional[str]=None
     url: Optional[str]=None
+    has_history: bool
+    has_exam: bool
+    has_findings: bool
+    has_diagnosis: bool
+    has_treatment: bool
+    has_discussion: bool
 
 class CaseDetail(BaseModel):
     id: str
