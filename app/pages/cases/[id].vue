@@ -24,11 +24,44 @@
           >
             <span class="metadata-label">{{ chip.label }}</span>
 
-            <!-- If value is an array, show each as a mini chip; otherwise show single value -->
-            <div v-if="Array.isArray(chip.value)" class="chip-list">
-              <span v-for="(v, i) in chip.value" :key="i" class="chip-pill">{{ v }}</span>
-            </div>
-            <span v-else class="chip-label">{{ chip.value }}</span>
+            <!-- Regions: nested region + subregion pills -->
+            <template v-if="chip.type === 'regions'">
+              <div class="regions-list">
+                <div
+                  v-for="(subregions, regionName) in chip.value"
+                  :key="regionName"
+                  class="region-pill"
+                >
+                  <span class="region-name">{{ regionName }}</span>
+
+                  <span
+                    v-for="sub in subregions"
+                    :key="regionName + '-' + sub"
+                    class="subregion-pill"
+                  >
+                    {{ sub }}
+                  </span>
+                </div>
+              </div>
+            </template>
+
+            <!-- Generic array chip (e.g. modalities) -->
+            <template v-else-if="Array.isArray(chip.value)">
+              <div class="chip-list">
+                <span
+                  v-for="(v, i) in chip.value"
+                  :key="i"
+                  class="chip-pill"
+                >
+                  {{ v }}
+                </span>
+              </div>
+            </template>
+
+            <!-- Single value chip -->
+            <template v-else>
+              <span class="chip-value">{{ chip.value }}</span>
+            </template>
           </div>
         </div>
 
@@ -174,7 +207,7 @@ interface CaseDetail {
   patient_age?: number
   gender?: string
   modalities: string[]
-  regions: string[]
+  regions: Record<string, string[]>
 }
 
 const caseData = ref<CaseDetail | null>(null)
@@ -219,20 +252,28 @@ const detailChips = computed(() => {
     {
       label: 'Modalities',
       icon: '🖥️',
-      value: Array.isArray(caseData.value.modalities) ? caseData.value.modalities.filter(Boolean) : []
+      value: Array.isArray(caseData.value.modalities)
+        ? caseData.value.modalities.filter(Boolean)
+        : []
     },
     {
       label: 'Regions',
       icon: '📍',
-      value: Array.isArray(caseData.value.regions) ? caseData.value.regions.filter(Boolean) : []
+      type: 'regions',
+      value: caseData.value.regions || {}
     }
   ]
 
-  // Keep only chips that have content (strings/numbers or non-empty arrays)
-  return chips.filter(chip =>
-    Array.isArray(chip.value) ? chip.value.length > 0 : chip.value != null && chip.value !== ''
-  )
+  return chips.filter(chip => {
+    if (chip.type === 'regions') {
+      return chip.value && Object.keys(chip.value).length > 0
+    }
+    return Array.isArray(chip.value)
+      ? chip.value.length > 0
+      : chip.value != null && chip.value !== ''
+  })
 })
+
 
 const loadCaseDetails = async () => {
   const caseId = route.params.id as string
@@ -403,7 +444,7 @@ onMounted(() => {
 .chip-value {
   font-size: 1rem;
   color: #2d3748;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .metadata-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -415,6 +456,49 @@ onMounted(() => {
 }
 
 .chip-pill {
+  background: #edf2f7;
+  border: 1px solid #d5dbe4;
+  border-radius: 12px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 600;
+}
+
+.regions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.region-pill {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: #e9f0ff;
+  border: 1px solid #bfc5db;
+  transition: all 0.2s ease;
+}
+
+.region-pill:hover {
+  transform: translateY(-1px);
+  background: #eef4ff;
+  border-color: #667eea;
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+}
+
+.region-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #2d3748;
+  margin-right: 0.25rem;
+}
+
+.subregion-pill {
   background: #edf2f7;
   border: 1px solid #d5dbe4;
   border-radius: 12px;
@@ -629,6 +713,7 @@ onMounted(() => {
 .back-btn:hover {
   background: #5568d3;
 }
+
 
 @media (max-width: 768px) {
   .case-header h1 {

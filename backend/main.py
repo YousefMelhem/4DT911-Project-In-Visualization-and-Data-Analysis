@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import json
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 
@@ -43,8 +43,8 @@ app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
 app.include_router(similarity_router, prefix="/api/similarity", tags=["similarity"])
 
 # Load processed cases
-CASES_FILE = PROCESSED_DIR / "cases_cleaned.json"
-SUMMARY_FILE = PROCESSED_DIR / "cases_summary.json"
+CASES_FILE = PROCESSED_DIR / "cases_cleaned_v2.json"
+SUMMARY_FILE = PROCESSED_DIR / "cases_summary_v2.json"
 
 # Cache for cases data
 cases_data = []
@@ -78,12 +78,18 @@ class CaseSummary(BaseModel):
     patient_age: Optional[int] = None
     gender: Optional[str] = None
     modalities: List[str]
-    regions: List[str]
+    regions: Dict[str, List[str]]
     added_on: Optional[str] = None
     last_edited_on: Optional[str] = None
     word_count: int
     thumbnail: Optional[str]=None
     url: Optional[str]=None
+    has_history: bool
+    has_exam: bool
+    has_findings: bool
+    has_diagnosis: bool
+    has_treatment: bool
+    has_discussion: bool
 
 class CaseDetail(BaseModel):
     id: str
@@ -91,7 +97,7 @@ class CaseDetail(BaseModel):
     patient_age: Optional[int] = None
     gender: Optional[str] = None
     modalities: List[str]
-    regions: List[str]
+    regions: Dict[str, List[str]]
     diagnosis: Optional[str] = None
     title: Optional[str] = None
     history: Optional[str] = None

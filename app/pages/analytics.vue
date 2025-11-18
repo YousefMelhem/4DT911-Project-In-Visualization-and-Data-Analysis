@@ -8,79 +8,22 @@ import AgeHistogram from '~/components/charts/AgeHistogram.vue'
 import ModalityBar from '~/components/charts/ModalityBar.vue'
 import RegionBar from '~/components/charts/RegionBar.vue'
 import CasesOverTime from '~/components/charts/CasesOverTime.vue'
-import MultiSelect from '~/components/ui/MultiSelect.vue'
 import DialogBox from '~/components/popup/DialogBox.vue'
+import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
+import {
+  useCaseFilters,
+  type CaseSummary,
+} from '~/composables/useCaseFilters'
 
 /* =========================
  * Types
  * =======================*/
-type CaseSummary = {
-  id: string
-  title: string | null
-  diagnosis: string | null
-  added_on: string | null
-  last_edited_on: string | null
-  patient_age: number | null
-  gender: string | null
-  modalities: string[]
-  regions: string[]
-  imageCount: number
-  word_count: number | null
-  thumbnail: string | null
-  url: string | null
-}
-
-type Bin = { binStart: number; binEnd: number; count: number }
 type Item = { label: string; count: number }
 type Point = { date: Date; count: number }
-
-type Filters = {
-  genders: string[]          // e.g., ['Male', 'Female']
-  ageMin: number | null
-  ageMax: number | null
-  dateMin: string | null     // ISO yyyy-mm-dd
-  dateMax: string | null
-  modalities: string[]
-  regions: string[]
-}
-
-type SummaryStats = {
-  total: number
-  medianAge: number | null
-  avgImages: number
-  avgWords: number
-}
-
-/* =========================
- * Constants
- * =======================*/
-const AGE_EDGES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, Infinity] as const
 
 /* =========================
  * Utilities (pure)
  * =======================*/
-const normalizeGender = (g: string | null): 'Female' | 'Male' | 'Unknown' => {
-  if (!g) return 'Unknown'
-  const s = g.trim().toLowerCase()
-  if (s === 'female' || s === 'f') return 'Female'
-  if (s === 'male' || s === 'm') return 'Male'
-  return 'Unknown'
-}
-
-const isFiniteNum = (v: unknown): v is number =>
-  typeof v === 'number' && Number.isFinite(v)
-
-const makeBins = (): Bin[] => {
-  const bins: Bin[] = []
-  for (let i = 0; i < AGE_EDGES.length - 1; i++) {
-    bins.push({ binStart: AGE_EDGES[i]!, binEnd: AGE_EDGES[i + 1]! - 1, count: 0 })
-  }
-  // ensure last bin is 90+
-  const last = bins[bins.length - 1]
-  if (last) last.binEnd = Infinity
-  return bins
-}
-
 const fmtDate = (iso: string | null) => {
   if (!iso) return '—'
   const d = new Date(iso)
@@ -108,101 +51,36 @@ const API_URL = config.public.apiUrl
 
 const { warning, success, error: showError } = useDialog()
 
-const filters = ref<Filters>({
-  genders: [],
-  ageMin: null,
-  ageMax: null,
-  dateMin: null,
-  dateMax: null,
-  modalities: [],
-  regions: [],
-})
-
-/* =========================
- * Available values (computed)
- * =======================*/
-const allModalities = computed(() =>
-  Array.from(new Set(rawData.value.flatMap(c => c.modalities || []))).sort()
-)
-const allRegions = computed(() =>
-  Array.from(new Set(rawData.value.flatMap(c => c.regions || []))).sort()
-)
-
-/* =========================
- * Filtered data
- * =======================*/
-const filteredData = computed(() => {
-  // Normalize selected modality/region values once
-  const norm = (s: string) => s.trim().toLowerCase()
-  const selMods = new Set(filters.value.modalities.map(norm))
-  const selRegs = new Set(filters.value.regions.map(norm))
-
-  return rawData.value.filter(row => {
-    // Gender
-    const g = normalizeGender(row.gender)
-    if (filters.value.genders.length > 0 && !filters.value.genders.includes(g)) return false
-
-    // Age range
-    const min = filters.value.ageMin
-    const max = filters.value.ageMax
-    if (isFiniteNum(min)) {
-      if (row.patient_age == null || row.patient_age < min) return false
-    }
-    if (isFiniteNum(max)) {
-      if (row.patient_age == null || row.patient_age > max) return false
-    }
-
-    // Date range
-    if (filters.value.dateMin || filters.value.dateMax) {
-      if (!row.added_on) return false // exclude unknown dates when a range is set
-      const d = new Date(row.added_on)
-      if (filters.value.dateMin && d < new Date(filters.value.dateMin)) return false
-      if (filters.value.dateMax && d > new Date(filters.value.dateMax)) return false
-    }
-
-    // Modalities (match ANY selected)
-    if (selMods.size > 0) {
-      const mods = (row.modalities || []).map(norm)
-      const hasAny = mods.some(m => selMods.has(m))
-      if (!hasAny) return false
-    }
-
-    // Regions (match ANY selected)
-    if (selRegs.size > 0) {
-      const regs = (row.regions || []).map(norm)
-      const hasAny = regs.some(r => selRegs.has(r))
-      if (!hasAny) return false
-    }
-
-    return true
-  })
-})
+// Shared filters + filtered data via composable
+const {
+  filters,
+  allModalities,
+  regionGroups,
+  filteredData,
+  summaryStats,
+  ageBins,
+  unknownAgeCount,
+  resetFiltersLocal,
+  normalizeGender,
+  getCaseMainRegions,
+  getCaseSubregions,
+} = useCaseFilters(rawData)
 
 /* =========================
  * Filters actions
  * =======================*/
 const resetFilters = async () => {
-  try{
+  try {
     const confirmed = await warning(
       'Reset Filters',
       'This will clear all active filters and show all cases. Continue?'
     )
 
-    if (confirmed){
-      filters.value = {
-        genders: [],
-        ageMin: null,
-        ageMax: null,
-        dateMin: null,
-        dateMax: null,
-        modalities: [],
-        regions: [],
-      }
+    if (confirmed) {
+      resetFiltersLocal()
       success('Filters Reset', 'All filters have been cleared.')
     }
-    } catch (e) {
-
-    // Show error dialog if something goes wrong
+  } catch (e) {
     showError(
       'Reset Failed',
       'An error occurred while resetting filters. Would you like to try again?',
@@ -214,38 +92,6 @@ const resetFilters = async () => {
 }
 
 /* =========================
- * KPI summary (computed)
- * =======================*/
-const summaryStats = computed<SummaryStats>(() => {
-  const n = filteredData.value.length
-  if (n === 0) {
-    return { total: 0, medianAge: null, avgImages: 0, avgWords: 0 }
-  }
-
-  // Median age
-  const ages = filteredData.value
-    .map(c => c.patient_age)
-    .filter((a): a is number => typeof a === 'number' && Number.isFinite(a))
-  ages.sort((a, b) => a - b)
-
-  let medianAge: number | null = null
-  if (ages.length > 0) {
-    const mid = Math.floor(ages.length / 2)
-    medianAge = ages.length % 2 !== 0
-      ? ages[mid]!
-      : (ages[mid - 1]! + ages[mid]!) / 2
-  }
-
-  // Averages
-  const avgImages =
-    filteredData.value.reduce((sum, c) => sum + (c.imageCount || 0), 0) / n
-  const avgWords =
-    filteredData.value.reduce((sum, c) => sum + (c.word_count || 0), 0) / n
-
-  return { total: n, medianAge, avgImages, avgWords }
-})
-
-/* =========================
  * Chart series (computed)
  * =======================*/
 const genderCounts = computed<Item[]>(() => {
@@ -253,27 +99,6 @@ const genderCounts = computed<Item[]>(() => {
   for (const row of filteredData.value) counts[normalizeGender(row.gender)]++
   return Object.entries(counts).map(([label, count]) => ({ label, count }))
 })
-
-const ageBins = computed<Bin[]>(() => {
-  const bins = makeBins()
-  for (const row of filteredData.value) {
-    if (row.patient_age == null || isNaN(Number(row.patient_age))) continue
-    const a = Number(row.patient_age)
-    for (let i = 0; i < AGE_EDGES.length - 1; i++) {
-      const start = AGE_EDGES[i]
-      const end = AGE_EDGES[i + 1]
-      if (start !== undefined && end !== undefined && a >= start && a < end) {
-        bins[i]!.count++
-        break
-      }
-    }
-  }
-  return bins
-})
-
-const unknownAgeCount = computed(() =>
-  filteredData.value.filter(r => r.patient_age == null || isNaN(Number(r.patient_age))).length
-)
 
 const modalityCounts = computed<Item[]>(() => {
   const map = new Map<string, number>()
@@ -287,17 +112,37 @@ const modalityCounts = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const regionCounts = computed<Item[]>(() => {
+const regionCountsMain = computed<Item[]>(() => {
   const map = new Map<string, number>()
   for (const row of filteredData.value) {
-    for (const r of row.regions || []) {
-      if (r) map.set(r, (map.get(r) ?? 0) + 1)
+    for (const main of getCaseMainRegions(row)) {
+      if (main) map.set(main, (map.get(main) ?? 0) + 1)
     }
   }
   return Array.from(map.entries())
     .map(([label, count]) => ({ label, count }))
     .sort((a, b) => b.count - a.count)
 })
+
+const regionCountsSub = computed<Item[]>(() => {
+  const map = new Map<string, number>()
+  for (const row of filteredData.value) {
+    for (const sub of getCaseSubregions(row)) {
+      if (sub) map.set(sub, (map.get(sub) ?? 0) + 1)
+    }
+  }
+  return Array.from(map.entries())
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+})
+
+const regionChartMode = ref<'main' | 'sub'>('main')
+
+const regionCounts = computed<Item[]>(() =>
+  regionChartMode.value === 'main'
+    ? regionCountsMain.value
+    : regionCountsSub.value
+)
 
 const casesOverTime = computed<Point[]>(() => {
   const monthCounts = new Map<string, number>()
@@ -339,20 +184,29 @@ const visibleRows = computed(() => filteredData.value.slice(0, tableLimit.value)
 const hasMoreRows = computed(() => filteredData.value.length > tableLimit.value)
 const showMoreRows = () => { tableLimit.value += 50 }
 
-// Reset paging when filters change (nice UX + avoids stale pagination)
-watch(filters, () => { tableLimit.value = 50 }, { deep: true })
+const tableKey = ref(0)
 
-// Signature to force clean table remount when any filter changes (avoids stale DOM reuse)
-const filtersSignature = computed(() =>
-  JSON.stringify({
-    genders: [...filters.value.genders].sort(),
-    ageMin: filters.value.ageMin,
-    ageMax: filters.value.ageMax,
-    dateMin: filters.value.dateMin,
-    dateMax: filters.value.dateMax,
-    modalities: [...filters.value.modalities].map(s => s.trim().toLowerCase()).sort(),
-    regions: [...filters.value.regions].map(s => s.trim().toLowerCase()).sort(),
-  })
+const formatRegionsCell = (row: CaseSummary): string => {
+  if (!row.regions) return '—'
+  const parts: string[] = []
+  for (const [main, subs] of Object.entries(row.regions)) {
+    if (!subs || subs.length === 0) {
+      parts.push(main)
+    } else {
+      parts.push(`${main} (${subs.join(', ')})`)
+    }
+  }
+  return parts.join('; ')
+}
+
+// Reset paging and bump table key when filters change
+watch(
+  filters,
+  () => {
+    tableLimit.value = 50
+    tableKey.value++
+  },
+  { deep: true }
 )
 
 /* =========================
@@ -376,58 +230,44 @@ const loadData = async () => {
 
     success('Refresh Complete', `Successfully loaded ${totalCases.value.toLocaleString()} cases!`)
   } catch (e) {
-    const errorMessage= e instanceof Error ? e.message : 'Unknown error'
+    const errorMessage = e instanceof Error ? e.message : 'Unknown error'
     error.value = errorMessage
-    // Determine error type and show appropriate dialog
     if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-      // Network error
       showError(
         'Connection Error',
         'Unable to connect. Would you like to retry?',
-        {
-          onConfirm: () => loadData()
-        }
+        { onConfirm: () => loadData() }
       )
     } else if (errorMessage.includes('HTTP error! status:')) {
-      // Server error
       const status = errorMessage.split('status: ')[1]
       showError(
         'Load Failed',
         `Server returned status ${status}. Would you like to retry?`,
-        {
-          onConfirm: () => loadData()
-        }
+        { onConfirm: () => loadData() }
       )
     } else {
-      // Other error
       showError(
         'Load Failed',
         `${errorMessage}. Would you like to retry?`,
-        {
-          onConfirm: () => loadData()
-        }
+        { onConfirm: () => loadData() }
       )
     }
   } finally {
     loading.value = false
   }
 }
-// Refresh button handler with confirmation dialog
+
 const handleRefreshClick = async () => {
-  // Show confirmation dialog using the dialog composable
   const confirmed = await warning('Refresh Data', 'Continue?')
-  
   if (confirmed) {
     await loadData()
   }
 }
 
-
 onMounted(() => {
   console.log('🔵 [DEBUG] Analytics page mounted')
   loadData()
 })
-
 </script>
 
 <template>
@@ -437,59 +277,24 @@ onMounted(() => {
         <h1>Analytics</h1>
         <p v-if="!loading && !error">
           Loaded <strong>{{ totalCases }}</strong> cases • Fetched at {{ fetchedAt?.toLocaleString() }}
-          <button class="refresh-btn" @click="handleRefreshClick" :disabled="loading" title="Refresh data">⟳ Refresh</button>
+          <button
+            class="refresh-btn"
+            @click="handleRefreshClick"
+            :disabled="loading"
+            title="Refresh data"
+          >
+            ⟳ Refresh
+          </button>
         </p>
       </div>
 
-      <!-- Filters -->
-      <div class="filters-panel">
-        <!-- Gender -->
-        <div class="filter-group">
-          <h4>Gender</h4>
-          <div class="pill-group">
-            <button v-for="g in ['Male', 'Female', 'Unknown']" :key="g"
-              :class="['pill', filters.genders.includes(g) && 'active']" @click="filters.genders.includes(g)
-                ? filters.genders = filters.genders.filter(x => x !== g)
-                : filters.genders.push(g)">
-              {{ g }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Age -->
-        <div class="filter-group">
-          <h4>Age range</h4>
-          <div class="range-group">
-            <input type="number" v-model.number="filters.ageMin" placeholder="Min" />
-            <span>–</span>
-            <input type="number" v-model.number="filters.ageMax" placeholder="Max" />
-          </div>
-        </div>
-
-        <!-- Modalities -->
-        <div class="filter-group push-bottom">
-          <MultiSelect label="Modalities" :options="allModalities" v-model="filters.modalities" />
-        </div>
-
-        <!-- Regions -->
-        <div class="filter-group push-bottom">
-          <MultiSelect label="Regions" :options="allRegions" v-model="filters.regions" />
-        </div>
-
-        <!-- Date -->
-        <div class="filter-group">
-          <h4>Date added</h4>
-          <div class="range-group">
-            <input type="date" v-model="filters.dateMin" />
-            <span>–</span>
-            <input type="date" v-model="filters.dateMax" />
-          </div>
-        </div>
-
-        <div class="filters-footer">
-          <button class="reset-btn" @click="resetFilters">Reset filters</button>
-        </div>
-      </div>
+      <!-- Filters (factored-out UI + shared logic) -->
+      <CaseFiltersPanel
+        v-model="filters"
+        :allModalities="allModalities"
+        :regionGroups="regionGroups"
+        @reset="resetFilters"
+      />
 
       <!-- KPIs -->
       <div class="summary-grid" v-if="!loading && !error">
@@ -553,8 +358,30 @@ onMounted(() => {
             </ClientOnly>
           </div>
           <div class="chart-card">
+            <div class="chart-card-mode-row">
+              <span class="mode-label">View:</span>
+              <div class="mode-pill-group">
+                <button
+                  type="button"
+                  class="mode-pill"
+                  :class="{ active: regionChartMode === 'main' }"
+                  @click="regionChartMode = 'main'"
+                >
+                  Main regions
+                </button>
+                <button
+                  type="button"
+                  class="mode-pill"
+                  :class="{ active: regionChartMode === 'sub' }"
+                  @click="regionChartMode = 'sub'"
+                >
+                  Subregions
+                </button>
+              </div>
+            </div>
+
             <ClientOnly>
-              <RegionBar :items="regionCounts" :max-visible="15" />
+              <RegionBar :items="regionCounts" />
             </ClientOnly>
           </div>
         </div>
@@ -569,8 +396,8 @@ onMounted(() => {
           </div>
 
           <div class="table-scroll">
-            <!-- Key forces remount when filters change to avoid stale DOM -->
-            <table class="cases-table" :key="filtersSignature">
+
+            <table class="cases-table" :key="tableKey">
               <thead>
                 <tr>
                   <th>Diagnosis</th>
@@ -592,7 +419,7 @@ onMounted(() => {
                   <td>{{ row.patient_age ?? '—' }}</td>
                   <td>{{ row.gender ?? '—' }}</td>
                   <td class="wrap" :title="joinArr(row.modalities)">{{ joinArr(row.modalities) }}</td>
-                  <td class="wrap" :title="joinArr(row.regions)">{{ joinArr(row.regions) }}</td>
+                  <td class="wrap" :title="formatRegionsCell(row)">{{ formatRegionsCell(row) }}</td>
                   <td class="num">{{ row.imageCount ?? 0 }}</td>
                   <td class="num">{{ row.word_count ?? 0 }}</td>
                 </tr>
@@ -609,7 +436,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <DialogBox/>
+    <DialogBox />
   </div>
 </template>
 
@@ -728,7 +555,6 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 1rem;
   min-width: 0;
-  /* allow shrinking */
 }
 
 .chart-card.full {
@@ -736,116 +562,45 @@ onMounted(() => {
 }
 
 @media (max-width: 900px) {
-
   .chart-card,
   .chart-card.full {
     grid-column: 1 / -1;
   }
 }
 
-/* Filters panel */
-.filters-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.2rem;
-  background: white;
-  padding: 1.25rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.75rem;
-}
-
-.filter-group {
+.chart-card-mode-row {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.filter-group h4 {
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #2d3748;
-}
-
-.range-group {
-  display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
-.range-group input {
-  width: 100%;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.mode-label {
+  font-size: 0.8rem;
+  color: #718096;
 }
 
-.pill-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+.mode-pill-group {
+  display: inline-flex;
+  gap: 0.25rem;
 }
 
-.pill {
+.mode-pill {
   border: 1px solid #cbd5e0;
   background: #edf2f7;
-  color: #2d3748;
-  border-radius: 20px;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-
-.pill:hover {
-  background: #e2e8f0;
-}
-
-.pill.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-color: transparent;
-}
-
-/* Push MultiSelects to bottom of their tile */
-.push-bottom {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-:deep(.ms) {
-  width: 100%;
-}
-
-:deep(.ms-btn) {
-  min-height: 36px;
-}
-
-/* Filters footer */
-.filters-footer {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 0.5rem;
-}
-
-.reset-btn {
-  background: #edf2f7;
-  color: #2d3748;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: #4a5568;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.78rem;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.reset-btn:hover {
-  background: #e2e8f0;
+.mode-pill.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
 }
 
 /* KPIs */
@@ -883,7 +638,6 @@ onMounted(() => {
   padding: 1rem;
   margin-top: .5rem;
   min-width: 0;
-  /* allow shrinking */
 }
 
 .table-header,
@@ -928,7 +682,6 @@ onMounted(() => {
   border-spacing: 0;
   background: white;
   min-width: 720px;
-  /* allow horizontal scroll on small screens */
 }
 
 .cases-table thead th {
