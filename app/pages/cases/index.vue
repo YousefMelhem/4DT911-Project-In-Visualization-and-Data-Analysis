@@ -2,10 +2,17 @@
   <div class="cases-page">
     <div class="page-header">
       <h1>Medical Cases Gallery</h1>
-      <p>Browse {{ totalCases }} diagnostic cases from MedPix</p>
+      <p>Browse {{ totalCases.toLocaleString() }} diagnostic cases from MedPix</p>
     </div>
 
     <div class="cases-container">
+      <CaseFiltersPanel
+        v-model="filters"
+        :allModalities="allModalities"
+        :regionGroups="regionGroups"
+        @reset="resetFilters"
+      />
+
       <div v-if="loading" class="loading">
         <div class="loader"></div>
         <p>Loading cases...</p>
@@ -17,11 +24,19 @@
       </div>
 
       <div v-else class="cases-grid">
-        <div v-for="caseItem in cases" :key="caseItem.id" class="case-card" @click="viewCase(caseItem.id)">
+        <div
+          v-for="caseItem in visibleCases"
+          :key="caseItem.id"
+          class="case-card"
+          @click="viewCase(caseItem.id)"
+        >
           <div class="case-image">
-            <img v-if="caseItem.thumbnail"
-              :src="`${API_URL}/images/${caseItem.thumbnail}`" :alt="caseItem.diagnosis"
-              @error="handleImageError" />
+            <img
+              v-if="caseItem.thumbnail"
+              :src="`${API_URL}/images/${caseItem.thumbnail}`"
+              :alt="caseItem.diagnosis ?? 'Case thumbnail'"
+              @error="handleImageError"
+            />
             <div v-else class="no-image">
               <span>📋</span>
               <p>No Image</p>
@@ -32,212 +47,240 @@
           </div>
 
           <div class="case-info">
-            <h3 class="case-title" :title="caseItem.diagnosis">{{ caseItem.diagnosis }}</h3>
+            <h3 class="case-title" :title="caseItem.diagnosis ?? undefined">
+              {{ caseItem.diagnosis || 'Untitled case' }}
+            </h3>
             <div class="case-details">
               <div class="detail-row">
                 <span class="detail-label">Age:</span>
-                <span class="detail-value">{{ caseItem.patient_age || 'Not specified' }}</span>
+                <span class="detail-value">
+                  {{ caseItem.patient_age ?? 'Not specified' }}
+                </span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Gender:</span>
-                <span class="detail-value">{{ caseItem.gender || 'Not specified' }}</span>
+                <span class="detail-value">
+                  {{ caseItem.gender ?? 'Not specified' }}
+                </span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Region:</span>
-                <span class="detail-value">{{ caseItem.regions ? Object.keys(caseItem.regions).join(', ') : 'Not specified' }}</span>
+                <span class="detail-value">
+                  {{
+                    caseItem.regions
+                      ? Object.keys(caseItem.regions).join(', ')
+                      : 'Not specified'
+                  }}
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div v-if="!loading && cases.length === 0" class="no-results">
-        <p>No cases found</p>
+
+      <div v-if="!loading && visibleCases.length === 0" class="no-results">
+        <p>No cases match the current filters</p>
       </div>
 
       <div v-if="hasMore" class="load-more">
-        <button @click="loadMore" class="load-more-btn"
-          :disabled="moreLoading" :aria-busy="moreLoading ? 'true' : 'false'"
-          > 
-          <span v-if="!moreLoading"> Load More Cases</span>
-          <span v-else>Loading...</span>
+        <button
+          @click="loadMore"
+          class="load-more-btn"
+        >
+          Load More Cases
         </button>
       </div>
-      <div v-show="hasMore && !loading" ref="sentinel" class="infinite-sentinel" aria-hidden="true"></div>
+
+      <div
+        v-show="hasMore && !loading"
+        ref="sentinel"
+        class="infinite-sentinel"
+        aria-hidden="true"
+      ></div>
     </div>
+
     <DialogBox />
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { navigateTo } from '#app'
 import DialogBox from '~/components/popup/DialogBox.vue'
+import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
+import { useCaseFilters, type CaseSummary } from '~/composables/useCaseFilters'
 
-interface CaseSummary {
-  id: string
-  diagnosis: string
-  imageCount: number
-  thumbnail: string | null
-  url: string
-  patient_age?: number
-  gender: string | null
-  modalities: string | null
-  regions: Record<string, string[]> | null
-}
-
-const cases = ref<CaseSummary[]>([])
+const rawData = ref<CaseSummary[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-const totalCases = ref(0)
-const offset = ref(0)
-const limit = 24
-const hasMore = ref(true)
-const { warning, success, error: showError } = useDialog()
+const fetchedAt = ref<Date | null>(null)
 
-// Use environment variable instead of hardcoded URL
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
+const { warning, success, error: showError } = useDialog()
+
+// Shared filters + filtered data via composable
+const {
+  filters,
+  allModalities,
+  regionGroups,
+  filteredData,
+  resetFiltersLocal,
+} = useCaseFilters(rawData)
+
+const totalCases = computed(() => rawData.value.length)
+
+// ===== Filters actions =====
+const resetFilters = async () => {
+  try {
+    const confirmed = await warning(
+      'Reset Filters',
+      'This will clear all active filters and show all cases. Continue?'
+    )
+    if (confirmed) {
+      resetFiltersLocal()
+      success('Filters Reset', 'All filters have been cleared.')
+    }
+  } catch (e) {
+    showError(
+      'Reset Failed',
+      'An error occurred while resetting filters. Would you like to try again?',
+      {
+        onConfirm: () => resetFilters(),
+      }
+    )
+  }
+}
+
+// ===== Local "pagination" over filteredData =====
+const PAGE_SIZE = 24
+const visibleLimit = ref(PAGE_SIZE)
+
+const visibleCases = computed(() =>
+  filteredData.value.slice(0, visibleLimit.value)
+)
+const hasMore = computed(
+  () => filteredData.value.length > visibleLimit.value
+)
+
+const loadMore = () => {
+  if (!hasMore.value) return
+  visibleLimit.value += PAGE_SIZE
+}
+
+// When filters change, reset back to first "page"
+watch(
+  filters,
+  () => {
+    visibleLimit.value = PAGE_SIZE
+  },
+  { deep: true }
+)
+
+// ===== Fetch all cases once =====
 const loadCases = async () => {
   try {
     loading.value = true
     error.value = null
 
-    const response = await fetch(
-      `${API_URL}/api/cases/summary?limit=${limit}&offset=${offset.value}`
-    )
-
+    const response = await fetch(`${API_URL}/api/cases/summary_all`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     const data = await response.json()
-
-    if (offset.value === 0) {
-      cases.value = data
-    } else {
-      cases.value = [...cases.value, ...data]
+    if (!Array.isArray(data)) {
+      throw new Error('Unexpected response shape')
     }
 
-    hasMore.value = data.length === limit
+    rawData.value = data as CaseSummary[]
+    fetchedAt.value = new Date()
 
-    // Get total count
-    const statsResponse = await fetch(`${API_URL}/api/stats`)
-    const stats = await statsResponse.json()
-    totalCases.value = stats.total_cases
-    if (offset.value === 0) {
-      success('Cases Loaded', `Successfully loaded ${totalCases.value} cases from MedPix`)
-    }
+    success(
+      'Cases Loaded',
+      `Successfully loaded ${totalCases.value.toLocaleString()} cases from MedPix`
+    )
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Unknown error'
     console.error('Error loading cases:', e)
     showError(
       'Load Failed',
       'An error occurred while loading cases. Would you like to try again?',
-    {
-      onConfirm: () => loadCases()
+      {
+        onConfirm: () => loadCases(),
       }
     )
   } finally {
     loading.value = false
   }
 }
-const moreLoading = ref(false)
+
+// ===== Navigation & helpers =====
+const viewCase = (caseId: string) => {
+  navigateTo(`/cases/${caseId}`)
+}
+
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement
+  target.style.display = 'none'
+  showError(
+    'Image Load Failed',
+    'Unable to load the case image. The image may be unavailable or corrupted.'
+  )
+}
+
+// ===== Infinite scroll sentinel =====
+const sentinel = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
 const bottomHits = ref(0)
 let bottomHitResetTimer: number | null = null
 
-const loadMore = async () => {
-  if (moreLoading.value || !hasMore.value) return
-  moreLoading.value = true
-  offset.value += limit
+const startObserver = () => {
+  if (observer) observer.disconnect()
 
-  try {
-    const response = await fetch(
-      `${API_URL}/api/cases/summary?limit=${limit}&offset=${offset.value}`
-    )
-    if (!response.ok) 
-      throw new Error(`HTTP error! status: ${response.status}`)
-    const data = await response.json()
-    cases.value = [...cases.value, ...data]
-    hasMore.value = data.length === limit
-    success('More Cases Loaded', `Successfully loaded ${data.length} additional cases`)
-
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Unknown error'
-    showError(
-      'Load More Failed',
-      'An error occurred while loading more cases. Would you like to try again?',
-      {
-        onConfirm: () => loadMore()
-      }
-    )
-  } finally {
-    moreLoading.value = false
-  } 
-}
-
-const viewCase = async (caseId: string) => {
-    // Navigate to case detail page
-    navigateTo(`/cases/${caseId}`)
-  }
-
-  const truncate = (text: string, length: number) => {
-    if (!text) return 'Unknown'
-    return text.length > length ? text.substring(0, length) + '...' : text
-  }
-
-  const handleImageError = (event: Event) => {
-    const target = event.target as HTMLImageElement
-    target.style.display = 'none'
-    showError(
-      'Image Load Failed',
-      'Unable to load the case image. The image may be unavailable or corrupted.',
-    )
-  }
-  const sentinel = ref<HTMLElement | null>(null)
-  let observer: IntersectionObserver | null = null
-
-  const startObserver = () => {
-    /*
-    watches the page and only loads more cases
-    if the user quickly reaches the bottom twice in a row. 
-    */
-    if (observer) observer.disconnect()
-    observer = new IntersectionObserver(async entries => {
+  observer = new IntersectionObserver(
+    entries => {
       const entry = entries[0]
-      if (!entry?.isIntersecting) 
-        return
-      if (!hasMore.value || moreLoading.value) 
-        return
+      if (!entry?.isIntersecting) return
+      if (!hasMore.value) return
+
       bottomHits.value += 1
-      if (bottomHits.value==1){
+      if (bottomHits.value === 1) {
         if (bottomHitResetTimer) clearTimeout(bottomHitResetTimer)
         bottomHitResetTimer = window.setTimeout(() => {
           bottomHits.value = 0
           bottomHitResetTimer = null
         }, 3000)
-      return
-      }    
-      if(bottomHits.value>=2){
-        bottomHits.value=0
+        return
+      }
+
+      if (bottomHits.value >= 2) {
+        bottomHits.value = 0
         if (bottomHitResetTimer) {
           clearTimeout(bottomHitResetTimer)
           bottomHitResetTimer = null
         }
-      await loadMore()
+        loadMore()
       }
-    }, 
-    { root: null, rootMargin: '200px', threshold: 0 })
-    if (sentinel.value instanceof Element) observer.observe(sentinel.value)
+    },
+    { root: null, rootMargin: '200px', threshold: 0 }
+  )
+
+  if (sentinel.value instanceof Element) {
+    observer.observe(sentinel.value)
   }
+}
 
-  onMounted(async () => {
-    await loadCases()
-    await startObserver()
-  })
-  onBeforeUnmount(() => observer?.disconnect())
+onMounted(async () => {
+  await loadCases()
+  startObserver()
+})
 
+onBeforeUnmount(() => observer?.disconnect())
 </script>
+
 
 <style scoped>
 .cases-page {
