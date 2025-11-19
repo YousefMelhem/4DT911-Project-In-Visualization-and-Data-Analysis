@@ -9,6 +9,10 @@ import ModalityBar from '~/components/charts/ModalityBar.vue'
 import RegionBar from '~/components/charts/RegionBar.vue'
 import CasesOverTime from '~/components/charts/CasesOverTime.vue'
 import DiagnosisUMAP from '~/components/charts/DiagnosisUMAP.vue'
+import SectionsCoverageBar from '~/components/charts/SectionsCoverageBar.vue'
+import ModalityHeatmap from '~/components/charts/ModalityHeatmap.vue'
+import RegionHeatmap from '~/components/charts/RegionHeatmap.vue'
+import ModalityRegionHeatmap from '~/components/charts/ModalityRegionHeatmap.vue'
 import DialogBox from '~/components/popup/DialogBox.vue'
 import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
 import {
@@ -21,6 +25,9 @@ import {
  * =======================*/
 type Item = { label: string; count: number }
 type Point = { date: Date; count: number }
+type ModalityMatrix = { labels: string[]; grid: number[][] }
+type RegionMatrix = ModalityMatrix
+type ModalityRegionMatrix = { rowLabels: string[]; colLabels: string[]; grid: number[][] }
 
 /* =========================
  * Utilities (pure)
@@ -37,6 +44,91 @@ const fmtDate = (iso: string | null) => {
 
 const joinArr = (arr?: string[]) =>
   Array.isArray(arr) && arr.length ? arr.join(', ') : '—'
+
+/** Generic symmetric co-occurrence matrix builder */
+const buildCoocMatrix = (
+  rows: CaseSummary[],
+  allLabels: string[],
+  getLabelsForRow: (row: CaseSummary) => readonly string[]
+): ModalityMatrix => {
+  // fixed axes from the full dataset
+  const labels = allLabels.slice()
+  const n = labels.length
+
+  const index = new Map<string, number>()
+  labels.forEach((label, i) => index.set(label, i))
+
+  const grid: number[][] = Array.from({ length: n }, () =>
+    Array.from({ length: n }, () => 0)
+  )
+
+  for (const row of rows) {
+    const raw = getLabelsForRow(row) ?? []
+    const unique = Array.from(new Set(raw.filter(Boolean)))
+
+    for (let i = 0; i < unique.length; i++) {
+      const a = index.get(unique[i]!)
+      if (a === undefined) continue
+      for (let j = i; j < unique.length; j++) {
+        const b = index.get(unique[j]!)
+        if (b === undefined) continue
+
+        const rowA = grid[a]!
+        rowA[b] = (rowA[b] ?? 0) + 1
+        if (a !== b) {
+          const rowB = grid[b]!
+          rowB[a] = (rowB[a] ?? 0) + 1
+        }
+      }
+    }
+  }
+
+  return { labels, grid }
+}
+
+/** Modality × Region matrix (rows = regions, cols = modalities) */
+const buildModalityRegionMatrix = (
+  rows: CaseSummary[],
+  allRegions: string[],
+  allModalities: string[],
+  getRegionsForRow: (row: CaseSummary) => readonly string[],
+  getModalitiesForRow: (row: CaseSummary) => readonly string[]
+): ModalityRegionMatrix => {
+  const rowLabels = allRegions.slice()
+  const colLabels = allModalities.slice()
+
+  const rCount = rowLabels.length
+  const cCount = colLabels.length
+
+  const rowIndex = new Map<string, number>()
+  rowLabels.forEach((label, i) => rowIndex.set(label, i))
+
+  const colIndex = new Map<string, number>()
+  colLabels.forEach((label, i) => colIndex.set(label, i))
+
+  const grid: number[][] = Array.from({ length: rCount }, () =>
+    Array.from({ length: cCount }, () => 0)
+  )
+
+  for (const row of rows) {
+    const regions = Array.from(new Set(getRegionsForRow(row).filter(Boolean)))
+    const mods = Array.from(new Set(getModalitiesForRow(row).filter(Boolean)))
+    if (!regions.length || !mods.length) continue
+
+    for (const reg of regions) {
+      const ri = rowIndex.get(reg)
+      if (ri === undefined) continue
+      const rowArr = grid[ri]!
+      for (const mod of mods) {
+        const ci = colIndex.get(mod)
+        if (ci === undefined) continue
+        rowArr[ci] = (rowArr[ci] ?? 0) + 1
+      }
+    }
+  }
+
+  return { rowLabels, colLabels, grid }
+}
 
 /* =========================
  * State
@@ -66,6 +158,22 @@ const {
   getCaseMainRegions,
   getCaseSubregions,
 } = useCaseFilters(rawData)
+
+/* =========================
+ * Derived lists for axes
+ * =======================*/
+
+// Main regions list for axes (all cases, not just filtered)
+// ensures regions always show even if 0 in current selection
+const allMainRegions = computed<string[]>(() => {
+  const set = new Set<string>()
+  for (const row of rawData.value) {
+    for (const main of getCaseMainRegions(row)) {
+      if (main) set.add(main)
+    }
+  }
+  return Array.from(set).sort()
+})
 
 /* =========================
  * Filters actions
@@ -143,6 +251,57 @@ const regionCounts = computed<Item[]>(() =>
   regionChartMode.value === 'main'
     ? regionCountsMain.value
     : regionCountsSub.value
+)
+
+// Text-section coverage (base, all filtered cases)
+const sectionCoverage = computed<Item[]>(() => {
+  const counts: {
+    History: number
+    Exam: number
+    Findings: number
+    Diagnosis: number
+    Treatment: number
+    Discussion: number
+  } = {
+    History: 0,
+    Exam: 0,
+    Findings: 0,
+    Diagnosis: 0,
+    Treatment: 0,
+    Discussion: 0,
+  }
+
+  for (const row of filteredData.value) {
+    if (row.has_history) counts.History++
+    if (row.has_exam) counts.Exam++
+    if (row.has_findings) counts.Findings++
+    if (row.has_diagnosis) counts.Diagnosis++
+    if (row.has_treatment) counts.Treatment++
+    if (row.has_discussion) counts.Discussion++
+  }
+
+  return Object.entries(counts).map(([label, count]) => ({ label, count }))
+})
+
+// Modality co-occurrence (base, all filtered cases)
+const modalityCooc = computed<ModalityMatrix>(() =>
+  buildCoocMatrix(filteredData.value, allModalities.value, (row) => row.modalities ?? [])
+)
+
+// Region co-occurrence (main regions only, base)
+const regionCooc = computed<RegionMatrix>(() =>
+  buildCoocMatrix(filteredData.value, allMainRegions.value, getCaseMainRegions)
+)
+
+// Modality × Region (base, all filtered cases)
+const modalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
+  buildModalityRegionMatrix(
+    filteredData.value,
+    allMainRegions.value,
+    allModalities.value,
+    getCaseMainRegions,
+    (row) => row.modalities ?? []
+  )
 )
 
 /* =========================
@@ -310,6 +469,57 @@ const clusterCasesOverTime = computed<Point[]>(() => {
   return series
 })
 
+// Text-section coverage for cluster-filtered data
+const clusterSectionCoverage = computed<Item[]>(() => {
+  const counts: {
+    History: number
+    Exam: number
+    Findings: number
+    Diagnosis: number
+    Treatment: number
+    Discussion: number
+  } = {
+    History: 0,
+    Exam: 0,
+    Findings: 0,
+    Diagnosis: 0,
+    Treatment: 0,
+    Discussion: 0,
+  }
+
+  for (const row of clusterFilteredData.value) {
+    if (row.has_history) counts.History++
+    if (row.has_exam) counts.Exam++
+    if (row.has_findings) counts.Findings++
+    if (row.has_diagnosis) counts.Diagnosis++
+    if (row.has_treatment) counts.Treatment++
+    if (row.has_discussion) counts.Discussion++
+  }
+
+  return Object.entries(counts).map(([label, count]) => ({ label, count }))
+})
+
+// Modality co-occurrence for cluster-filtered data
+const clusterModalityCooc = computed<ModalityMatrix>(() =>
+  buildCoocMatrix(clusterFilteredData.value, allModalities.value, (row) => row.modalities ?? [])
+)
+
+// Region co-occurrence for cluster-filtered data (main regions)
+const clusterRegionCooc = computed<RegionMatrix>(() =>
+  buildCoocMatrix(clusterFilteredData.value, allMainRegions.value, getCaseMainRegions)
+)
+
+// Modality × Region for cluster-filtered data
+const clusterModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
+  buildModalityRegionMatrix(
+    clusterFilteredData.value,
+    allMainRegions.value,
+    allModalities.value,
+    getCaseMainRegions,
+    (row) => row.modalities ?? []
+  )
+)
+
 // Use cluster-filtered data for charts when cluster is selected
 const displayGenderCounts = computed(() => 
   selectedCluster.value !== null ? clusterGenderCounts.value : genderCounts.value
@@ -328,6 +538,18 @@ const displayUnknownAgeCount = computed(() =>
 )
 const displayCasesOverTime = computed(() => 
   selectedCluster.value !== null ? clusterCasesOverTime.value : casesOverTime.value
+)
+const displaySectionCoverage = computed(() =>
+  selectedCluster.value !== null ? clusterSectionCoverage.value : sectionCoverage.value
+)
+const displayModalityCooc = computed<ModalityMatrix>(() =>
+  selectedCluster.value !== null ? clusterModalityCooc.value : modalityCooc.value
+)
+const displayRegionCooc = computed<RegionMatrix>(() =>
+  selectedCluster.value !== null ? clusterRegionCooc.value : regionCooc.value
+)
+const displayModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
+  selectedCluster.value !== null ? clusterModalityRegionMatrix.value : modalityRegionMatrix.value
 )
 
 const casesOverTime = computed<Point[]>(() => {
@@ -489,26 +711,26 @@ onMounted(() => {
       <main class="analytics-main-content">
         <!-- KPIs -->
         <div class="summary-grid" v-if="!loading && !error">
-        <div class="summary-card" :class="{ 'highlight': selectedCluster !== null }">
-          <h3>{{ clusterFilteredData.length.toLocaleString() }}</h3>
-          <p>{{ selectedCluster !== null ? 'Cluster Cases' : 'Filtered Cases' }}</p>
+          <div class="summary-card" :class="{ 'highlight': selectedCluster !== null }">
+            <h3>{{ clusterFilteredData.length.toLocaleString() }}</h3>
+            <p>{{ selectedCluster !== null ? 'Cluster Cases' : 'Filtered Cases' }}</p>
+          </div>
+          <div class="summary-card">
+            <h3 v-if="summaryStats.medianAge !== null">{{ summaryStats.medianAge }}</h3>
+            <h3 v-else>—</h3>
+            <p>Median Age</p>
+          </div>
+          <div class="summary-card">
+            <h3>{{ summaryStats.avgImages.toFixed(1) }}</h3>
+            <p>Avg. Images per Case</p>
+          </div>
+          <div class="summary-card">
+            <h3>{{ summaryStats.avgWords.toFixed(0) }}</h3>
+            <p>Avg. Word Count</p>
+          </div>
         </div>
-        <div class="summary-card">
-          <h3 v-if="summaryStats.medianAge !== null">{{ summaryStats.medianAge }}</h3>
-          <h3 v-else>—</h3>
-          <p>Median Age</p>
-        </div>
-        <div class="summary-card">
-          <h3>{{ summaryStats.avgImages.toFixed(1) }}</h3>
-          <p>Avg. Images per Case</p>
-        </div>
-        <div class="summary-card">
-          <h3>{{ summaryStats.avgWords.toFixed(0) }}</h3>
-          <p>Avg. Word Count</p>
-        </div>
-      </div>
 
-              <!-- Loading -->
+        <!-- Loading -->
         <div v-if="loading" class="center-block">
           <div class="loader"></div>
           <p>Loading analytics...</p>
@@ -522,127 +744,154 @@ onMounted(() => {
 
         <!-- Charts + Table -->
         <div v-else class="content">
-        <!-- UMAP Diagnosis Clustering Visualization -->
-        <div class="umap-section">
-          
-          <div v-if="selectedCluster !== null" class="cluster-banner">
-            🎯 Cluster filter active - All charts below show only cases from the selected cluster
-            <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
-          </div>
-          <ClientOnly>
-            <DiagnosisUMAP 
-              :width="1200"
-              :height="700"
-              :selectedCluster="selectedCluster"
-              @pointClick="handleDiagnosisClick"
-              @clusterClick="handleClusterClick"
-            />
-          </ClientOnly>
-        </div>
-
-        <div class="charts-grid">
-          <!-- Top row -->
-          <div class="chart-card">
+          <!-- UMAP Diagnosis Clustering Visualization -->
+          <div class="umap-section">
+            <div v-if="selectedCluster !== null" class="cluster-banner">
+              🎯 Cluster filter active - All charts below show only cases from the selected cluster
+              <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
+            </div>
             <ClientOnly>
-              <GenderBar :items="displayGenderCounts" />
-            </ClientOnly>
-          </div>
-          <div class="chart-card">
-            <ClientOnly>
-              <AgeHistogram :bins="displayAgeBins" :unknown-count="displayUnknownAgeCount" />
+              <DiagnosisUMAP 
+                :width="1200"
+                :height="700"
+                :selectedCluster="selectedCluster"
+                @pointClick="handleDiagnosisClick"
+                @clusterClick="handleClusterClick"
+              />
             </ClientOnly>
           </div>
 
-          <!-- Middle row (full width) -->
-          <div class="chart-card full">
-            <ClientOnly>
-              <CasesOverTime :series="displayCasesOverTime" />
-            </ClientOnly>
+          <div class="charts-grid">
+            <!-- Top row -->
+            <div class="chart-card">
+              <ClientOnly>
+                <GenderBar :items="displayGenderCounts" />
+              </ClientOnly>
+            </div>
+            <div class="chart-card">
+              <ClientOnly>
+                <AgeHistogram :bins="displayAgeBins" :unknown-count="displayUnknownAgeCount" />
+              </ClientOnly>
+            </div>
+
+            <!-- Middle row (full width) -->
+            <div class="chart-card full">
+              <ClientOnly>
+                <CasesOverTime :series="displayCasesOverTime" />
+              </ClientOnly>
+            </div>
+
+            <!-- Bottom rows -->
+            <div class="chart-card">
+              <ClientOnly>
+                <ModalityBar :items="displayModalityCounts" />
+              </ClientOnly>
+            </div>
+
+            <!-- Modality co-occurrence heatmap -->
+            <div class="chart-card">
+              <ClientOnly>
+                <ModalityHeatmap :matrix="displayModalityCooc" />
+              </ClientOnly>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-mode-row">
+                <span class="mode-label">View:</span>
+                <div class="mode-pill-group">
+                  <button
+                    type="button"
+                    class="mode-pill"
+                    :class="{ active: regionChartMode === 'main' }"
+                    @click="regionChartMode = 'main'"
+                  >
+                    Main regions
+                  </button>
+                  <button
+                    type="button"
+                    class="mode-pill"
+                    :class="{ active: regionChartMode === 'sub' }"
+                    @click="regionChartMode = 'sub'"
+                  >
+                    Subregions
+                  </button>
+                </div>
+              </div>
+
+              <ClientOnly>
+                <RegionBar :items="displayRegionCounts" />
+              </ClientOnly>
+            </div>
+
+            <!-- Region co-occurrence heatmap (main regions only) -->
+            <div class="chart-card">
+              <ClientOnly>
+                <RegionHeatmap :matrix="displayRegionCooc" />
+              </ClientOnly>
+            </div>
+
+            <!-- Text sections coverage -->
+            <div class="chart-card">
+              <ClientOnly>
+                <SectionsCoverageBar :items="displaySectionCoverage" />
+              </ClientOnly>
+            </div>
+
+            <!-- Modality × Region heatmap -->
+            <div class="chart-card">
+              <ClientOnly>
+                <ModalityRegionHeatmap :matrix="displayModalityRegionMatrix" />
+              </ClientOnly>
+            </div>
           </div>
 
-          <!-- Bottom row -->
-          <div class="chart-card">
-            <ClientOnly>
-              <ModalityBar :items="displayModalityCounts" />
-            </ClientOnly>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-mode-row">
-              <span class="mode-label">View:</span>
-              <div class="mode-pill-group">
-                <button
-                  type="button"
-                  class="mode-pill"
-                  :class="{ active: regionChartMode === 'main' }"
-                  @click="regionChartMode = 'main'"
-                >
-                  Main regions
-                </button>
-                <button
-                  type="button"
-                  class="mode-pill"
-                  :class="{ active: regionChartMode === 'sub' }"
-                  @click="regionChartMode = 'sub'"
-                >
-                  Subregions
-                </button>
+          <!-- Data table -->
+          <div class="table-card">
+            <div class="table-header">
+              <div class="left">
+                <h3>Cases</h3>
+                <p>Showing {{ visibleRows.length.toLocaleString() }} of {{ clusterFilteredData.length.toLocaleString() }}</p>
               </div>
             </div>
 
-            <ClientOnly>
-              <RegionBar :items="displayRegionCounts" />
-            </ClientOnly>
-          </div>
-        </div>
+            <div class="table-scroll">
+              <table class="cases-table" :key="tableKey">
+                <thead>
+                  <tr>
+                    <th>Diagnosis</th>
+                    <th>Added</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Modalities</th>
+                    <th>Regions</th>
+                    <th>Images</th>
+                    <th>Words</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in visibleRows" :key="row.id + ':' + i">
+                    <td class="id wrap" :title="row.diagnosis ?? undefined">
+                      <NuxtLink :to="`/cases/${row.id}`">{{ row.diagnosis }}</NuxtLink>
+                    </td>
+                    <td>{{ fmtDate(row.added_on) }}</td>
+                    <td>{{ row.patient_age ?? '—' }}</td>
+                    <td>{{ row.gender ?? '—' }}</td>
+                    <td class="wrap" :title="joinArr(row.modalities)">{{ joinArr(row.modalities) }}</td>
+                    <td class="wrap" :title="formatRegionsCell(row)">{{ formatRegionsCell(row) }}</td>
+                    <td class="num">{{ row.imageCount ?? 0 }}</td>
+                    <td class="num">{{ row.word_count ?? 0 }}</td>
+                  </tr>
+                  <tr v-if="visibleRows.length === 0">
+                    <td colspan="8" class="empty">No cases match the current filters.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-        <!-- Data table -->
-        <div class="table-card">
-          <div class="table-header">
-            <div class="left">
-              <h3>Cases</h3>
-              <p>Showing {{ visibleRows.length.toLocaleString() }} of {{ clusterFilteredData.length.toLocaleString() }}</p>
+            <div v-if="hasMoreRows" class="table-footer right">
+              <button class="show-more-btn" @click="showMoreRows">Show more</button>
             </div>
           </div>
-
-          <div class="table-scroll">
-
-            <table class="cases-table" :key="tableKey">
-              <thead>
-                <tr>
-                  <th>Diagnosis</th>
-                  <th>Added</th>
-                  <th>Age</th>
-                  <th>Gender</th>
-                  <th>Modalities</th>
-                  <th>Regions</th>
-                  <th>Images</th>
-                  <th>Words</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(row, i) in visibleRows" :key="row.id + ':' + i">
-                  <td class="id wrap" :title="row.diagnosis ?? undefined">
-                    <NuxtLink :to="`/cases/${row.id}`">{{ row.diagnosis }}</NuxtLink>
-                  </td>
-                  <td>{{ fmtDate(row.added_on) }}</td>
-                  <td>{{ row.patient_age ?? '—' }}</td>
-                  <td>{{ row.gender ?? '—' }}</td>
-                  <td class="wrap" :title="joinArr(row.modalities)">{{ joinArr(row.modalities) }}</td>
-                  <td class="wrap" :title="formatRegionsCell(row)">{{ formatRegionsCell(row) }}</td>
-                  <td class="num">{{ row.imageCount ?? 0 }}</td>
-                  <td class="num">{{ row.word_count ?? 0 }}</td>
-                </tr>
-                <tr v-if="visibleRows.length === 0">
-                  <td colspan="8" class="empty">No cases match the current filters.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div v-if="hasMoreRows" class="table-footer right">
-            <button class="show-more-btn" @click="showMoreRows">Show more</button>
-          </div>
-        </div>
         </div>
       </main>
     </div>
