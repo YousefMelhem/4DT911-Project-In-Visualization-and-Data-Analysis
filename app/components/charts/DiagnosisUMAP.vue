@@ -158,8 +158,8 @@ const renderUMAP = () => {
       
       tooltip
         .style('display', 'block')
-        .style('left', `${event.pageX + 15}px`)
-        .style('top', `${event.pageY - 15}px`)
+        .style('left', `${event.pageX + 10}px`)
+        .style('top', `${event.pageY - 10}px`)
         .html(`
           <div style="font-weight: bold; margin-bottom: 4px; color: ${colorScale(d.cluster.toString())}">
             ${clusterName}
@@ -358,10 +358,11 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
 }
 
 .tooltip {
-  position: absolute;
+  position: fixed;
   display: none;
-  background: white;
-  border: 1px solid #ddd;
+  background: #2d3748;
+  color: white;
+  border: 1px solid #1a202c;
   border-radius: 6px;
   padding: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

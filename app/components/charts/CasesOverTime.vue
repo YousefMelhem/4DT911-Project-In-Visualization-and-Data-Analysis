@@ -20,13 +20,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import { select } from 'd3-selection'
-import { scaleTime, scaleLinear } from 'd3-scale'
-import { max, extent } from 'd3-array'
-import { axisBottom, axisLeft } from 'd3-axis'
-import { line, area, curveMonotoneX } from 'd3-shape'
-import { timeMonth } from 'd3-time'
-import { timeFormat } from 'd3-time-format'
+import * as d3 from 'd3'
 
 /* =========================
  * Types
@@ -46,7 +40,7 @@ const MARGIN = { top: 20, right: 20, bottom: 46, left: 56 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 
-const fmtMonth = timeFormat('%b %Y')
+const fmtMonth = d3.timeFormat('%b %Y')
 
 const svgRef = ref<SVGSVGElement | null>(null)
 
@@ -57,7 +51,7 @@ const draw = () => {
   const el = svgRef.value
   if (!el) return
 
-  const svg = select(el)
+  const svg = d3.select(el)
   svg.selectAll('*').remove()
 
   // Copy & sort data (non-mutating)
@@ -65,52 +59,52 @@ const draw = () => {
   if (data.length === 0) return
 
   // Scales
-  const xDomain = extent(data, d => d.date) as [Date, Date]
-  const x = scaleTime().domain(xDomain).range([MARGIN.left, MARGIN.left + INNER_W])
+  const xDomain = d3.extent(data, (d: Point) => d.date) as [Date, Date]
+  const x = d3.scaleTime().domain(xDomain).range([MARGIN.left, MARGIN.left + INNER_W])
 
-  const yMax = max(data, d => d.count) ?? 0
-  const y = scaleLinear().domain([0, yMax]).nice().range([MARGIN.top + INNER_H, MARGIN.top])
+  const yMax = d3.max(data, (d: Point) => d.count) ?? 0
+  const y = d3.scaleLinear().domain([0, yMax]).nice().range([MARGIN.top + INNER_H, MARGIN.top])
 
   // Axes
   // Aim for ~6 x-axis ticks across the whole range
   const approxTickCount = Math.ceil(data.length / 6) || 1
   svg.append('g')
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
-    .call(axisBottom(x).ticks(timeMonth.every(approxTickCount)).tickFormat((d: any) => fmtMonth(d)))
+    .call(d3.axisBottom(x).ticks(d3.timeMonth.every(approxTickCount)).tickFormat((d) => fmtMonth(d as Date)))
     .selectAll('text')
       .style('font-size', '10px')
       .attr('transform', 'translate(0,4)')
 
   svg.append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
-    .call(axisLeft(y).ticks(5))
+    .call(d3.axisLeft(y).ticks(5))
     .selectAll('text')
       .style('font-size', '10px')
 
   // Area (under line)
-  const areaGen = area<Point>()
-    .x(d => x(d.date))
+  const areaGen = d3.area<Point>()
+    .x((d: Point) => x(d.date))
     .y0(y(0))
-    .y1(d => y(d.count))
-    .curve(curveMonotoneX)
+    .y1((d: Point) => y(d.count))
+    .curve(d3.curveMonotoneX)
 
   svg.append('path')
     .datum(data)
     .attr('fill', '#e6e9fb')
-    .attr('d', areaGen as any)
+    .attr('d', areaGen)
 
   // Line
-  const lineGen = line<Point>()
-    .x(d => x(d.date))
-    .y(d => y(d.count))
-    .curve(curveMonotoneX)
+  const lineGen = d3.line<Point>()
+    .x((d: Point) => x(d.date))
+    .y((d: Point) => y(d.count))
+    .curve(d3.curveMonotoneX)
 
   svg.append('path')
     .datum(data)
     .attr('fill', 'none')
     .attr('stroke', '#667eea')
     .attr('stroke-width', 2)
-    .attr('d', lineGen as any)
+    .attr('d', lineGen)
 
   // Points + simple tooltips
   svg.append('g')
@@ -118,12 +112,12 @@ const draw = () => {
     .data(data)
     .enter()
     .append('circle')
-      .attr('cx', d => x(d.date))
-      .attr('cy', d => y(d.count))
+      .attr('cx', (d: Point) => x(d.date))
+      .attr('cy', (d: Point) => y(d.count))
       .attr('r', 3)
       .attr('fill', '#667eea')
       .append('title')
-        .text(d => `${fmtMonth(d.date)}: ${d.count.toLocaleString()}`)
+        .text((d: Point) => `${fmtMonth(d.date)}: ${d.count.toLocaleString()}`)
 }
 
 onMounted(draw)

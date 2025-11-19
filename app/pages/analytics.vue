@@ -250,20 +250,22 @@ const clusterRegionCounts = computed<Item[]>(() =>
 
 const clusterAgeBins = computed(() => {
   const bins = [
-    { range: '0-10', min: 0, max: 10, count: 0 },
-    { range: '11-20', min: 11, max: 20, count: 0 },
-    { range: '21-30', min: 21, max: 30, count: 0 },
-    { range: '31-40', min: 31, max: 40, count: 0 },
-    { range: '41-50', min: 41, max: 50, count: 0 },
-    { range: '51-60', min: 51, max: 60, count: 0 },
-    { range: '61-70', min: 61, max: 70, count: 0 },
-    { range: '71-80', min: 71, max: 80, count: 0 },
-    { range: '81+', min: 81, max: 999, count: 0 },
+    { binStart: 0, binEnd: 9, count: 0 },
+    { binStart: 10, binEnd: 19, count: 0 },
+    { binStart: 20, binEnd: 29, count: 0 },
+    { binStart: 30, binEnd: 39, count: 0 },
+    { binStart: 40, binEnd: 49, count: 0 },
+    { binStart: 50, binEnd: 59, count: 0 },
+    { binStart: 60, binEnd: 69, count: 0 },
+    { binStart: 70, binEnd: 79, count: 0 },
+    { binStart: 80, binEnd: 89, count: 0 },
+    { binStart: 90, binEnd: Infinity, count: 0 },
   ]
   for (const row of clusterFilteredData.value) {
     const age = row.patient_age
     if (typeof age === 'number' && age >= 0) {
-      const bin = bins.find(b => age >= b.min && age <= b.max)
+      const binIndex = Math.min(Math.floor(age / 10), 9)
+      const bin = bins[binIndex]
       if (bin) bin.count++
     }
   }
@@ -457,32 +459,36 @@ onMounted(() => {
 
 <template>
   <div class="analytics-page">
-    <div class="container">
-      <div class="page-header">
-        <h1>Analytics</h1>
-        <p v-if="!loading && !error">
-          Loaded <strong>{{ totalCases }}</strong> cases • Fetched at {{ fetchedAt?.toLocaleString() }}
-          <button
-            class="refresh-btn"
-            @click="handleRefreshClick"
-            :disabled="loading"
-            title="Refresh data"
-          >
-            ⟳ Refresh
-          </button>
-        </p>
-      </div>
+    <div class="page-header">
+      <h1>Analytics</h1>
+      <p v-if="!loading && !error">
+        Loaded <strong>{{ totalCases }}</strong> cases • Fetched at {{ fetchedAt?.toLocaleString() }}
+        <button
+          class="refresh-btn"
+          @click="handleRefreshClick"
+          :disabled="loading"
+          title="Refresh data"
+        >
+          ⟳ Refresh
+        </button>
+      </p>
+    </div>
 
-      <!-- Filters (factored-out UI + shared logic) -->
-      <CaseFiltersPanel
-        v-model="filters"
-        :allModalities="allModalities"
-        :regionGroups="regionGroups"
-        @reset="resetFilters"
-      />
+    <div class="analytics-layout">
+      <!-- Left Sidebar: Filters -->
+      <aside class="filters-sidebar">
+        <CaseFiltersPanel
+          v-model="filters"
+          :allModalities="allModalities"
+          :regionGroups="regionGroups"
+          @reset="resetFilters"
+        />
+      </aside>
 
-      <!-- KPIs -->
-      <div class="summary-grid" v-if="!loading && !error">
+      <!-- Main Content -->
+      <main class="analytics-main-content">
+        <!-- KPIs -->
+        <div class="summary-grid" v-if="!loading && !error">
         <div class="summary-card" :class="{ 'highlight': selectedCluster !== null }">
           <h3>{{ clusterFilteredData.length.toLocaleString() }}</h3>
           <p>{{ selectedCluster !== null ? 'Cluster Cases' : 'Filtered Cases' }}</p>
@@ -502,20 +508,20 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Loading -->
-      <div v-if="loading" class="center-block">
-        <div class="loader"></div>
-        <p>Loading analytics data…</p>
-      </div>
+              <!-- Loading -->
+        <div v-if="loading" class="center-block">
+          <div class="loader"></div>
+          <p>Loading analytics...</p>
+        </div>
 
-      <!-- Error -->
-      <div v-else-if="error" class="center-block error">
-        <p>❌ Error loading analytics: {{ error }}</p>
-        <button @click="loadData" class="retry-btn">Retry</button>
-      </div>
+        <!-- Error -->
+        <div v-else-if="error" class="center-block error">
+          <p>❌ Error loading analytics: {{ error }}</p>
+          <button @click="loadData" class="retry-btn">Retry</button>
+        </div>
 
-      <!-- Charts + Table -->
-      <div v-else class="content">
+        <!-- Charts + Table -->
+        <div v-else class="content">
         <!-- UMAP Diagnosis Clustering Visualization -->
         <div class="umap-section">
           <h2 class="section-title">Diagnosis Clustering Map</h2>
@@ -530,6 +536,8 @@ onMounted(() => {
           </div>
           <ClientOnly>
             <DiagnosisUMAP 
+              :width="1200"
+              :height="700"
               :selectedCluster="selectedCluster"
               @pointClick="handleDiagnosisClick"
               @clusterClick="handleClusterClick"
@@ -640,7 +648,8 @@ onMounted(() => {
             <button class="show-more-btn" @click="showMoreRows">Show more</button>
           </div>
         </div>
-      </div>
+        </div>
+      </main>
     </div>
     <DialogBox />
   </div>
@@ -653,16 +662,10 @@ onMounted(() => {
   background: #f5f7fa;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-/* Header */
+/* Header - stays full width above layout */
 .page-header {
   text-align: center;
-  margin-bottom: 1.25rem;
+  padding: 2rem 2rem 1.25rem;
 }
 
 .page-header h1 {
@@ -674,6 +677,70 @@ onMounted(() => {
 
 .page-header p {
   color: #4a5568;
+}
+
+/* Sidebar Layout */
+.analytics-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 200px);
+}
+
+.filters-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* Custom scrollbar for sidebar */
+.filters-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filters-sidebar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.analytics-main-content {
+  padding: 0 2rem 2rem;
+  overflow-x: hidden;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .analytics-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .analytics-main-content {
+    padding: 1rem;
+  }
+
+  .page-header {
+    padding: 1rem;
+  }
 }
 
 .refresh-btn {

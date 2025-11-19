@@ -152,7 +152,7 @@ const renderUMAP = () => {
           <div style="font-weight: bold; color: ${colorScale(d.cluster.toString())}">
             ${clusterName}
           </div>
-          <div style="font-size: 11px; margin-top: 4px;">
+          <div style="font-size: 11px; margin-top: 4px; color: white;">
             ${diagCount} unique diagnoses
           </div>
         `)
@@ -341,7 +341,7 @@ watch(() => data.value.length, async (newLength) => {
 .tooltip {
   position: absolute;
   display: none;
-  background: white;
+  background: #2d3748;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 8px;
