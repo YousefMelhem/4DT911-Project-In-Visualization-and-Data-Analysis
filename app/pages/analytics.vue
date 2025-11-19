@@ -524,12 +524,7 @@ onMounted(() => {
         <div v-else class="content">
         <!-- UMAP Diagnosis Clustering Visualization -->
         <div class="umap-section">
-          <h2 class="section-title">Diagnosis Clustering Map</h2>
-          <p class="section-subtitle">
-            Explore {{ totalCases.toLocaleString() }} cases grouped into 25 clusters using BioBERT embeddings and UMAP dimensionality reduction.
-            Each point represents a unique diagnosis, sized by frequency. 
-            <strong>Click a cluster in the legend to filter all charts below!</strong>
-          </p>
+          
           <div v-if="selectedCluster !== null" class="cluster-banner">
             🎯 Cluster filter active - All charts below show only cases from the selected cluster
             <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
@@ -694,7 +689,7 @@ onMounted(() => {
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 /* Custom scrollbar for sidebar */

@@ -248,25 +248,25 @@ const onDateMaxInput = (val: string) => {
 .filters-panel {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.75rem;
   width: 100%;
 }
 
 .filters-header {
-  padding-bottom: 1rem;
-  border-bottom: 3px solid #667eea;
-  margin-bottom: 0.5rem;
-}
-
-.filters-header h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #2d3748;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #667eea;
   margin-bottom: 0.25rem;
 }
 
+.filters-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 0.15rem;
+}
+
 .filter-hint {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #718096;
   margin: 0;
 }
@@ -275,7 +275,7 @@ const onDateMaxInput = (val: string) => {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding-bottom: 1rem;
+  padding-bottom: 0.65rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -285,51 +285,50 @@ const onDateMaxInput = (val: string) => {
 }
 
 .filter-group h4 {
-  margin-bottom: 0.65rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: #2d3748;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.75rem;
+  letter-spacing: 0.4px;
 }
 
 .search-group input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.6rem;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
 }
 
 .range-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .range-group input {
   width: 100%;
-  padding: 0.4rem 0.6rem;
+  padding: 0.35rem 0.5rem;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
   min-width: 0;
 }
 
 .pill-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .pill {
   border: 1px solid #cbd5e0;
   background: #f7fafc;
   color: #2d3748;
-  border-radius: 6px;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.85rem;
+  border-radius: 5px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all .2s ease;
   text-align: left;
@@ -348,7 +347,7 @@ const onDateMaxInput = (val: string) => {
 }
 
 .push-bottom {
-  margin-top: 24px;
+  margin-top: 0.5rem;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -367,12 +366,23 @@ input[type="date"] {
 }
 
 :deep(.ms-btn) {
-  min-height: 36px;
+  min-height: 32px;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+}
+
+:deep(.ms-dropdown) {
+  font-size: 0.85rem;
+}
+
+:deep(.ms-label) {
+  font-size: 0.7rem;
+  margin-bottom: 0.4rem;
 }
 
 .filters-footer {
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
   border-top: 2px solid #e5e7eb;
 }
 
@@ -381,9 +391,9 @@ input[type="date"] {
   background: #fee;
   color: #c53030;
   border: 1px solid #fc8181;
-  border-radius: 6px;
-  padding: 0.65rem 1rem;
-  font-size: 0.9rem;
+  border-radius: 5px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
