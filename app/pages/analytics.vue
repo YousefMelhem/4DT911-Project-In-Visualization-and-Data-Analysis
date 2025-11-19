@@ -8,6 +8,7 @@ import AgeHistogram from '~/components/charts/AgeHistogram.vue'
 import ModalityBar from '~/components/charts/ModalityBar.vue'
 import RegionBar from '~/components/charts/RegionBar.vue'
 import CasesOverTime from '~/components/charts/CasesOverTime.vue'
+import DiagnosisUMAP from '~/components/charts/DiagnosisUMAP.vue'
 import DialogBox from '~/components/popup/DialogBox.vue'
 import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
 import {
@@ -144,6 +145,189 @@ const regionCounts = computed<Item[]>(() =>
     : regionCountsSub.value
 )
 
+/* =========================
+ * UMAP Cluster Interaction
+ * =======================*/
+const selectedCluster = ref<number | null>(null)
+const selectedDiagnoses = ref<Set<string>>(new Set())
+
+// Load cluster data for filtering
+const clusterData = ref<Map<string, number>>(new Map())
+
+const loadClusterMapping = async () => {
+  try {
+    const response = await fetch(`${API_URL}/data/features/diagnosis_biobert_clusters.json`)
+    if (response.ok) {
+      const data = await response.json()
+      const mapping = new Map<string, number>()
+      data.diagnoses.forEach((diag: string, i: number) => {
+        mapping.set(diag.toLowerCase(), data.clusters[i])
+      })
+      clusterData.value = mapping
+      console.log(`✅ Loaded ${mapping.size} diagnosis-cluster mappings`)
+    }
+  } catch (e) {
+    console.warn('Could not load cluster mapping:', e)
+  }
+}
+
+// Filter data by selected cluster
+const clusterFilteredData = computed<CaseSummary[]>(() => {
+  if (selectedCluster.value === null) return filteredData.value
+  
+  return filteredData.value.filter(row => {
+    if (!row.diagnosis) return false
+    const diagLower = row.diagnosis.toLowerCase()
+    const cluster = clusterData.value.get(diagLower)
+    return cluster === selectedCluster.value
+  })
+})
+
+const handleClusterClick = (clusterId: number) => {
+  if (selectedCluster.value === clusterId) {
+    selectedCluster.value = null
+    success('Cluster Deselected', 'Showing all cases again')
+  } else {
+    selectedCluster.value = clusterId
+    const count = clusterFilteredData.value.length
+    success('Cluster Selected', `Filtering ${count.toLocaleString()} cases in this cluster`)
+  }
+}
+
+const handleDiagnosisClick = (diagnosis: string) => {
+  // Navigate to cases page filtered by this diagnosis
+  navigateTo(`/cases?diagnosis=${encodeURIComponent(diagnosis)}`)
+}
+
+// Update charts based on cluster-filtered data
+const clusterGenderCounts = computed<Item[]>(() => {
+  const counts = { Female: 0, Male: 0, Unknown: 0 }
+  for (const row of clusterFilteredData.value) counts[normalizeGender(row.gender)]++
+  return Object.entries(counts).map(([label, count]) => ({ label, count }))
+})
+
+const clusterModalityCounts = computed<Item[]>(() => {
+  const map = new Map<string, number>()
+  for (const row of clusterFilteredData.value) {
+    for (const mod of row.modalities || []) {
+      if (mod) map.set(mod, (map.get(mod) ?? 0) + 1)
+    }
+  }
+  return Array.from(map.entries())
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+})
+
+const clusterRegionCountsMain = computed<Item[]>(() => {
+  const map = new Map<string, number>()
+  for (const row of clusterFilteredData.value) {
+    for (const main of getCaseMainRegions(row)) {
+      if (main) map.set(main, (map.get(main) ?? 0) + 1)
+    }
+  }
+  return Array.from(map.entries())
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+})
+
+const clusterRegionCountsSub = computed<Item[]>(() => {
+  const map = new Map<string, number>()
+  for (const row of clusterFilteredData.value) {
+    for (const sub of getCaseSubregions(row)) {
+      if (sub) map.set(sub, (map.get(sub) ?? 0) + 1)
+    }
+  }
+  return Array.from(map.entries())
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+})
+
+const clusterRegionCounts = computed<Item[]>(() =>
+  regionChartMode.value === 'main'
+    ? clusterRegionCountsMain.value
+    : clusterRegionCountsSub.value
+)
+
+const clusterAgeBins = computed(() => {
+  const bins = [
+    { range: '0-10', min: 0, max: 10, count: 0 },
+    { range: '11-20', min: 11, max: 20, count: 0 },
+    { range: '21-30', min: 21, max: 30, count: 0 },
+    { range: '31-40', min: 31, max: 40, count: 0 },
+    { range: '41-50', min: 41, max: 50, count: 0 },
+    { range: '51-60', min: 51, max: 60, count: 0 },
+    { range: '61-70', min: 61, max: 70, count: 0 },
+    { range: '71-80', min: 71, max: 80, count: 0 },
+    { range: '81+', min: 81, max: 999, count: 0 },
+  ]
+  for (const row of clusterFilteredData.value) {
+    const age = row.patient_age
+    if (typeof age === 'number' && age >= 0) {
+      const bin = bins.find(b => age >= b.min && age <= b.max)
+      if (bin) bin.count++
+    }
+  }
+  return bins
+})
+
+const clusterUnknownAgeCount = computed(() => {
+  return clusterFilteredData.value.filter(row => 
+    row.patient_age === null || row.patient_age === undefined
+  ).length
+})
+
+const clusterCasesOverTime = computed<Point[]>(() => {
+  const monthCounts = new Map<string, number>()
+  const re = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/
+
+  for (const row of clusterFilteredData.value) {
+    const s = row.added_on
+    if (!s) continue
+    const m = re.exec(s.trim())
+    if (!m) continue
+    const y = Number(m[1])
+    const mon = Number(m[2])
+    if (!Number.isFinite(y) || !Number.isFinite(mon) || y < 1900 || y > 2100 || mon < 1 || mon > 12) continue
+    const key = `${y}-${String(mon).padStart(2, '0')}-01`
+    monthCounts.set(key, (monthCounts.get(key) ?? 0) + 1)
+  }
+
+  if (monthCounts.size === 0) return []
+  const keys = Array.from(monthCounts.keys()).sort()
+  const start = new Date(keys[0]!)
+  const end = new Date(keys[keys.length - 1]!)
+
+  const series: Point[] = []
+  const d = new Date(start)
+  d.setDate(1)
+  while (d <= end) {
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
+    series.push({ date: new Date(d), count: monthCounts.get(key) ?? 0 })
+    d.setMonth(d.getMonth() + 1)
+  }
+  return series
+})
+
+// Use cluster-filtered data for charts when cluster is selected
+const displayGenderCounts = computed(() => 
+  selectedCluster.value !== null ? clusterGenderCounts.value : genderCounts.value
+)
+const displayModalityCounts = computed(() => 
+  selectedCluster.value !== null ? clusterModalityCounts.value : modalityCounts.value
+)
+const displayRegionCounts = computed(() => 
+  selectedCluster.value !== null ? clusterRegionCounts.value : regionCounts.value
+)
+const displayAgeBins = computed(() => 
+  selectedCluster.value !== null ? clusterAgeBins.value : ageBins.value
+)
+const displayUnknownAgeCount = computed(() => 
+  selectedCluster.value !== null ? clusterUnknownAgeCount.value : unknownAgeCount.value
+)
+const displayCasesOverTime = computed(() => 
+  selectedCluster.value !== null ? clusterCasesOverTime.value : casesOverTime.value
+)
+
 const casesOverTime = computed<Point[]>(() => {
   const monthCounts = new Map<string, number>()
   const re = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/
@@ -180,8 +364,8 @@ const casesOverTime = computed<Point[]>(() => {
  * Table (computed & actions)
  * =======================*/
 const tableLimit = ref(50)
-const visibleRows = computed(() => filteredData.value.slice(0, tableLimit.value))
-const hasMoreRows = computed(() => filteredData.value.length > tableLimit.value)
+const visibleRows = computed(() => clusterFilteredData.value.slice(0, tableLimit.value))
+const hasMoreRows = computed(() => clusterFilteredData.value.length > tableLimit.value)
 const showMoreRows = () => { tableLimit.value += 50 }
 
 const tableKey = ref(0)
@@ -267,6 +451,7 @@ const handleRefreshClick = async () => {
 onMounted(() => {
   console.log('🔵 [DEBUG] Analytics page mounted')
   loadData()
+  loadClusterMapping()
 })
 </script>
 
@@ -298,9 +483,9 @@ onMounted(() => {
 
       <!-- KPIs -->
       <div class="summary-grid" v-if="!loading && !error">
-        <div class="summary-card">
-          <h3>{{ summaryStats.total.toLocaleString() }}</h3>
-          <p>Filtered Cases</p>
+        <div class="summary-card" :class="{ 'highlight': selectedCluster !== null }">
+          <h3>{{ clusterFilteredData.length.toLocaleString() }}</h3>
+          <p>{{ selectedCluster !== null ? 'Cluster Cases' : 'Filtered Cases' }}</p>
         </div>
         <div class="summary-card">
           <h3 v-if="summaryStats.medianAge !== null">{{ summaryStats.medianAge }}</h3>
@@ -331,30 +516,51 @@ onMounted(() => {
 
       <!-- Charts + Table -->
       <div v-else class="content">
+        <!-- UMAP Diagnosis Clustering Visualization -->
+        <div class="umap-section">
+          <h2 class="section-title">Diagnosis Clustering Map</h2>
+          <p class="section-subtitle">
+            Explore {{ totalCases.toLocaleString() }} cases grouped into 25 clusters using BioBERT embeddings and UMAP dimensionality reduction.
+            Each point represents a unique diagnosis, sized by frequency. 
+            <strong>Click a cluster in the legend to filter all charts below!</strong>
+          </p>
+          <div v-if="selectedCluster !== null" class="cluster-banner">
+            🎯 Cluster filter active - All charts below show only cases from the selected cluster
+            <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
+          </div>
+          <ClientOnly>
+            <DiagnosisUMAP 
+              :selectedCluster="selectedCluster"
+              @pointClick="handleDiagnosisClick"
+              @clusterClick="handleClusterClick"
+            />
+          </ClientOnly>
+        </div>
+
         <div class="charts-grid">
           <!-- Top row -->
           <div class="chart-card">
             <ClientOnly>
-              <GenderBar :items="genderCounts" />
+              <GenderBar :items="displayGenderCounts" />
             </ClientOnly>
           </div>
           <div class="chart-card">
             <ClientOnly>
-              <AgeHistogram :bins="ageBins" :unknown-count="unknownAgeCount" />
+              <AgeHistogram :bins="displayAgeBins" :unknown-count="displayUnknownAgeCount" />
             </ClientOnly>
           </div>
 
           <!-- Middle row (full width) -->
           <div class="chart-card full">
             <ClientOnly>
-              <CasesOverTime :series="casesOverTime" />
+              <CasesOverTime :series="displayCasesOverTime" />
             </ClientOnly>
           </div>
 
           <!-- Bottom row -->
           <div class="chart-card">
             <ClientOnly>
-              <ModalityBar :items="modalityCounts" />
+              <ModalityBar :items="displayModalityCounts" />
             </ClientOnly>
           </div>
           <div class="chart-card">
@@ -381,7 +587,7 @@ onMounted(() => {
             </div>
 
             <ClientOnly>
-              <RegionBar :items="regionCounts" />
+              <RegionBar :items="displayRegionCounts" />
             </ClientOnly>
           </div>
         </div>
@@ -391,7 +597,7 @@ onMounted(() => {
           <div class="table-header">
             <div class="left">
               <h3>Cases</h3>
-              <p>Showing {{ visibleRows.length.toLocaleString() }} of {{ filteredData.length.toLocaleString() }}</p>
+              <p>Showing {{ visibleRows.length.toLocaleString() }} of {{ clusterFilteredData.length.toLocaleString() }}</p>
             </div>
           </div>
 
@@ -540,6 +746,60 @@ onMounted(() => {
   gap: 1rem;
 }
 
+/* UMAP Section */
+.umap-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.section-subtitle {
+  color: #718096;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+.cluster-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.clear-cluster-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-cluster-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Charts grid (12-col) */
 .charts-grid {
   display: grid;
@@ -617,6 +877,19 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 1rem;
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.summary-card.highlight {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  transform: scale(1.05);
+}
+
+.summary-card.highlight h3,
+.summary-card.highlight p {
+  color: white;
 }
 
 .summary-card h3 {

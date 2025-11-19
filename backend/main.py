@@ -34,10 +34,12 @@ BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 PROCESSED_DIR = DATA_DIR / "processed"
 ML_Ready_DIR = DATA_DIR / "ml_ready"
+FEATURES_DIR = DATA_DIR / "features"
 IMAGES_DIR = DATA_DIR / "archive" / "medpix_data_final" 
 
-# Mount static files for images
+# Mount static files for images and ML features
 app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
+app.mount("/data/features", StaticFiles(directory=str(FEATURES_DIR)), name="features")
 
 # Include routers
 app.include_router(similarity_router, prefix="/api/similarity", tags=["similarity"])
