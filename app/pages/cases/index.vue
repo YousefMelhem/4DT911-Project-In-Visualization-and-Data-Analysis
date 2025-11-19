@@ -5,15 +5,30 @@
       <p>Browse {{ totalCases.toLocaleString() }} diagnostic cases from MedPix</p>
     </div>
 
-    <div class="cases-container">
-      <CaseFiltersPanel
-        v-model="filters"
-        :allModalities="allModalities"
-        :regionGroups="regionGroups"
-        @reset="resetFilters"
-      />
+    <div class="cases-layout">
+      <!-- Left Sidebar: Filters -->
+      <aside class="filters-sidebar">
+        <CaseFiltersPanel
+          v-model="filters"
+          :allModalities="allModalities"
+          :regionGroups="regionGroups"
+          @reset="resetFilters"
+        />
+      </aside>
 
-      <div v-if="loading" class="loading">
+      <!-- Main Content -->
+      <main class="cases-main-content">
+        <!-- Cluster Visualization Filter -->
+        <div class="cluster-filter-section">
+          <ClientOnly>
+            <DiagnosisUMAPCompact 
+              :selectedCluster="selectedCluster"
+              @clusterClick="handleClusterClick"
+            />
+          </ClientOnly>
+        </div>
+
+        <div v-if="loading" class="loading">
         <div class="loader"></div>
         <p>Loading cases...</p>
       </div>
@@ -97,6 +112,7 @@
         class="infinite-sentinel"
         aria-hidden="true"
       ></div>
+      </main>
     </div>
 
     <DialogBox />
@@ -109,6 +125,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { navigateTo } from '#app'
 import DialogBox from '~/components/popup/DialogBox.vue'
 import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
+import DiagnosisUMAPCompact from '~/components/charts/DiagnosisUMAPCompact.vue'
 import { useCaseFilters, type CaseSummary } from '~/composables/useCaseFilters'
 
 const rawData = ref<CaseSummary[]>([])
@@ -121,6 +138,28 @@ const API_URL = config.public.apiUrl
 
 const { warning, success, error: showError } = useDialog()
 
+// Cluster filtering
+const selectedCluster = ref<number | null>(null)
+const clusterData = ref<Map<string, number>>(new Map())
+
+// Load cluster mapping
+const loadClusterMapping = async () => {
+  try {
+    const response = await fetch(`${API_URL}/data/features/diagnosis_biobert_clusters.json`)
+    if (response.ok) {
+      const data = await response.json()
+      const mapping = new Map<string, number>()
+      data.diagnoses.forEach((diag: string, i: number) => {
+        mapping.set(diag.toLowerCase(), data.clusters[i])
+      })
+      clusterData.value = mapping
+      console.log(`✅ Loaded ${mapping.size} diagnosis-cluster mappings for cases page`)
+    }
+  } catch (e) {
+    console.warn('Could not load cluster mapping:', e)
+  }
+}
+
 // Shared filters + filtered data via composable
 const {
   filters,
@@ -129,6 +168,29 @@ const {
   filteredData,
   resetFiltersLocal,
 } = useCaseFilters(rawData)
+
+// Apply cluster filter on top of existing filters
+const clusterFilteredData = computed(() => {
+  if (selectedCluster.value === null) return filteredData.value
+  
+  return filteredData.value.filter(row => {
+    if (!row.diagnosis) return false
+    const diagLower = row.diagnosis.toLowerCase()
+    const cluster = clusterData.value.get(diagLower)
+    return cluster === selectedCluster.value
+  })
+})
+
+const handleClusterClick = (clusterId: number) => {
+  if (clusterId === -1 || selectedCluster.value === clusterId) {
+    selectedCluster.value = null
+    success('Cluster Filter Cleared', 'Showing all cases')
+  } else {
+    selectedCluster.value = clusterId
+    const count = clusterFilteredData.value.length
+    success('Cluster Filter Applied', `Showing ${count.toLocaleString()} cases in this cluster`)
+  }
+}
 
 const totalCases = computed(() => rawData.value.length)
 
@@ -159,10 +221,10 @@ const PAGE_SIZE = 24
 const visibleLimit = ref(PAGE_SIZE)
 
 const visibleCases = computed(() =>
-  filteredData.value.slice(0, visibleLimit.value)
+  clusterFilteredData.value.slice(0, visibleLimit.value)
 )
 const hasMore = computed(
-  () => filteredData.value.length > visibleLimit.value
+  () => clusterFilteredData.value.length > visibleLimit.value
 )
 
 const loadMore = () => {
@@ -170,9 +232,9 @@ const loadMore = () => {
   visibleLimit.value += PAGE_SIZE
 }
 
-// When filters change, reset back to first "page"
+// When filters or cluster selection change, reset back to first "page"
 watch(
-  filters,
+  [filters, selectedCluster],
   () => {
     visibleLimit.value = PAGE_SIZE
   },
@@ -275,6 +337,7 @@ const startObserver = () => {
 
 onMounted(async () => {
   await loadCases()
+  await loadClusterMapping()
   startObserver()
 })
 
@@ -307,10 +370,67 @@ onBeforeUnmount(() => observer?.disconnect())
   margin-bottom: 2rem;
 }
 
-.cases-container {
-  max-width: 1400px;
+.cases-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  max-width: 1800px;
   margin: 0 auto;
+  min-height: calc(100vh - 250px);
+}
+
+@media (max-width: 1200px) {
+  .cases-layout {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .cases-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-sidebar {
+    position: static !important;
+    max-height: none !important;
+    border-right: none !important;
+  }
+}
+
+.filters-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 1.5rem 1rem;
+}
+
+.filters-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filters-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.cases-main-content {
   padding: 2rem;
+  background: #f5f7fa;
+}
+
+.cluster-filter-section {
+  margin-bottom: 2rem;
 }
 
 .loading,

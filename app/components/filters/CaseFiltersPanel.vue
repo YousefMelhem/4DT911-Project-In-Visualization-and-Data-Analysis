@@ -1,5 +1,10 @@
 <template>
   <div class="filters-panel">
+    <div class="filters-header">
+      <h3>🔍 Filters</h3>
+      <p class="filter-hint">Refine your search</p>
+    </div>
+    
     <!-- Search -->
     <div class="filter-group search-group">
       <h4>Search</h4>
@@ -11,18 +16,13 @@
       />
     </div>
     <!-- Gender -->
-    <div class="filter-group">
-      <h4>Gender</h4>
-      <div class="pill-group">
-        <button
-          v-for="g in ['Male', 'Female', 'Unknown']"
-          :key="g"
-          :class="['pill', modelValue.genders.includes(g) && 'active']"
-          @click="toggleGender(g)"
-        >
-          {{ g }}
-        </button>
-      </div>
+    <div class="filter-group push-bottom">
+      <MultiSelect
+        label="Gender"
+        :options="['Male', 'Female', 'Unknown']"
+        :model-value="modelValue.genders"
+        @update:modelValue="onGendersChange"
+      />
     </div>
 
     <!-- Age -->
@@ -84,19 +84,13 @@
     </div>
 
     <!-- Text sections -->
-    <div class="filter-group">
-        <h4>Required text sections</h4>
-        <div class="pill-group">
-            <button
-            v-for="section in sectionOptions"
-            :key="section.key"
-            type="button"
-            :class="['pill', modelValue[section.key] && 'active']"
-            @click="toggleSection(section.key)"
-            >
-            {{ section.label }}
-            </button>
-        </div>
+    <div class="filter-group push-bottom">
+      <MultiSelect
+        label="Required text sections"
+        :options="['History', 'Exam', 'Findings', 'Diagnosis', 'Treatment', 'Discussion']"
+        :model-value="selectedTextSections"
+        @update:modelValue="onTextSectionsChange"
+      />
     </div>
 
     <!-- Word count -->
@@ -148,6 +142,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import MultiSelect from '~/components/ui/MultiSelect.vue'
 import type { Filters, RegionGroup } from '~/composables/useCaseFilters'
 
@@ -173,14 +168,31 @@ const onQueryInput = (val: string) => {
   update({ query: val })
 }
 
-const toggleGender = (g: string) => {
-  const genders = new Set(props.modelValue.genders)
-  if (genders.has(g)) {
-    genders.delete(g)
-  } else {
-    genders.add(g)
-  }
-  update({ genders: Array.from(genders) })
+const onGendersChange = (vals: string[]) => {
+  update({ genders: vals })
+}
+
+// Computed property to convert boolean flags to array of selected sections
+const selectedTextSections = computed(() => {
+  const sections: string[] = []
+  if (props.modelValue.hasHistory) sections.push('History')
+  if (props.modelValue.hasExam) sections.push('Exam')
+  if (props.modelValue.hasFindings) sections.push('Findings')
+  if (props.modelValue.hasDiagnosis) sections.push('Diagnosis')
+  if (props.modelValue.hasTreatment) sections.push('Treatment')
+  if (props.modelValue.hasDiscussion) sections.push('Discussion')
+  return sections
+})
+
+const onTextSectionsChange = (vals: string[]) => {
+  update({
+    hasHistory: vals.includes('History'),
+    hasExam: vals.includes('Exam'),
+    hasFindings: vals.includes('Findings'),
+    hasDiagnosis: vals.includes('Diagnosis'),
+    hasTreatment: vals.includes('Treatment'),
+    hasDiscussion: vals.includes('Discussion'),
+  })
 }
 
 const onAgeMinInput = (raw: string) => {
@@ -229,94 +241,103 @@ const onDateMinInput = (val: string) => {
 const onDateMaxInput = (val: string) => {
   update({ dateMax: val || null })
 }
-
-const sectionOptions = [
-  { key: 'hasHistory', label: 'History' },
-  { key: 'hasExam', label: 'Exam' },
-  { key: 'hasFindings', label: 'Findings' },
-  { key: 'hasDiagnosis', label: 'Diagnosis' },
-  { key: 'hasTreatment', label: 'Treatment' },
-  { key: 'hasDiscussion', label: 'Discussion' },
-] as const
-
-type SectionKey = typeof sectionOptions[number]['key']
-
-const toggleSection = (key: SectionKey) => {
-  update({ [key]: !props.modelValue[key] } as Pick<Filters, SectionKey>)
-}
 </script>
 
 <style scoped>
 
 .filters-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  grid-auto-flow: row;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   width: 100%;
-  box-sizing: border-box;
-  gap: 1.2rem;
-  background: white;
-  padding: 1.25rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.75rem;
+}
+
+.filters-header {
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #667eea;
+  margin-bottom: 0.25rem;
+}
+
+.filters-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 0.15rem;
+}
+
+.filter-hint {
+  font-size: 0.7rem;
+  color: #718096;
+  margin: 0;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filter-group:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .filter-group h4 {
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: #2d3748;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .search-group input {
   width: 100%;
   padding: 0.4rem 0.6rem;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
 }
 
 .range-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .range-group input {
   width: 100%;
-  padding: 0.4rem 0.6rem;
+  padding: 0.35rem 0.5rem;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
   min-width: 0;
 }
 
 .pill-group {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.4rem;
 }
 
 .pill {
   border: 1px solid #cbd5e0;
-  background: #edf2f7;
+  background: #f7fafc;
   color: #2d3748;
-  border-radius: 20px;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.85rem;
+  border-radius: 5px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: all .15s ease;
+  transition: all .2s ease;
+  text-align: left;
 }
 
 .pill:hover {
-  background: #e2e8f0;
+  background: #edf2f7;
+  border-color: #667eea;
+  transform: translateX(2px);
 }
 
 .pill.active {
@@ -326,7 +347,7 @@ const toggleSection = (key: SectionKey) => {
 }
 
 .push-bottom {
-  margin-top: 24px;
+  margin-top: 0.5rem;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -345,30 +366,43 @@ input[type="date"] {
 }
 
 :deep(.ms-btn) {
-  min-height: 36px;
+  min-height: 32px;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+}
+
+:deep(.ms-dropdown) {
+  font-size: 0.85rem;
+}
+
+:deep(.ms-label) {
+  font-size: 0.7rem;
+  margin-bottom: 0.4rem;
 }
 
 .filters-footer {
-  grid-column: -2 / -1;
-  justify-self: end;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: flex-end;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid #e5e7eb;
 }
 
 .reset-btn {
-  background: #edf2f7;
-  color: #2d3748;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  width: 100%;
+  background: #fee;
+  color: #c53030;
+  border: 1px solid #fc8181;
+  border-radius: 5px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .reset-btn:hover {
-  background: #e2e8f0;
+  background: #fc8181;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(252, 129, 129, 0.3);
 }
 </style>

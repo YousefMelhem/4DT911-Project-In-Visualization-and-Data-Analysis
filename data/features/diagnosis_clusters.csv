@@ -1,0 +1,4003 @@
+diagnosis,frequency,cluster
+Fibrous Dysplasia,18,0
+Branchial Cleft Cyst,12,0
+Olfactory Neuroblastoma,12,0
+Vestibular Schwannoma,11,0
+Battle Related Eye Injury,8,0
+Blowout Fracture Of The Orbit,8,0
+Odontogenic Keratocyst,8,0
+Odontogenic Keratocyst Of The Mandible,8,0
+Optic Nerve Glioma,8,0
+Orbital Pseudotumor,8,0
+Ameloblastoma,6,0
+Eagle Syndrome,6,0
+Thyroglossal Duct Cyst,6,0
+Cephalohematoma,5,0
+Fronto-Nasal Encephalocele,5,0
+Retinoblastoma,5,0
+Sialolithiasis,5,0
+Basal Cell Nevus Syndrome; Gorlin-Goltz Syndrome,4,0
+Bell'S Palsy Affecting The Left Facial Nerve.,4,0
+Bilateral Wilms Tumor,4,0
+Blowout Fracture Of Orbit.,4,0
+"Bone Metastasis, Left Occipital Condyle From Colon Cancer",4,0
+Chondrosarcoma Of The Skull Base,4,0
+Obstructing Sialolith With Associated Acute Infection,4,0
+Odontogenic Keratocyst With Ectopic Eruption Of A Maxillary Molar Tooth,4,0
+Oral Chewing Tobacco,4,0
+Orbital Nodular Fasciitis,4,0
+"Osteoid Osteoma, Frontal Sinus",4,0
+Osteoma Of The External Auditory Canal,4,0
+Ostoegenic Sarcoma Jaw (Osteosarcoma),4,0
+Otosclerosis,4,0
+"Otosclerosis, Probably Secondary To Acute Bacterial Meningitis",4,0
+Squamous Cell Carcinoma,4,0
+Thyroid Ophthalmopathy,4,0
+Adenoid Cystic Carcinoma,3,0
+Facial Nerve Schwannoma,3,0
+Fibromatosis Coli,3,0
+Rathke Cleft Cyst,3,0
+Second Branchial Cleft Cyst,3,0
+Silent Sinus Syndrome,3,0
+Superior Semicircular Canal Dehiscence Syndrome,3,0
+Adamantinomatous Craniopharyngioma,2,0
+"Chondrosarcoma, Moderate Grade",2,0
+"Craniopharyngioma, Adamantinomatous Type",2,0
+Enlarged Vestibular Aqueduct Syndrome,2,0
+Fibrous Dysplasia Of Maxilla,2,0
+Glomus Tympanicum And Glomus Jugulare Tumors (Paraganglioma),2,0
+Microtia And Atresia Of The External Auditory Canal,2,0
+"Rhabdomyosarcoma, Alveolar Type",2,0
+Rhinolith,2,0
+Stafne Bone Cavity,2,0
+Subperiosteal Orbital Abscess,2,0
+Trigeminal Schwannoma,2,0
+Acute Myelogenous Leukemia (AML),1,0
+Adenomatous Goiter. .,1,0
+Allergic Preseptal Swelling,1,0
+Aneurysmal Bone Cyst T5 Vertebra,1,0
+"Angiosarcoma,Liver, Metastatic To Skull",1,0
+Antrochoanal Polyp,1,0
+Arachnoid Cyst Epidermoid,1,0
+Arachnoid Cyst Oculomotor III,1,0
+Atresia Of External Auditory Canal,1,0
+Cephalohematoma - Ossified,1,0
+Cholesteatoma Right Ear,1,0
+Choroid Fissure Cyst,1,0
+Coalescent Mastoiditis Without Sub-Periosteal Abscess,1,0
+Coloboma,1,0
+Compound Composite Odontoma,1,0
+Compound Odontoma.,1,0
+Congenital Cholesteatoma,1,0
+Congenital Dacrocystocele,1,0
+Congenital Dacryocystocele On The Right,1,0
+Contrecoup Intraparenchymal Brain Contusion And Basilar Skull Fracture.,1,0
+Epidural Empyema,1,0
+Epiglottitis,1,0
+Esthesioneuroblastoma,1,0
+Ethmoiditis With Subperiosteal Abscess Of The Left Medial Orbit,1,0
+Ewing Sarcoma Of The Skull,1,0
+Ewings Sarcoma Of The Skull,1,0
+Fibro Osseous Lesions Of The Face And Sinuses (Fibrous Dysplasia),1,0
+Fibrous Dysplasia Of Right Temporal And Zygomatic Bone.,1,0
+Findings Consistent With Eagle Syndrome In The Proper Clinical Setting.,1,0
+"Frontoethmoidal Mucocele, Intracranial Extension",1,0
+Frontoethmoidal Mucopyocele,1,0
+Fungal Sinusitis,1,0
+Glomus Jugulare Tumor (Presumptive - No Biopsy),1,0
+"Glomus Tumor, Paraganglioma, Chemodectoma",1,0
+Glomus Tympanicum,1,0
+Glomus Tympanicum Tumor (Paraganglioma),1,0
+GRAVES Opthalmalopathy,1,0
+"Greater Occipital Nerve Entrapment, Unilateral Occipital Headache",1,0
+Hperplasia Of The Mandibular Coronoid Process,1,0
+Hyperstosis Frontalis Interna,1,0
+Infected 2nd Branchial Cleft Cyst,1,0
+Infected 4th Branchial Cleft Sinus.,1,0
+Infected Radicular Cyst,1,0
+Intraconal Orbit Schwannoma,1,0
+Inverted Nasal Papilloma,1,0
+Juvenile Nasopharyngeal Angiofibroma,1,0
+Juvenile Nasopharyngeal Angiofibroma (JNA),1,0
+"Juvenile Nonossifying Fibroma, Orbital Roof",1,0
+Lateral Meningocele,1,0
+"Left Optic Nerve Glioma, Neurofibromatosis 1 (NF1)",1,0
+Lingual Thyroid,1,0
+Lymphangioma,1,0
+Lymphoma Orbit,1,0
+Mastoiditis,1,0
+Medial Migration Of PE (Tympanostomy) Tube,1,0
+"Meningioma, Intraosseous",1,0
+"Meningioma, Pneumosinus Dilatans",1,0
+Mondini Syndrome,1,0
+Nasal Malignant Peripheral Nerve Sheath Tumor (MPNST),1,0
+Neurofibromatosis Type 1 With Left C1-2 Schwannoma,1,0
+Nonkeratinizing Undifferentiated Carcinoma Oropharyngeal Cancer,1,0
+Radiation Neuritis Trigeminal Nerve Secondary To Gamma Knife Therapy.,1,0
+Radicular Cyst,1,0
+Recurrent Uveitis With Hyphema,1,0
+"Retinal Lymphoma, Large B-Cell Type",1,0
+Right Orbital Arteriovenous Malformation (AVM),1,0
+Right Upper Lobe Collapse,1,0
+Rupture Of The Left Globe With Associated Orbital Wall Fractures.,1,0
+Schwannoma Of The Vagus Nerve,1,0
+"Schwannoma, Intracanalicular",1,0
+"Secondary Orbital Large Cell Lymphoma, Extraconal Masses",1,0
+Sialadenitits,1,0
+"Sialolithiasis, Right Submandibular Gland",1,0
+SILENT SINUS SYNDROME,1,0
+Simple Ranula,1,0
+Sjogren'S Syndrome With Concomitant Lymphoma,1,0
+Spenoid Sinus Mucoceles,1,0
+Sphenoid Mucocele,1,0
+Sphenoid Mucocele And Sinusitis,1,0
+Squamous Cell Carcinoma External Auditory Canal,1,0
+Squamous Cell Carcinoma Moderately Differentiated,1,0
+"Squamous Cell Carcinoma Of Orbit, Superior Orbital Fissure, And Cavernous Sinus",1,0
+Squamous Cell Carcinoma Right Orbit.,1,0
+"Squamous Cell Carcinoma, Malignant Transformation Of Epidermoid Cyst.",1,0
+Subgaleal Hemorrhage,1,0
+Subperiosteal Abscess,1,0
+Temporal Bone Fractures,1,0
+Thyroglossal Duct Cyst (TGD),1,0
+Thyroid Papillary Carcinoma,1,0
+Torus Palatinus,1,0
+Tricholemmoma,1,0
+Trigeminal Schwannoma (CN V),1,0
+"Venous Sinus Thrombosis, Temporal Bone Otomastoiditis, Osteomyelitis, MRSA",1,0
+"Vestibular (""Acoustic"") Schwannoma",1,0
+"VESTIBULAR SCHWANNOMA, Intracanalicular",1,0
+Zygomaticomaxillary Complex Fractures,1,0
+Left Aortic Arch With Aberrant Right Subclavian Artery,10,1
+Right Aortic Arch With Aberrant Left Subclavian Artery,8,1
+Aberrant Right Subclavian Artery,7,1
+Aortic Dissection,7,1
+Abdominal Aortic Aneurysm,6,1
+Coarctation Of The Aorta,5,1
+Bicuspid Aortic Valve,4,1
+Bicuspid Aortic Valve With Aortic Dilatation,4,1
+Blunt Splenic Trauma Requiring Embolization Of The Splenic Artery,4,1
+Bridging Bronchus,4,1
+Obstruction And Isolation Of The Right Posterior Sectoral Duct And Its Radicals From The Remainder Of The Biliary System.,4,1
+Obturator Hernia,4,1
+Atrial Septal Defect (ASD),3,1
+Azygous Continuation Of The Inferior Vena Cava,3,1
+Angiosarcoma,2,1
+Aortic Coarctation,2,1
+Aortic Nipple,2,1
+Atrial Septal Defect,2,1
+Celiac Artery Aneurysm,2,1
+Common Femoral Artery Pseudoaneurysm,2,1
+Ebstein'S Anomaly,2,1
+Hereditary Hemorrhagic Telangiectasia (HHT) And Pulmonary Arteriovenous Malformation (AVM),2,1
+Intracranial Internal Carotid Artery Aneurysm,2,1
+Left Lower Lobe Collapse,2,1
+Median Arcuate Ligament Syndrome,2,1
+Myocardial Ischemia,2,1
+Renal Artery Aneurysm,2,1
+Right Sided Aortic Arch With Aberrant Left Subclavian Artery,2,1
+Saddle Pulmonary Embolism,2,1
+Tracheal Bronchus,2,1
+Traumatic Aortic Injury,2,1
+Type II Endograft Leak,2,1
+Abdominal Aortic Aneurysm (AAA),1,1
+ABERRANT RIGHT SUBCLAVIAN ARTERY,1,1
+Absence Of IVC,1,1
+Accessory Cardiac Bronchus,1,1
+Accessory Right Hepatic Vein,1,1
+Amplatzer Atrial Septal Defect Occluder,1,1
+Anastamotic Pseudoaneurysm,1,1
+ANEMIA,1,1
+Aneurysm,1,1
+Angiographic Complication. Near-Occlusion Of Right CFA From Iatrogenic Injury During Cardiac Catheterization And Application Of Closure Device.,1,1
+Anomalous Left Coronary Artery Arising Form The Pulmonary Artery (ALCAPA),1,1
+Anomalous Origin Of The Right Coronary Artery,1,1
+Anomalous Right Coronary Artery,1,1
+Aortic Aneurysm,1,1
+"Aortic Dissection, DeBakey Type I, Stanford Class A",1,1
+Aortic Dissection.,1,1
+Aortic Nipple (Characteristic Imaging Appearance).,1,1
+Aortic Pseudoaneursym,1,1
+AORTIC PSEUDOANEURYSM,1,1
+Aortic Transection,1,1
+Arteriovenous Fistula (Angiographically Confirmed),1,1
+Artificial Cardiac Valves,1,1
+Atherosclerotic Right Renal Artery Stenosis,1,1
+Atrial Septal Defect Mitral Regurgitation (By Imaging),1,1
+Atrial Septal Defect (ASD).Ostium Primum.,1,1
+Atrial Septal Defect Causing Pulmonary Artery Hyptertension.,1,1
+Atrial Septal Defect Treated With A Percutaneous Closure Device.,1,1
+Atrial Septal Defect; Migraine Headache,1,1
+Calcified Mitral Annulus,1,1
+Cardiac Tamponade,1,1
+"Carotid Artery Stenosis Secondary To Atherosclerotic Disease. Based On An ICA PSV Of 315, Degree Of Stenosis Is Most Likely Greater Than 70%.",1,1
+Carotid Disease,1,1
+Carotid Stenosis Due To Atherosclerosis.,1,1
+Catheter,1,1
+Catheter Failure,1,1
+Catheter-Port Connection Failure,1,1
+"Celiac, Abdominal Aorta, & Common Iliac Aneurysms",1,1
+Chronic Aortic Dissection,1,1
+CHRONIC AORTIC PSEUDOANEURYSM,1,1
+Chronic Myocardial Infarction,1,1
+Circumaortic Left Renal Vein,1,1
+COARCTATION,1,1
+Coil Embolization Of A Duodenal Bleed,1,1
+Coil Emboliztion Of A Dialysis Fistula,1,1
+Common Carotid Occlusion With Preservation Of Ipsilateral Flow In The ICA,1,1
+"Common Carotid Occlusion, Collateral Reconstitution Of Ipsilateral ICA From Vertebral Artery Muscular Branches",1,1
+Congenital Absence Of The Internal Carotid Artery,1,1
+Congenital Absence Of The Right Cavernosal Artery Causing Erectile Dysfunction,1,1
+Congenital Hypoplasia Of The Internal Carotid Artery,1,1
+Congenital Partial Absence Of The Pericardium.,1,1
+Congenitally Corrected Transposition Of The Great Vessels,1,1
+Critical Left Internal Carotid Artery Stenosis (Angiographic String Sign),1,1
+Critical Pulmonary Stenosis With Intact Ventricular Septum Diagnosed By Echocardiogram And Cardiac Catheterization.,1,1
+Cryoplasty Of Femoropopliteal Atherosclerotic Disease,1,1
+Endograft Leak - Type II Involving The L3 Lumbar Artery And Inferior Mesenteric Artery.,1,1
+Endoleak-Type IIIb,1,1
+Extra Or Enlarged Pericardial Fat Pad There Is A Left Arch With Soft Tissue Compression Of The Esophagus On Lateral View Consistent With A Normal Variant: Left Aortic Arch With Aberrant Right Subclavian.,1,1
+Femoral Pseudoaneurysm,1,1
+"Focal Nodular Hyperplasia (Liver), Pulmonary AVM, Hereditary Hemorrhagic Telangiectasia",1,1
+Foreign Body Embolization.,1,1
+Giant Cell Arteritis,1,1
+Gonadal Vein Thrombosis,1,1
+"Gunshot Wound, Traumatic Vascular Injury",1,1
+Hepatic Artery Laceration Confirmed At Angiography,1,1
+Hereditary Hemorrhagic Telangiectasia (HHT) And Pulmonary Arteriovenous Malformation (AVM)- Osler-Weber-Rendu,1,1
+High Velocity Rifle Wound Through C5,1,1
+Hypoplastic Right Heart,1,1
+Importance Of Recognizing Vascular Anatomy In Chemoembolization,1,1
+Inadvertent Ventriculostomy Tube Placed Into The Mid-Brain,1,1
+Inappropriate Positioning Of PICC Line,1,1
+Incidental Hepatic Artery Aneurysm,1,1
+Inferior Vena Cava Filter,1,1
+Inguinal Hernia Involving Bladder,1,1
+Internal Carotid Artery Aneurysm,1,1
+Interrupted Left IVC With Hemiazygous And Azygous Continuation.,1,1
+Intrapericardial Diaphragmatic Hernia,1,1
+Left Aortic Arch With Aberrant Right Subclavian Artery.,1,1
+Left Atrial Appendage Thrombus,1,1
+"Left Common Carotid Occlusion, High Grade Stenosis Right ICA",1,1
+Left Internal Carotid Dissection,1,1
+Left Sided Superior Vena Cava,1,1
+Left Superior Vena Cava,1,1
+Left Ventricular Aneurysm,1,1
+Left Ventricular Non Compaction,1,1
+Left-Sided Aortic Arch With An Aberrant Right Subclavian Artery,1,1
+Low Signal Intensity Renal Parenchyma On MRI,1,1
+"Marfan Syndrome, Annuloaortic Ectasia",1,1
+Marfan'S Syndrome Resulting In Aortic Root Dilation,1,1
+Massive Pulmonary Embolism,1,1
+Metastatic Pheochromocytoma/Paraganglioma,1,1
+Missed Guidewire From CV Line Floating In Svc-Ra-Ivc,1,1
+Mitral Regurgitation,1,1
+Mitral Stenosis With Repair,1,1
+Multiple Saccular Aneurysms,1,1
+"Near Miss Of The Renal Cell Carcinoma Due To The ""Satisfaction Of Search"" Phenomena",1,1
+RECURRENT VARICOCELE TREATED WITH GONADAL VEIN/VARICOCELE EMBOLIZATION.,1,1
+Renal Arteriovenous Malformation,1,1
+RENAL ARTERIOVENOUS MALFORMATION,1,1
+Repaired Tetralogy Of Fallot,1,1
+Replaced Right Hepatic Artery,1,1
+Retrieval Of A Gunther Tulip Vena Cava Filter,1,1
+Retroaortic Renal Vein,1,1
+"Rib Fractures: Posterior At Left 3rd Rib, Laterally On Left 5th-9th Ribs. Incidental",1,1
+Right Aortic Arch With Aberrant Left Subclavian.,1,1
+Right Arch With Aberrant Left Subclavian Artery,1,1
+Right Mediport Catheter Malposition,1,1
+Right Sided Aortic Arch,1,1
+Right Sided Aortic Arch With Aberrant Left Subclavian Artery.,1,1
+Right Ventricular Aneurysm,1,1
+Rupture As A Complication Of Fistulogram And Related Interventions,1,1
+Ruptured Aortic Aneurysm,1,1
+Ruptured Infrarenal Abdominal Aortic Aneurysm,1,1
+Severe Stenosis At The Ostium Of The Left Renal Artery Causing Renovascular Hypetension.,1,1
+Stanford A Aortic Dissection,1,1
+Stent Placement For Recurrent Central Venous Occlusion,1,1
+Subclavian Central Venous Catheter Fracture And Embolization,1,1
+Subclavian Steal,1,1
+Subclavian Vein Stenosis,1,1
+Superior Mesenteric Artery Thromboembolus,1,1
+Superior Mesenteric Artery Thrombus,1,1
+Superior Vena Cava Obstruction,1,1
+SVC Duplication,1,1
+SVC Syndrome,1,1
+Takayasu&#39;S Arteritis (Type 1),1,1
+"Thoracic ""Outlet"" Syndrome, Venous Type",1,1
+Thoracic Aortic Dissection,1,1
+Thoracic Outlet Syndrome Secondary To Subclavian Vein Stenosis,1,1
+Transjugular Intrahepatic Portosystemic Shunt (TIPS),1,1
+Transposition Of The Great Vessels,1,1
+Umbilical Venous Catheter Malposition,1,1
+Varicocele Embolization,1,1
+Vein Of Galen Malformation (Aneurysm) & Falcine Sinus,1,1
+"Vein Of Galen Malformation, Onyx Embolization; And, Embolization Into Branches Of The Pulmonary Arteries.",1,1
+Vertebral Artery Ectasia In Marfan'S Syndrome,1,1
+Vertebral Artery Fenestration,1,1
+Baastrup'S Syndrome,4,2
+Biceps Brachii Tendon Long Head Rupture,4,2
+Bilateral Pars Fracture Of L5 With Grade I Spondylolisthesis Of L5 On S1,4,2
+Brachial Plexopathy,4,2
+Burst Fracture Lumbar L-3,4,2
+OPLL - Ossification Of The Posterior Longitudinal Ligament,4,2
+Epidural Spinal Hematoma,3,2
+Epidural Lipomatosis,2,2
+"Failed Back Syndrome, Post Operative Hematoma In The Lumbar Spine.",2,2
+L5-S1 Extruded Disk Fragment,2,2
+Thoracic Outlet Syndrome,2,2
+Vertebra Plana,2,2
+"A Neck And Wrist Pain: Bilateral Carpal Tunnel Syndrome, Cervical Subluxation Knee Pain: Post-Traumatic Osteoarthritis, Chronic ACL & PCL Tears, Torn Lateral Meniscus Back Pain: Traumatic Herniated Discs At L4-L5 And L5-S1 With Lumbar Radiculopathy B Patient B Was Diagnosed With A Compression Fracture In The Vertebral Body Of L2, Greater Trochanteric Bursitis With Tendinopathy Of The Inserting Gluteus Medius Tendon, And A Bone Contusion Of The Tibia.",1,2
+Acute And Chronic Lumbar Radiculopathy Secondary To Trauma-Induced Exacerbation Of Intervertebral Disc Herniation.,1,2
+Acute Cervical Disc Herniation With Resultant Cord Compression,1,2
+"Adolescent Idiopathic Scoliosis, Degenerative Disc Disease",1,2
+Anatomic Lumbar Instability With Radiculopathy,1,2
+Arachnoid Cyst Causing Hydromyelia,1,2
+Atlantoaxial Subluxation Due To Rheumatoid Arthritis,1,2
+Atrial Fibrillation,1,2
+C-Spine Fracture With Locked Facets,1,2
+C5 Cervical Radiculopathy And Supraspinatus Tendon Rotator Cuff Injury,1,2
+Caplan Syndrome,1,2
+Case Study: Multidisciplinary Approach To Acute Low Back Pain With Associated Lower Extremity Complaints Secondary To Trauma And Complicated By Pre-Existing Spinal Conditions.,1,2
+Catheter Tip Granuloma.,1,2
+Cerebral Infarction (Stroke),1,2
+Cervical And Lumbar Radiculopathy,1,2
+Cervical Central Disc Protrusions With Radiation - Outcomes Assessment With Chiropractic Care,1,2
+Cervical Cord Hemangioblastoma,1,2
+"Cervical Myelopathy, CTS, Radiculopathy And Rotator Cuff Injury",1,2
+Cervical Radiculopathy With Myelopathic Changes,1,2
+"Cervical Radiculopathy, Lumbar Radiculopathy, Cubital Tunnel Syndrome, Right SLAP Tear (Grade 1), Post-Concussive Syndrome, Cervicalgia, Acute Lumbago",1,2
+"Cervical Spine Instability, CTS, Rotator Cuff Sprain, Labral Tear",1,2
+Cervicogenic Headache,1,2
+Chiari 1 Malformation Aggravated By MVA,1,2
+Chiari Type I Malformation,1,2
+Chronic Fungal Sinusitis,1,2
+Chronic Regional Pain Syndrome,1,2
+"Co-Management, Chiropractic And Neurosurgical Care, Of A Large Lumbar Herniated Disc",1,2
+"Complex Post-MVC Lumbar Surgery, Multiple Spinal Disc Herniations, Shoulder Injury, Post-Surgical Psoas Phlegmon With Spinal Functional Assessment",1,2
+Eliciting A Proper,1,2
+Epidural Catheter Tip Sterile Granuloma,1,2
+"Epidural Hematoma, Cervical And Thoracic Spine",1,2
+Ewing Sarcoma Chest Wall,1,2
+Extruded Lumbar Disk Herniation,1,2
+Facet Joint (Synovial) Cyst,1,2
+"Failed Back Syndrome, Secondary To Displaced Intervertebral Disc Cage",1,2
+"Flexion-Distraction, Osseous-Ligamentous (Chance Variant) Fracture Of L1.",1,2
+Foreign Body (Denture) At The Level Of Cricopharynx,1,2
+Foreign Body Impaction In Distal Esophagus,1,2
+Foreign Body Ingestion,1,2
+Fracture Of The Base Of The Fifth Metatarsal (Jones Fracture),1,2
+Full-Thickness Rotator Cuff Tear,1,2
+Functional Capacity Evaluation And Lumbar Radiculopathy Construct Validity,1,2
+Glioblastoma Multiforme (Astrocytoma Gr 4),1,2
+"Hematoma, Compartment Syndrome",1,2
+Hemophilia With Arthritis,1,2
+Herniated Discs C5-6 And C6-7 Levels - Discussion On Age Dating Disc Injuries Via MRI,1,2
+Highly Suspicious For Clinically Isolated Syndrome Of MS,1,2
+HIZ Discogenic Pain Radiculopathy,1,2
+Homozygous Sickle Cell Disease With Avascular Necrosis,1,2
+Hyperflexion Injury Of The Thoracic Spine With Spinal Cord Hematoma,1,2
+Incomplete Fracture Proximal Left Femur,1,2
+Infarction Thoracic Spinal Cord,1,2
+Internal Disc Disruption With Secondary Chemical Radiculopathy.,1,2
+Intrauterine Pregnancy,1,2
+Juvenile Rheumatoid Arthritis,1,2
+Klippel Feil Syndrome Type I,1,2
+L4-L5 And L5-S1 Herniated Discs,1,2
+L5 Radiculopathy,1,2
+L5-S1 Disc Herniation With S1 Radiculopathy,1,2
+L5-S1 Right Para-Centrally Extruded Disc,1,2
+Left C5/C6 Disc Herniation With Radiculopathy,1,2
+"Left Mid-Shaft Clavicle Fractures, Likely Due To Accidental Trauma",1,2
+Left S1 Radiculopathy,1,2
+Left Upper Lobe Pneumothorax,1,2
+Ligamentous Laxity In The Cervical Spine In A Patient With Rheumatoid Arthritis,1,2
+Limbus Vertebra,1,2
+Lumbar DIsc Herniation And Radiculopathy,1,2
+"Lumbar Disc Herniation L3-L4, L4-L5 With Right L4 Radiculopathy",1,2
+"Lumbar Disc Herniation, L4/5 And L5/S1 With Left Sided Radiculopathy",1,2
+"Lumbar Radiculopathy Due To Lumbar Disc Herniation, Protrusio Acetabuli",1,2
+Lumbar Radiculopathy In The Presence Of Disc Herniation And Spondylolisthesis,1,2
+Lumbar Spinal Stenosis,1,2
+Lumbar Sprain And Fibula Bone Lesion,1,2
+Lumbosacral Compressive And Chemical Radiculopathy.,1,2
+Lumbosacral Epidural Lipoma,1,2
+"Madelung Deformity, Bilateral Carpal Tunnel Syndrome, C6/C7 Disc Herniation, Possible Double Crush Phenomena.",1,2
+Massive Rotator Cuff Tears,1,2
+Multiple C1 Fractures,1,2
+Multiple Sclerosis- Active Stage.,1,2
+MVA Chest Trauma,1,2
+"MVA Induced Disc Herniation At C5/6 With Clinical Radiculopathy, Vertebral Motion Dysfunction Superimposed On Pre-Existing CIS",1,2
+MVC Cervical Discopathy Complicated By MS And Concussion,1,2
+Normal Variant: Calcification In The Ligamentum Nuchae,1,2
+Radiculopathy Secondary To Herniated Disk In ESRD Requiring Hemodialysis - Post Motor Vehicle Collision,1,2
+"Resolution Of Chronic Shoulder And Neck Pain With Cold Laser, Rehabilitation And Chiropractic Care - Case Study",1,2
+"Retained Acupuncture Needles. When Questioned, Patient Admitted That As A Complementary Treatment To Her Mastectomy 30 Years Ago, She Received Acupuncture. Gold Needles Were Used In A Technique Which Intentionally Retained Them Into The Patient’S Body. She Denied Any Pain Or Skin Changes From The Retained Needles.",1,2
+Right Anterior Inferior Iliac Spine Avulsion Fracture,1,2
+Right C6 Radiculopathy,1,2
+Right Cervical Rib,1,2
+"Right Hip Femoral Acetabular Impingement, Right Hip Anterior Superior Labral Tear, Right Iliopsoas Snapping Syndrome, Right Iliac Wing Fracture",1,2
+"Right Vertebral Artery Dissection, Lateral Medullary Syndrome (Wallenberg Syndrome)",1,2
+Rotator Cuff Tear And Left C5 And C6 Radiculopathy.,1,2
+Rotator Cuff Tendinopathy Vs Cervical Radiculopathy,1,2
+Salter-Harris Fracture Type II,1,2
+SERONEGATIVE SPONDYLARTHROPATHIES,1,2
+Severe Left Lateral Recess And Foraminal Stenosis Lumbar Spine With Radicular And Scleratogenous Effect,1,2
+SLAP Tear And Clinical Cervical Radiculopathy,1,2
+Spinal Cord Ependymoma Pending Histology Results.,1,2
+Spinal Osteochondroma,1,2
+Spinal Stenosis With Herniated Nucleus Pulposis (HNP) L4-5,1,2
+"Spine Fracture, T4",1,2
+"Spine, Lateral Recess Stenosis",1,2
+"Spine, Spinal Stenosis",1,2
+Spondylodiskitis With Associated Epidural Abscess. Cultures Positive For Staphlococcus,1,2
+"Spondylolisthesis, Bilateral L3 Pars Defects",1,2
+"Sports Hernia, Specifically Avulsion Of Rectus Abdominis-Adductor Longus Aponeurosis",1,2
+Stage IV Chondromalacia Patella,1,2
+Staphyloccus Spondylodiscitis With Epidural Abscess,1,2
+Subtalar And Talonavicular Dislocation,1,2
+Subtalar Dislocation,1,2
+T4N2M1 Small Cell Lung Carcinoma,1,2
+"Tarlov Cyst, May Have Become Symptomatic Post-Pregnancy",1,2
+Tethered Spinal Cord With Terminal Spinal Lipoma,1,2
+Thoracic Spine Meningioma (Psammomatous),1,2
+Torn Right Anterior Cruciate Ligament (ACL),1,2
+Transdural Spinal Cord Herniation,1,2
+Transverse Myelitis,1,2
+"Trauma-Induced Multi-Level Disc Herniations, Accompanied By Trauma-Induced Symptomatic Spondylolisthesis, Facet Syndrome And Instability Of The L4-L5 Region.",1,2
+Traumatic Cervical Nerve Root Avulsion,1,2
+Unicameral Bone Cyst With Associated Pathological Fracture,1,2
+Ventricular Fibrillation,1,2
+Vertebral Fracture In A Patient With Lumbar Disc Herniation,1,2
+"Watch Battery Ingestion, Esophageal Erosion And Mediastinitis, Osteomyelitis And Fusion Of T1-T3",1,2
+Baastrup'S Sign,4,3
+Acute L4-L5 Radiculopathy Likely Tophaceous Spinal Gout At L4-L5 Levels And Left Recurrent Meningeal Neuropathy,1,3
+CAN A ROTATOR CUFF TEAR BE AGE DATED?,1,3
+Cauda Equina Syndrome,1,3
+Cerebrovascular Disease,1,3
+Cervical And Lumbar Disc Herniations Management Complicated By LVAD,1,3
+Cervical And Lumbar Radiculopathy Complicated By Knee And Shoulder Injury.,1,3
+Cervical Cord Contusion Myelomalacia,1,3
+Cervical Disc Herniation And Shoulder Labral Tear,1,3
+Cervical Disc Herniation And Shoulder Rotator Cuff Tear Post Work-Related Altercation,1,3
+Cervical Disc Herniation With Radiculopathy,1,3
+"Cervical Disc Herniation, Cubital Tunnel Syndrome, Cupal Tunnel Syndrone",1,3
+Cervical Disc Protrusion And Pituitary Tumor,1,3
+Cervical Discitis/Osteomyelitis - Diagnosis And Management By A Doctor Of Chiropractic – A Case Study,1,3
+Cervical Instability Following MVC,1,3
+Cervical Radiculopathy,1,3
+Cervical Radiculopathy And Chiropractic Outcome Assessment,1,3
+Cervical Radiculopathy Secondary To Trauma-Induced Exacerbation Of Intervertebral Disc Herniation Complicated By Dementia Secondary To Chronic Ischemic White Matter Disease And Post Concussive Syndrome,1,3
+"Cervical Radiculopathy, Cervical Disc Herniation, Arthritis, Carpal Tunnel Syndrome, Consider Complex Regional Pain Syndrome And Double Crush Phenomenon",1,3
+"Cervical Spinal Stenosis, Multiple Level DJD & Central Discs (""Washboard Spine"")",1,3
+"Cervical Spinal Stenosis, Rotator Cuff Injury, Labral Tear, With Discussion Of The Torg And Effective Torg Ratios",1,3
+Chance-Type Fracture,1,3
+Chondrosarcoma,1,3
+Congenital Heart Disease Overview,1,3
+Conservative Care Of Right Post-Traumatic Carpal Tunnel Syndrome With Associated Ligament Injury Confirmed With Advanced Imaging,1,3
+Correlative Study: Modic Type 2 MRI And Bilateral L4 Radiculopathy.,1,3
+Cystocele,1,3
+"Extensive Bilateral Pulmonary Emboli Extending Into Distal Vasculature, More So On The Right Side",1,3
+Failure Of Posterior Cervical Fusion Hardware; Displacement Of Internal Fixation Device Of Vertebrae – T84.226A.,1,3
+Femoroacetabular Impingement - Pincer Type,1,3
+Flail Chest,1,3
+Implantable Ports,1,3
+IMPROPERLY POSITIONED PICC LINES,1,3
+Improved C3-4 Disc Herniation Recovery With Conservative Care Due To An Over Read Of The MRI By Treating Doctor Of Chiropractic With Advanced Trauma And MRI Interpretation Credentials,1,3
+Intra And Inter-Rater Reliability In Diagnosing Lumbar Post-Traumatic Ligament Injury,1,3
+Klippel-Feil Klippel-Feil Syndrome,1,3
+Knee Effusion,1,3
+"L3-L4, L4-L5, And L5-S1 Disc Bulges",1,3
+Legg-Calve-Perthes Disease Sequela,1,3
+Leriche Syndrome,1,3
+"Lumbar Disc Herniation And Biomechanical Dysfunction: A Case Study. Discussion Of: The Outcome Assessment Of Physical Therapy And Chiropractic Spinal Adjustments On Low Back Pain, Opioid Use, And Health Care Utilization",1,3
+Lumbar Disc Herniation With Likely Chemical Radiculpathy,1,3
+"Lumbar Disc Herniation, Superimposed Varix And Radiculopathy.",1,3
+"Lumbar Disc Herniations With Bilateral Chronic L5 Radiculopathy, Cervical Spine Injury With Chronic Right C6 Radiculopathy And Right Shoulder Labral Tear With Impingement Syndrome",1,3
+Lumbar Disk Herniation - Radiculopathy - ROM-SEMG,1,3
+Lumbar Herniated Discs L4-L5 And L5-S1.,1,3
+Lumbar Stenosis With Radiculopathy Complicated By A Synovial Cyst And A Disc Protrusion,1,3
+Multi-Level Disc Herniation With Left Lower Extremity Radiculopathy.,1,3
+Multifactorial: Lumbar Radiculopathy Secondary To Trauma-Induced Exacerbation Of Intervertebral Disc Herniation Complicated By Trauma-Induced Exacerbation Of The Thoracolumbar Myelopathy Secondary To An Extramedullary Intradural Tumor. .,1,3
+Multiple Cranial Neuropathies,1,3
+Multiple Sclerosis Vs. Trauma,1,3
+"Normal Brain Anatomy, Axial, Coronal, Sagittal",1,3
+Normal Cross-Sectional Gross Anatomy,1,3
+Normal Knee Radiograph,1,3
+Normal Shoulder - Axial,1,3
+"Normal Shoulder Radiography, MRI And Gross Sections",1,3
+Normal Views Of Cervical Spine,1,3
+Radiculopathy From A Lumbar Large Left Lateral Disc Extrusion,1,3
+Radiculopathy From Right Proximal Foraminal And Lateral Recess Disc Protrusion And Chiropractic Care - A Case Study,1,3
+Resolution Of Symptoms Associated With Cervical Disc Herniation And Annular Fissure Following Chiropractic Care,1,3
+Right C6 Radiculopathy And Ankylosing Spondylitis,1,3
+"Right Paracentral Positioned Cervical Disc Herniation, Due To A Rear-End Motor Vehicle Crash, Producing Myelopathy To The Side And Site Of Herniation: A Case Study",1,3
+Ruptured Diaphragm,1,3
+Scheuermann Disease With Kyphosis,1,3
+"Sentinel Node Mapping, Lymphoscintigraphy, And Biopsy",1,3
+Severe Osteo-Arthropathy (Osteoarthritis),1,3
+Sialolithiasis Resulting In Sialoadenitis,1,3
+Spinal Cord Myelomalacia Following MVC: A Case Report,1,3
+Spondylolisthesis,1,3
+Tarlov Cyst,1,3
+Thyroid Adenoma (All Three Patients),1,3
+Transmesenteric Internal Hernia,1,3
+Traumatic Thoracic Aortic Aneurysm,1,3
+Unilteral Facet Dislocation With Fracture C6-C7,1,3
+University Of South Carolina Normal CT Axial Anatomy Of The Abdomen,1,3
+Vasculitis,1,3
+Walker-Warburg,1,3
+"White Matter Disease, Autoimmune Myositis, Supraspinatus And Labral Tear",1,3
+Angiomyolipoma,17,4
+Orchitis,16,4
+Renal Cell Carcinoma,16,4
+Benign Cystic Teratoma,12,4
+Breast Hamartoma (Fibroadenolipoma),12,4
+Ovarian Dermoid (Cystic Teratoma),12,4
+Mature Cystic Teratoma,11,4
+Intraosseous Lipoma,10,4
+Testicular Microlithiasis,10,4
+Cavernous Hemangioma,9,4
+Wilms Tumor,9,4
+Adrenal Myelolipoma,8,4
+Brachytherapy Seed Embolization,8,4
+Ovarian Teratoma,8,4
+Varicocele,8,4
+Endometrioma,7,4
+Liver Hemangioma,7,4
+Ovarian Dermoid Cyst,7,4
+Adrenal Adenoma,6,4
+Epidermoid Cyst,6,4
+Focal Nodular Hyperplasia,6,4
+Infiltrating Ductal Carcinoma,6,4
+Hepatic Hemangioma,5,4
+Seminoma,5,4
+Benign Adrenal Adenoma,4,4
+Benign Breast Calcifications,4,4
+Benign Breast Calcifications Representative Of Fibrocystic Change (BIRADS 2),4,4
+Benign Calcifications,4,4
+Bilateral Optic Gliomas,4,4
+Bladder Cancer,4,4
+Breast Abscess,4,4
+Breast Hemangioma,4,4
+"Breast Implant, Rupture, Extracapsular Silicone",4,4
+"Breast, Ductal Carcinoma",4,4
+"Breast, Papillomatosis",4,4
+Bronchogenic Carcinoma With Metastasis To The Liver. Diagnosis Confirmed By US Guided Needle Biopsy Of The Liver Lesion And Cytopathologic Study Of The Recovered Tissue.,4,4
+Fibromatosis Colli,4,4
+Gastrointestinal Stromal Tumor,4,4
+"Hemangioma, Soft-Tissue",4,4
+Hemorrhagic Cyst,4,4
+Lipoma Arborescens,4,4
+Mixed Germ Cell Testicular Tumor,4,4
+MYELOLIPOMA,4,4
+Optic Nerve Sheath Meningioma.,4,4
+Orbital Dermoid,4,4
+Orbital Granular Cell Tumor,4,4
+Ossifying Fibroma Skull,4,4
+Ossifying Intraosseous Lipoma.,4,4
+Ovarian Dysgerminoma,4,4
+Ovarian Fibroma,4,4
+Ovarian Teratoma (Dermoid),4,4
+Ovarian Tumor Of Borderline Malignancy,4,4
+Aneurysmal Bone Cyst,3,4
+CAROTID BODY TUMOR,3,4
+Epididymitis,3,4
+Fibroadenoma,3,4
+Gastrointestinal Stromal Tumor (GIST),3,4
+Grave'S Disease,3,4
+Gynecomastia,3,4
+Hepatocellular Carcinoma,3,4
+Inflammatory Breast Carcinoma,3,4
+Intraductal Papilloma,3,4
+Intramedullary Lipoma Of The Spinal Cord,3,4
+Nephroblastomatosis,3,4
+Reduction Mammoplasty,3,4
+Rhabdomyosarcoma,3,4
+Siliconomas: Silicone Granulomas From Silicone Breast Augmentation,3,4
+Simple Bone Cyst,3,4
+Vestibular ('Acoustic') Schwannoma,3,4
+Anterior Mediastinal Teratoma,2,4
+Atrial Myxoma,2,4
+Capillary Hemangioma,2,4
+Chondroblastic Osteosarcoma,2,4
+Chordoma,2,4
+Colloid (Mucinous)Carcinoma,2,4
+FAT NECROSIS,2,4
+Fat Necrosis,2,4
+Fatty Infiltration Of The Liver,2,4
+Fibrosarcoma,2,4
+Gallbladder Polyp,2,4
+Ganglion Cyst,2,4
+Granular Cell Tumor,2,4
+GRAVES DISEASE,2,4
+Hashimoto'S Thyroiditis,2,4
+Hemangioma,2,4
+Hepatic Abscess,2,4
+Hepatic Adenoma,2,4
+Intaosseous Lipoma,2,4
+Invasive Ductal Carcinoma,2,4
+Invasive Lobular Carcinoma,2,4
+Junctional Parenchymal Defect,2,4
+Leydig Cell Tumor,2,4
+Lipomatous Hypertrophy Of The Interatrial Septum,2,4
+Lymphoma,2,4
+Microcystic (Serous) Adenoma Of The Pancreas,2,4
+Mixed Germ Cell Tumors Of The Testicle,2,4
+Mucinous Cystadenoma,2,4
+Myxoid Liposarcoma,2,4
+NEUROBLASTOMA,2,4
+Renal Angiomyolipoma,2,4
+Renal Oncocytoma,2,4
+Secretory Calcifications Of The Breast,2,4
+Serous Cystadenoma Of The Pancreas,2,4
+Silicone Granulomas,2,4
+Silicone Granulomas Of The Breast,2,4
+Soft Tissue Sarcoma,2,4
+Testicular Seminoma,2,4
+Wilms' Tumor,2,4
+Yolk Sac Tumor,2,4
+Abnormal Nipple Discharge - Probable Intraductal Papilloma,1,4
+Acute Epididymitis And Orchitis With Testicular Abscess Formation,1,4
+"Adenocarcinoma Of The Lung, Poorly To Moderately Undifferentiated.",1,4
+Adenomatoid Tumor Of The Scrotum,1,4
+Adrenal Mass: NSCL Cancer Recurrence With Adrenal Met,1,4
+Adrenal Rest,1,4
+Amiodarone Deposition In The Liver,1,4
+AML (Angiomyolipoma),1,4
+Anaplastic Ganglioglioma (WHO Grade III),1,4
+Anaplastic Meningioma,1,4
+Angiomyolipomas In A Patient With Tuberous Sclerosis,1,4
+Angiomyolipomas In Tuberous Sclerosis,1,4
+Atypical Pulmonary Hamartoma,1,4
+Atypical Teratoid Rhabdoid Tumor,1,4
+"Autosomal Dominant ""Adult"" Polycystic Kidney Disease (ADPKD)",1,4
+Axillary Aluminum Chlorhydrate Residue (Deodorant).,1,4
+Azygous Lobe (Azygous Fissure),1,4
+Calyceal (Pyelocalyceal) Diverticulum.,1,4
+Carcinoma Of The Bladder,1,4
+Castleman Disease,1,4
+Cavernous Hemangiomas,1,4
+Cavernous Malformation,1,4
+Cavernous Malformation (Preferred Name),1,4
+Cerebellopontine Angle Meningioma - Path Proven,1,4
+Cerebral Aneurysm,1,4
+Cholangiocarcinoma - Radiographic Appearance And Biopsy,1,4
+Chondromyxoid Fibroma,1,4
+"Chondrosarcoma, Low Grade",1,4
+Clivus Hemangioma,1,4
+Colloid Cyst Of The Third Ventricle,1,4
+Column Of Bertin--Normal Variant,1,4
+Combined-Type Intraductal Papillary Mucinous Neoplasm,1,4
+Complex Odontoma,1,4
+Complex Sclerosing Lesions/Radial Scar,1,4
+Congenital Hepatic Vascular Malformation Vs. Infantile Hemangioendothelioma,1,4
+Cystic Teratoma,1,4
+Cystic Transformation Of The Rete Testis,1,4
+Echinococcal Cyst (Hydatid Disease) Of The Liver,1,4
+Embryonal Cell Carcinoma,1,4
+Endometriosis,1,4
+Enteric Duplication Cyst,1,4
+Eosinophilic Granuloma Of The Calvarium,1,4
+"Ependymoma, With Scattered Myxopapillary Features",1,4
+Epididymal Cyst Versus Spermatocele,1,4
+Extra Adrenal Pheochromocytoma (Paraganglioma),1,4
+Extracapsular Silicone Breast Implant Rupture,1,4
+Fibroadenoma Of The Breast,1,4
+Fibroma Of The Tendon Sheath,1,4
+Filum Terminale Myxopapillary Ependymoma,1,4
+Follicular Thyroid Carcinoma W/ Minimal Invasion,1,4
+Galactocele,1,4
+Gallbladder (Cholesterol) Polyp,1,4
+Gallbladder Mass,1,4
+Giant Cavernous Hepatic Hemangioma,1,4
+Giant Cell Tumor Of The Tendon Sheath,1,4
+Giant Cell Tumor With Pulmonary Metastases,1,4
+Glioblastoma Multiforme With Oligodendroglial Component,1,4
+Gynecomastia (Characteristic Appearance).,1,4
+Gynecomastia (Confirmed With Imaging Alone),1,4
+Hamartoma,1,4
+Hemangioblastoma (WHO Grade I),1,4
+"Hemangioma, Bone",1,4
+Hemangiopericytoma,1,4
+"Hematoma, Testicular",1,4
+Hemmorrhagic Cyst,1,4
+Hepatic Angiomyolipoma,1,4
+Hodgkin Disease,1,4
+Hypertrophied Column Of Bertin,1,4
+Hypervascular Hepatic Mass: Possible Hepatic Adenoma,1,4
+"Infantile Hemangioma, Parotid",1,4
+Infiltrating Ductal Carcinoma Ultrasound Guided Core Biopsy,1,4
+Infiltrating Ductal Carcinoma And Ductal Carcinoma In Situ(Surgical Pathology From Lumpectomy Confirmed),1,4
+Infiltrating Ductal Carcinoma With Involvement Of The Epidermis --- Mastectomy,1,4
+Infiltrating Lobular Carcinoma,1,4
+Inflammatory Breast Cancer (Secondary),1,4
+"Insulinoma. Although The Octreotide Scan Was Performed And Was Negative, Histologic Analysis Of The Surgical Specimen Revealed An Insulinoma.",1,4
+Intracapsular Implant Rupture,1,4
+Intracapsular Rupture Of Silicone Breast Implant,1,4
+Intracranial Epidermoid Tumor,1,4
+Intraductal Papillary Mucinous Tumor - Branch Type,1,4
+Intraductal Papilloma Of The Breast,1,4
+Intradural Extramedullary Meningioma.,1,4
+Intramammary Lymph Node. Documented Stability And Characteristic Appearance.,1,4
+Intramuscular Hemangioma,1,4
+Intramuscular Lipoma Of The Triceps,1,4
+Intraosseous Lipoma Of The Distal Femur Confirmed By MRI,1,4
+Intratesticular Cysts (Based On Imaging Characteristics),1,4
+"Invasive Ductal Carcinoma, Grade 3",1,4
+Jugular Foramen Mass (Unknown; Patient Underwent Surgery And We Are Awaiting The Results Of Pathologic Evaluation),1,4
+Juvenile Granulosa Cell Tumor Of The Testis,1,4
+Juvenile Nasopharyngeal Angiofibroma (JNA) Diagnosis Confirmed At Histology After First Resection.,1,4
+Kaposiform Hemangioendothelioma,1,4
+Lactating Adenoma,1,4
+Large Cell Carcinoma,1,4
+Leydig Cell Tumor Of The Testis,1,4
+Lipoma,1,4
+Lipomas Of The Small Bowel,1,4
+Lipomatous Hypertrophy Of The Atrial Septum,1,4
+Liponecrosis Macrocystica Calcificans (Oil Cyst),1,4
+Liponeurocytoma,1,4
+Liver Cavernous Hemangioma,1,4
+Lymphadenitis,1,4
+Male Breast Cancer,1,4
+Malignant Fibrous Histiocytoma,1,4
+Malignant Melanoma Metastatic To Brain,1,4
+Mature Benign Cystic Teratoma,1,4
+Medullary Sponge Kidney (MSK),1,4
+Medullary Thyroid Carcinoma,1,4
+Meningioangiomatosis,1,4
+Metastatic Thyroid Papillary Carcinoma To Internal Jugular Nodes. S/P US-Guided Percutaneous Biopsy.,1,4
+Mixed Germ Cell Tumor Of The Testicle (Embryonal And Yolk Sac Tumor Components),1,4
+Monophasic Venous Waveform With Large Pelvic Mass Compressing The Right External Iliac Vein.,1,4
+Morel Lavallee,1,4
+Most Likely Clear Cell Chondrosarcoma Given Its Enhancement Characteristics.,1,4
+Mucinous Cystadenoma Of The Appendix,1,4
+Mucus Rentention Cyst,1,4
+Multiple Gastric Polyps,1,4
+Myositis Ossificans (Post-Traumatic),1,4
+"Nasopharyngeal Carcinoma, Undifferentiated Type.",1,4
+Neural Fibrolipoma (Fibrolipomatous Hamartoma),1,4
+Neuroendocrine Carcinoma Of Duodenum,1,4
+Neurofibroma,1,4
+Non Ossifying Fibroma In Different Stages,1,4
+Radial Scar/Complex Sclerosing Lesion Of The Breast,1,4
+Ranula,1,4
+Renal Arterovenous Malformation,1,4
+Renal Artery Aneurysm.,1,4
+Renal Cell Carcinoma (Clear Cell),1,4
+"Renal Cell Carcinoma, Clear Cell Type.",1,4
+Rhabdomyolysis,1,4
+"Rhabdomyosarcoma, Metastatic",1,4
+Right Preseptal Cellulitis And Choroidal Melanoma.,1,4
+Ruptured Baker Cyst,1,4
+Schwannoma T1-T2,1,4
+Schwannoma(Ancient),1,4
+"Schwannoma, Paraspinal",1,4
+Sclerosing Adenosis,1,4
+Scrotal Rhabdomyosarcoma,1,4
+Seminoma - Diagnosis Confirmed By Pathology Following Orchiectomy.,1,4
+Sigmoid Lipoma,1,4
+Siliconomas: Silicone Granulomas From Direct Intramammary Silicone Injection Breast Augmentation,1,4
+"Simple Cyst, Left Breast",1,4
+Skull Cap In Anterior Abdominal Wall With Underlying Liquified Hematoma.,1,4
+"Small Hydrocele, Epididymal Head Cyst And Tubular Ectasia Of The Rete Testis",1,4
+"Solitary Fibrous Tumor, Cervical Spine",1,4
+Somatostatin Receptor Imaging (Octreotide Scans),1,4
+Spermatocele,1,4
+Spindle Cell Chest Wall Sarcoma,1,4
+Splenic Hemangioma,1,4
+"Splenic Laceration, Grade III",1,4
+Static Artifact,1,4
+Subcutaneous Abscess,1,4
+Superscan -- Diffuse Osteoblastic Metastasis - Prostate Cancer.,1,4
+Supraclavicular Brown Fat,1,4
+Suprasellar Cistern Lipoma,1,4
+Suspected Metastasis Of Papillary Thyroid Cancer,1,4
+Synovial Sarcoma-Biphasic,1,4
+"Teratoma (""Dermoid"")",1,4
+Testicle Fracture,1,4
+Testicular Epidermoid Cyst,1,4
+Testicular Epidermoid Cyst Pathologically Confirmed.,1,4
+"Testicular Microlithiasis Seminoma, Classic Type",1,4
+Testicular Microlithiasis Testicular Seminoma,1,4
+Testicular Rupture,1,4
+The Peripheral Nodular Enhancement On CT Is Pathognomonic Of A Hemangioma,1,4
+Thymic Cyst,1,4
+"Thyroid Cancer, Probably Follicular",1,4
+Tornwaldt Cyst,1,4
+Tornwaldt Or Thornwaldt Cyst,1,4
+Transient Osteoporosis Of The Hip.,1,4
+"Tuberous Sclerosis (TS), Renal Angiomyolipoma (AML)",1,4
+Tubular Ectasia Of The Rete Testes,1,4
+Tumefactive Multiple Sclerosis,1,4
+Tumor: Seminoma,1,4
+Twinkle Artifact,1,4
+Ultrasound Characteristics Of Breast Cancer,1,4
+Ultrasound-Guided Aspiration Of Breast Cyst,1,4
+Uterine Lipoleiomyoma,1,4
+Venous Malformation,1,4
+Von Meyenburg Complex - Multiple Biliary Hamartomas,1,4
+Warthin Tumor,1,4
+Osteochondroma,84,5
+Osteoid Osteoma,32,5
+Osteomyelitis,28,5
+Osteosarcoma,28,5
+Osteogenesis Imperfecta,24,5
+Occult Stress Fracture,16,5
+OSTEOMYELITIS,16,5
+Nonossifying Fibroma,12,5
+Ollier'S Disease,12,5
+Stress Fracture,12,5
+Enchondroma,11,5
+Rheumatoid Arthritis,11,5
+Ewing Sarcoma,10,5
+Ankylosing Spondylitis,8,5
+Bipartite Patella,8,5
+Osteiitis Condensans Ilii,8,5
+Osteitis Condensans Ilii,8,5
+Osteopoikilosis,8,5
+Rickets,8,5
+Erosive Osteoarthritis,7,5
+Femoral Neck Stress Fracture,7,5
+Multiple Myeloma,7,5
+Giant Cell Tumor,6,5
+Scaphoid Fracture,6,5
+Chondrocalcinosis,5,5
+Heterotopic Ossification,5,5
+Kohler'S Disease,5,5
+Tophaceous Gout,5,5
+Benign Fibroxanthoma,4,5
+Bilateral Avascular Necrosis (AVN) Of The Femoral Heads,4,5
+Bilateral Slipped Capital Femoral Epiphysis,4,5
+Bipartite Medial Cuneiform,4,5
+Bisphosphanate-Related Stress Fractures Of The Femur,4,5
+Bisphosphate Therapy In Pediatrics,4,5
+Bizarre Parosteal Osteochondromatous Proliferation,4,5
+BONE ISLAND,4,5
+Gouty Arthritis,4,5
+Idiopathic Synovial Osteochondromatosis,4,5
+Legg-Calve-Perthes,4,5
+Melorheostosis,4,5
+"Occult Stress Fracture Of Right 2nd Metatarsal Head, With Moderate To Severe Stress Reactions In Both 2nd Metatarsal Shafts And In The Left Mid Tibial Diaphysis.",4,5
+"Old, Inactive Rheumatoid Arthritis Affecting Both Hips (Total Hip Replacement On Left, Erosive Change On Right)",4,5
+"Ollier'S Disease, Enchondromatosis",4,5
+Osgood-Schlatter Disease,4,5
+OSSIFICATION OF STYLOHYOID LIGAMENT,4,5
+Osteitis Condensans Ilii (Illei),4,5
+Osteitis Pubis,4,5
+Osteoarthritis,4,5
+Osteoarthritis Hip - Radiographic,4,5
+"Osteoarthritis Of The Hips Bilaterally, Secondary To Slipped Capital Femoral Epiphyses.",4,5
+Osteoarthritis With Subchondral Cyst And Intra-Articular Fragment,4,5
+Osteochondral Loose Body,4,5
+Osteochondritis Dissecans.,4,5
+Osteochondroma Of Right Fibula,4,5
+Osteochondromatosis (Multiple Hereditary Exostosis),4,5
+Osteonecrosis Of Both Humeral Heads,4,5
+Osteopenia/Osteoporosis,4,5
+"Osteopoikilosis Diagnosed Radiographically, As Pt Was Asymptomatic (Ankle Pain Was Trauma-Related), And Had A Positive Family",4,5
+OSTEOPOIKILOSIS Sclerosing Bone Dysplasias,4,5
+Unicameral Bone Cyst With Pathologic Fracture,4,5
+Avascular Necrosis Of The Femoral Head,3,5
+Charcot Joint,3,5
+Chondroblastoma,3,5
+Hereditary Multiple Exostoses,3,5
+Legg-Calve-Perthes Disease,3,5
+Multiple Hereditary Exostosis,3,5
+Myositis Ossificans,3,5
+Renal Osteodystrophy,3,5
+SCFE - Slipped Capital Femoral Epiphysis,3,5
+Spontaneous Osteonecrosis Of The Knee,3,5
+Tethered Spinal Cord With Terminal Spinal Lipoma.,3,5
+Unicameral (Simple) Bone Cyst,3,5
+Avascular Necrosis,2,5
+Calcium Hydroxyapatite Crystal Deposition Disease,2,5
+CALCIUM PYROPHOSPHATE DIHYDRATE (CPPD) CRYSTAL DEPOSITION DISEASE,2,5
+Calcium Pyrophosphate Dihydrate (CPPD) Crystal Deposition Disease,2,5
+CPPD Arthropathy,2,5
+Femoral Neck Stress Fractures,2,5
+Fibrous Dysplasia Of The Hip,2,5
+Gout,2,5
+Hemophilia,2,5
+Hydroxyapatite Deposition Disease,2,5
+Jefferson Fracture,2,5
+Liposclerosing Myxofibrous Tumor Of Bone (LSMFT),2,5
+Mantle Cell Lymphoma,2,5
+MULTIPLE HEREDITARY EXOSTOSIS,2,5
+Multiple Osteochondromatosis,2,5
+Sickle Cell Disease,2,5
+"Spine, Tethered Cord",2,5
+Spondylolysis And Spondylolithesis,2,5
+Stress Fracture Of The Calcaneus,2,5
+Stress Fracture Right Femoral Neck.,2,5
+Stress Fracture Tarsal Navicular Bone,2,5
+Tibial Shaft Stress Fracture,2,5
+Transient Synovitis Of The Hip,2,5
+Tumoral Calcinosis,2,5
+Acetabular Fracture - Posterior Vertical,1,5
+Achilles Tendon Tear (Partial),1,5
+ACL Tear With Lateral Femoral Notch Sign,1,5
+Acute Lymphoblastic Leukemia,1,5
+"Acute Osteomyelitis, Child",1,5
+Acute Pediatric Osteomyelitis,1,5
+Acute Retroperitoneal And Left Inguinal Hematoma Secondary To Recent Surgery,1,5
+Adamantinoma,1,5
+Adductor Insertion Avulsion Syndrome (Thigh Splints),1,5
+Advanced Gout,1,5
+Aneurysmal Bone Cyst (Confirmed By Histology).,1,5
+"Aneurysmal Bone Cyst, Pathologic Facture",1,5
+Ankylosing Spondylitis In An Anchondroplasitic Dwarf.,1,5
+Ankylosing Spondylitis With Fracture Through C6-7 Disk Space,1,5
+Ankylosing Spondylitis.,1,5
+Avascular Necrosis (Dx Verified By Combination Of Clinical Hx And Radiographic,1,5
+Avascular Necrosis - MRI Diagnosis,1,5
+Avascular Necrosis Of The Femoral Head.,1,5
+Avascular Necrosis Of The Femoral Heads,1,5
+Avascular Necrosis Reparative Phase On Nuclear Medicine Scan Confirmed By MRI Appearance.,1,5
+AVN,1,5
+Calcaneal Fracture In The Setting Of Disuse Osteopenia.,1,5
+Calcaneonavicular Coalition,1,5
+Chance Fracture T11,1,5
+Charcot Arthroapathy Of The Foot And Ankle,1,5
+Childhood Polio And Post-Polio Surgical Corrective Procedures,1,5
+CHRONIC OSTEOMYELITIS CAUSED BY STAPHYLOCOCCUS AUREUS.,1,5
+Classic Metaphyseal Lesion- Non-Accidental Trauma,1,5
+Comminuted Fracture Of Medial Femoral Condyle. Small Joint Effusion.,1,5
+Complete Fracture,1,5
+Cortical Osteoid Osteoma,1,5
+CPPD,1,5
+CPPD (Pseudogout),1,5
+Cranial Acetabular Retroversion,1,5
+CREST Syndrome,1,5
+Cuboid Stress Fracture,1,5
+Cuneiform Stress Fracture,1,5
+CXR,1,5
+Enchondroma (Pathology Pending),1,5
+Enchondroma With Pathologic Fracture,1,5
+Enchondromatosis,1,5
+Enchondromatosis (Ollier'S Disease).,1,5
+Endochondroma,1,5
+Enostosis,1,5
+Femoral Neck Insufficiency Fracture.,1,5
+Femoral Neck Stress Fracture (Diagnostic MRI),1,5
+Findings On CXR In Sickle Cell Disease,1,5
+Fracture Blister,1,5
+Freiberg'S Infraction.,1,5
+Giant Cell Tumor Of The Bone (Osteoclastoma),1,5
+Giant Cell Tumor With Aneursymal Bone Cyst Features,1,5
+Gorlin Syndrome,1,5
+"Gout, Pathophysiology",1,5
+"Grade 3 Stress Fracture, Right Femoral Neck",1,5
+Grade 4 Stress Fracture,1,5
+Growth Arrest Lines,1,5
+Hallux Rigidus,1,5
+"Healing, Nonossifying Fibroma",1,5
+Hemangioma - Based On Imaging Characteristics (No Tissue Obtained),1,5
+Hemangiomatosis,1,5
+Hydroxyapatite Crystal Deposition Disease,1,5
+Hydroxyapatite Crystal Deposition Disease - Wrist,1,5
+Hydroxyapatite Deposition Disease Diagnosis Confirmed By: Radiographic,1,5
+Hydroxyapatite Deposition Disease (Calcific Tendonitis) With Osseous Involvement,1,5
+Hypertrophic Osteoarthropathy,1,5
+Infarcted Intra-Osseous Lipoma,1,5
+Inflammatory Erosive Osteoarthritis,1,5
+Intraosseus Lipoma,1,5
+Intrinsic Sclerotic Bone Dysplasia (Likely Osteopetrosis) With Fracture,1,5
+Jefferson Fracture C1,1,5
+Jefferson Fracture C1; Incidental Dens Type II Fracture,1,5
+"Juvenile Rheumatoid Arthritis, Untreated, Presenting As Adult.",1,5
+K?Hler'S Disease,1,5
+Keinbock'S Disease,1,5
+"Large Areas Of Osseous Infarct With Right S-I Joint Abscess, All Secondary To Effects Of Sickle Cell Anemia",1,5
+Leukemia,1,5
+Low-Grade Chondrosarcoma (Pathologically Proven),1,5
+"Lymphoblastic Lymphoma. FDG-18 PET Revealed No Other Hypermetabolic Foci In The Chest, Abdomen, Or Pelvis.",1,5
+Macrodystrophia Lipomatosa,1,5
+Metastatic Bone Disease,1,5
+Metastatic Disease (Presumed Breast),1,5
+Metatarsal Stress Fracture,1,5
+Monkeberg Sclerosis,1,5
+Multifocal Bone Infarcts,1,5
+Multifocal Bone Infarcts (Osteonecrosis),1,5
+Multiple Hereditary Exostoses,1,5
+MULTIPLE HEREDITARY EXOSTOSES,1,5
+Multiple Hereditary Exostosis.,1,5
+Neurofibromatosis Associated Pseudoarthrosis Of The Tibia,1,5
+Neuropathic Osteoarthritis,1,5
+Non-Union Of Old Scaphoid Fracture With Intraossous Cysts,1,5
+Nonossifying Fibroma - The Diagnosis Was Made Based On,1,5
+Nutritional Rickets,1,5
+Reiter’S Syndrome,1,5
+Renal Cell Carcinoma Lytic Bone Metastases.,1,5
+Rheumatoid Arthritis Of Hip,1,5
+"Rheumatoid Arthritis, Atlanto-Axial Subluxation With Erosive Changes At The Dens",1,5
+Rickets Due To Renal Failure,1,5
+"Rickets, Healing",1,5
+"Right Hip Pain Secondary To Prosthesis Loosening, Not Infection.",1,5
+Right Tibial (Completed) Stress Fracture.,1,5
+Sarcoidosis - Chest And Hands,1,5
+Secondary Osteochondromatosis,1,5
+Segond Fracture With Asssociated Anterior Cruciate Ligament Tear,1,5
+Sickle Cell Anemia With Avascular Necrosis Of Humeral Head.,1,5
+"Silastic Arthropathy, Elbow",1,5
+"Simple Bone Cyst (SBC), Pathologic Fracture",1,5
+Simple Bone Cyst With Pathologic Fracture,1,5
+"Simple Bone Cyst, Pathologic Fracture",1,5
+Skeletal Metastasis,1,5
+Spondyloepiphyseal Dysplasia Tarda [Radiographically Diagnosed],1,5
+Spondyloptosis,1,5
+Stress Fracture Of The Distal Fibula,1,5
+Stress Fracture Of The Distal Fibula And Tibia,1,5
+Sub And Supra Scapular Atrophy,1,5
+"Subcapital Femoral Neck Fracture, Garden Stage I",1,5
+Subchondral Cyst,1,5
+Subchondral Cyst Secondary To Osteoarthritis,1,5
+Synovial Chondromatosis,1,5
+Synovial Fold Syndrome Of The Elbow,1,5
+Synovial Osteochondromatosis,1,5
+Tennis Leg,1,5
+Tethered Spinal Cord.,1,5
+Thyroid Acropachy,1,5
+Tibia Stress Fracture After Knee Replacement,1,5
+Tibial Hemimelia,1,5
+"Tibial Stress Fracture - Bilateral, R Mid Tibial Grade III And L Distal Third Grade IV",1,5
+Toddler'S Fracture - Likely 7 - 14 Days Old Given Evidence Of Healing.,1,5
+Transient Osteoporosis Of The Hip,1,5
+Traumatic Stump Neuroma,1,5
+Tripartite Patellae,1,5
+Tumoral Calcinosis (Metastatic Calcification),1,5
+Type III Accessory Navicular Bone,1,5
+"Unicameral (Solitary Or ""Simple"") Bone Cyst, Pathological Fracture",1,5
+Unknown. No Pathologic Diagnosis.,1,5
+Vertebral Fracture Secondary To Osteomyelitis,1,5
+Vertical Stress Fracture,1,5
+Vitamin D Resistance With Radiographic Appearance Of Healing Rickets Radiographically Apparent SCFE On AP View,1,5
+Agenesis Of The Corpus Callosum,7,6
+Basilar Artery Aneurysm,4,6
+Benign Enlargement Of The Subarachnoid Spaces In Infants,4,6
+Bicornuate Uterus With Associated Right Renal Agenesis,4,6
+Hydranencephaly,4,6
+Occipital Cephalocele,4,6
+Osteogenesis Imperfecta Perinatal Type II,4,6
+Osteogenesis Imperfecta Type III,4,6
+Caudal Regression Syndrome,3,6
+Chiari II Malformation,3,6
+Choroid Plexus Cyst,3,6
+Craniosynostosis,3,6
+Scimitar Syndrome,3,6
+Septo-Optic Dysplasia,3,6
+Anencephaly,2,6
+Arnold-Chiari Malformations,2,6
+Autosomal Dominant (Adult) Polycystic Kidney Disease (ADPKD),2,6
+"Cephalic Disorders, Hydranencephaly",2,6
+Choanal Atresia And Congenital Nasal Airway Obstruction,2,6
+Cleft Lip,2,6
+Lobar Holoprosencephaly,2,6
+Middle Interhemispheric Variant Of Holoprosencephaly,2,6
+Scheuermann Kyphosis,2,6
+Schizencephaly,2,6
+Semilobar Holoprosencephaly,2,6
+Septo-Optic Dysplasia (DeMorsier Syndrome),2,6
+Sickle Cell Anemia,2,6
+Syringomyelia,2,6
+Trisomy 18,2,6
+Vein Of Galen Malformation,2,6
+Absent Septum Pellucidum,1,6
+Achondroplasia,1,6
+Agenesis Of The Corpus Callosum And Subependymal Gray Matter Heterotopia,1,6
+"Agyria, Lissencephaly",1,6
+Aicardi Syndrome,1,6
+Apert'S Syndrome,1,6
+Aqueductal Stenosis.,1,6
+Asphyxiating Thoracic Dystrophy (Jeune Syndrome),1,6
+Autosomal Recessive Polycystic Disease,1,6
+Azygos Continuation Of IVC,1,6
+Camptomelic Dysplasia,1,6
+CAUDAL REGRESSION SYNDROME,1,6
+Caudal Regression Syndrome With Aplasia Left Kidney,1,6
+"Cephalic Disorders, Hemimegalencephaly",1,6
+"Cephalic Disorders, Lissencephaly Type 1",1,6
+"Cephalocele, Occipital Agenesis Of The Corpus Callosum Open Lipped Schizencephalic Cleft Left Parietal Lobe",1,6
+CHARGE SYNROME,1,6
+Chiari 3 Malformation Cervical-Occipital Encephalocele,1,6
+Chiari I With Cervical Spine Syrinx.,1,6
+Chiari II,1,6
+Chiari III Hindbrain Malformation With Large Occipital Encephalocele,1,6
+Chiari Malformation,1,6
+Chiari Two Malformation,1,6
+Chondrodysplasia Punctata,1,6
+Clediocranial Dysplasia/Dysostosis,1,6
+Cleidocranial Dysostosis,1,6
+Cleidocranial Dysostosis With Small Right Frontal Dermoid,1,6
+Cleidocranial Dysplasia,1,6
+Clubbed Feet,1,6
+"Cochlear Dysplasia, Incomplete Partition Type 1",1,6
+Complex Malformation,1,6
+"Congenital Adrenal Hyperplasia, Virilized Urogenital Sinus",1,6
+Congenital CMV,1,6
+Congenital Toxoplasmosis,1,6
+"Cortical Dysplasia, Pachygyria",1,6
+Craniosynostosis Coronal Suture,1,6
+Craniosynostosis Of The Metopic Suture,1,6
+Craniosynostosis Right Coronal Suture,1,6
+Craniosynostosis; Idiopathic Scaphocephaly,1,6
+Craniosynostosis; Scaphocephaly,1,6
+Cutis Aplasia Congenita,1,6
+Cystic Hygroma (Turner'S Syndrome) With Hydrops,1,6
+Cytomegalovirus,1,6
+Ectopic Pituitary Posterior Lobe,1,6
+Encephalocele,1,6
+"Enlarged Vestibular Aqueduct Syndrome (""Hydrops"")",1,6
+Fungal Meningeal Infections (Presumed Candida Albicans),1,6
+Giant Congenital Aneurysm Rupture,1,6
+Goldenhar Syndrome,1,6
+Holoprosencephaly Alobar Type(Imaging Characteristics),1,6
+"Holoprosencephaly, Alobar",1,6
+Holt Oram Syndrome,1,6
+Holt-Oram Syndrome,1,6
+Hyperostosis Frontalis Interna,1,6
+Intracranial Venous Sinus Congestion From (Congestive) Cardiomyopathy,1,6
+Intraventricular Juvenile Pilocytic Astrocytoma,1,6
+Joubert Syndrome,1,6
+Kallmann Syndrome,1,6
+"L3 Posterior Hemivertebra, Congenital Kyphosis",1,6
+Lissencephaly,1,6
+Lumbosacral Dysgenesis (Syndrome Of Caudal Regression).,1,6
+Macular Hole,1,6
+Marked Hydrocephalus Due To Aqueductal Stenosis,1,6
+Mayer - Rokitansky Syndrome,1,6
+Megacystis Microcolon Intestinal Hypoperistalsis Syndrome (MMIHS),1,6
+Metopic Craniosynostosis,1,6
+Microcephaly With Simplified Gyral Pattern,1,6
+Microtia And Bilateral Atresia Of The External Auditory Canals And Middle Ear Stuctures,1,6
+Mondini Deformity,1,6
+"Mondini Deformity, Incomplete Partition Type I.",1,6
+"Myelomeningocele, Neurogenic Bladder",1,6
+"Neurofibromatosis Type 1 (NF1) With Optic Glioma, Dural Ectasia, Thoracic Syrinx.",1,6
+"Neurofibromatosis Type 1 (NF1), Right Orbital Plexiform Neurofibroma, Sphenoid Wing Hypoplasia, Possible Optic Nerve Glioma.",1,6
+Neurofibromatosis-1,1,6
+Renal Crossed Fused Ectopia,1,6
+Retinopathy Of Prematurity,1,6
+Sacral Agenesis,1,6
+Sagittal Craniosynostosis,1,6
+Schizencephaly (Open-Lip And Closed-Lip),1,6
+Schizencephaly And Occipital Encephalocele,1,6
+"Schizencephaly, Closed Lip",1,6
+Schwannoma W/Cyst,1,6
+"Sickle Cell Disease, Avascular Necrosis, Cervical Disc Herniation, Cervical Radiculopathy, Myelomalacia, COPD.",1,6
+Stenosis Of External Auditory (Ear) Canal,1,6
+Sturge Weber Syndrome And Suprasellar Arachnoid Cyst,1,6
+"Sturge-Weber Syndrome, Diffuse Cerebral Developmental Venous Anomalies",1,6
+Talipes Equinovarus,1,6
+Transposition Of The Great Vessels (Prenatal Ultrasound),1,6
+Trapped Or Encysted Fourth Ventricle = Chronic Sequela From Old Intraventricular Hemorrhage,1,6
+"Trigonocephaly, Metopic Synostosis",1,6
+Unilateral Coronal Synostosis Helical CT With 3-D Reconstructions.,1,6
+"Unilateral Megaloencephaly, Hemimegalencephaly",1,6
+Vermain Hypoplasia,1,6
+Vigabatrin-Induced Edema,1,6
+"Vitamin D Deficient Rickets Deficiency Of Vitamin D Metabolites Causes Decreased Mineralization At Growth Plates UV Light Stimulates Vitamin D Formation In The Skin Risk Factors: Dietary Deficiency, Living In The Inner City (Smog), Darkly Pigmented Skin, Decreased UV Penetration",1,6
+Walker-Warburg Syndrome,1,6
+Bimalleolar Fracture Of Right Ankle,8,7
+Subacute Thyroiditis,5,7
+Bilateral Congenital Lobar Emphysema,4,7
+BILATERAL PHEOCHROMOCYTOMAS,4,7
+Bilateral Renal Calculus With Obstruction,4,7
+Bilateral Subdural Hematomas,4,7
+"Biphosphonate Associated Stress Fracture, Femur, Subtrochanteric",4,7
+Brain Herniation From Subacute Cerebral Infarction,4,7
+Branch Retinal Artery Occlusion,4,7
+Bronchial Arteriography For Hemoptysis,4,7
+Graves' Disease,4,7
+Obstructive Hydrocephalus (At Level Of Sylvian Aqueduct),4,7
+"Oligodendroglioma WHO Grade II, Path Diagnosis.",4,7
+"Oropharyngeal (Tongue) Cancer, Squamous Cell Carcinoma (SCC)",4,7
+"Osmotic Myelinolysis, Central Pontine Myelinolysis",4,7
+"Osmotic Myelinolysis, Extraontine Myelinolysis",4,7
+Osteogenesis Imperfecta Type II,4,7
+Emphysematous Pyelonephritis,3,7
+Spontaneous Pneumomediastinum,3,7
+Abdominal Compartment Syndrome,2,7
+Acute Chest Syndrome,2,7
+Citrobacter Koseri Osteomyelitis/Discitis,2,7
+Cushing’S Disease,2,7
+GRAVES' DISEASE,2,7
+Histoplasmosis,2,7
+Hydronephrosis,2,7
+Kartagener Syndrome,2,7
+Kernicterus,2,7
+Lymphangioleiomyomatosis,2,7
+Small Cell Lung Carcinoma (SCLC),2,7
+Spino-Cerebellar Ataxia,2,7
+VACTERL Syndrome,2,7
+Vagal Paraganglioma,2,7
+AAST Grade IV Renal Laceration Of Ectopic Right Kidney.,1,7
+Acute Appendicitis (Diagnosed Via Ultrasound),1,7
+Acute Basilar Occlusion,1,7
+Acute Cholecystitis With Cholelithiasis And No Soft Tissue Mass,1,7
+Acute Cholecystitis With Gall Stones (Calculus Cholecystitis),1,7
+Acute Disseminated Encephalomyelitis.,1,7
+Adamantinomatous Craniopharyngioma (WHO Grade I),1,7
+Adenocarcinoma (Poorly Differentiated),1,7
+Adult Presentation Of A Meckel'S Diverticulum,1,7
+"ALCAPA, Bland White Garland Syndrome",1,7
+Allergic Bronchopulmonary Aspergillosis,1,7
+Anaplastic Astrocytoma - WHO Grade 3,1,7
+Anomalous Origin Of The Right Pulmonary Artery From The Ascending Aorta,1,7
+Anomalous Origin Of The Right Pulmonary Artery From The Ascending Aorta (Hemitruncus Arteriosus),1,7
+"Aortic Dissection, Stanford Type A, DeBakey Type I",1,7
+Aortic Pseudoaneurysm,1,7
+Aortic Rupture,1,7
+Aortopulmonary Window,1,7
+"Astrocytoma WHO Gr 4 (Glioblastoma), Multifocal",1,7
+Atlanto-Occipital Disassociation,1,7
+Autosomal Dominant Polycystic Kidney Disease (ADPKD),1,7
+AV Canal Mitral Valve Regurgitation,1,7
+Cardiomegaly (CHF),1,7
+"Case 13 (27th Annual Uniformed Services Dermatology Seminar, 2003) DERMATOMYOSITIS-LIKE ERUPTION DUE TO ZOCOR",1,7
+Castleman Disease - Hyaline Vascular Variant,1,7
+Cavernous Transformation Of The Portal Vein,1,7
+Cavitary Squamous Cell Carcinoma,1,7
+Cerebral Ischemia & Infarction,1,7
+Chlamydophila Pneumonia In An Idiopathic CD4+ Lymphocytopenic Patient,1,7
+"Cholecystitis, With Air In The Gall Stones.",1,7
+Choledocholithiasis And Biliary Obstruction: A Complication Of Sickle-Cell Disease.,1,7
+Choledocholithiasis And Cholelithiasis,1,7
+Chronic Cholecystitis,1,7
+Chronic Recurrent DVT,1,7
+"CHURG-STRAUSS SYNDROME (1997 Uniformed Services Dermatology Seminar, Case#16) Captain D. Schissel, MC, USA",1,7
+Cirrhosis,1,7
+CNS Sarcoidosis,1,7
+Cocaine Overdose Secondary To Rupture Of Latex Cocaine Packet,1,7
+Coin Lodged In Esophagus,1,7
+Colorectal Adenocarcinoma With Mets To Liver,1,7
+Congenital Cytomegalovirus (CMV) Infection,1,7
+Congenital Foramen Of The Left Pericardium,1,7
+Congestive Heart Failure Exacerbation,1,7
+Cortical Dysplasia: Pachygyria With Schizencephaly Spastic Cerebral Palsy Central Hypothyroidism,1,7
+Creutzfeldt-Jakob Disease (CJD),1,7
+Cryptococcal Pneumonia,1,7
+"CT Guided Biopsy Of Liver Revealed Pt Has Cirrhosis With Corresponding Portal Hypertension. The Biopsy Of The Liver Mass Was Consistent With Focal Fat Deposit, But Inconclusive, And Will Be Re-Biopsied For Definitive Diagnosis",1,7
+Early Appendicitis,1,7
+Ectopic Posterior Pituitary,1,7
+ECTOPIC PREGNANCY.,1,7
+Emphysematous Cholecystitis Organism: CLOSTRIDIUM PERFRINGENS,1,7
+EMPHYSEMATOUS CHOLECYSTITIS,1,7
+Extensive Mesenteric Ischemia,1,7
+Extravasation Of Blood From R Common Femoral Artery And Vein.,1,7
+Facial Nerve Hemangioma,1,7
+Femoral Pseudoaneurysms,1,7
+Fitz-Hugh Curtis Syndrome,1,7
+Foreign Body (Battery) Ingestion,1,7
+Gastric Outlet Obstruction From Benign Ulcer,1,7
+"Gastric Pneumatosis, Etiology Uncertain",1,7
+Gastric Rupture - Iatrogenic,1,7
+Graft Vs Host (GVHD) Of The Skin And GI System.,1,7
+Graves Disease With Thyroid Storm,1,7
+Graves Ophthalmopathy,1,7
+GSW To Right Shoulder,1,7
+Hamartoma 2nd To NF-1,1,7
+HCC,1,7
+Hemophilic Polyarthritis,1,7
+HEPATIC ANGIOGRAM TO EVALUATE FOR VASCULAR COMPLICATIONS AFTER LIVER TRANSPLANT,1,7
+Hepatocellular Carcinoma (HCC),1,7
+Hepatocellular Carcinoma (Hepatoma) With Portal Vein Invasion And Thrombosis,1,7
+Herpes Encephalitis (HSV 1),1,7
+Herpes Simplex Encephalitis.,1,7
+Heterotaxia Syndrome With Polysplenia,1,7
+High-Grade Chondroid Neoplasm,1,7
+Hodgkin’S Lymphoma (Nodular Lymphocytic Predominant),1,7
+Idiopathic Pulmonary Hemosiderosis,1,7
+"Infectious Arthritis, Mycobacterium Terratium",1,7
+Intracardiac Fibroma,1,7
+Intracerebral Hemorrhage (Likely Related To Chronic Hypertension),1,7
+Intradural Lipoma,1,7
+Invasive Bronchopulmonary Aspergillosis,1,7
+Iron Deficiency Anemia Secondary To AV Malformations.,1,7
+IVC Filter Migration,1,7
+Jeune Syndrome (Asphyxiating Thoracic Dystrophy),1,7
+Left Renal Arteriovenous Fistula,1,7
+Leukoaraiosis,1,7
+Low Grade Glial Neoplasm,1,7
+LUE PICC With Tip In Descending Aorta,1,7
+Lung Abscess (Solitary) No Specific Confirmation: Patient Improving On Antibiotics,1,7
+Lymphangitic Carcinomatosis From Primary Breast Adenocarcinoma,1,7
+Medullary Nephrocalcinosis - Likely Medullary Sponge Kidney,1,7
+Melanocytoma Of The Iris In A Child,1,7
+"Meningioma, WHO Grade 2 (Chordoid)",1,7
+"Meningitis With Dehydration, Straight Sinus Thrombosis And Venous Infarction.",1,7
+Mesenteric Panniculitis,1,7
+"Metastasis, Melanoma",1,7
+Metastatic Prostate Cancer (Blastic),1,7
+Metastatic Squamous Cell Carcinoma (Involvement Of L Inguinal Lymph Node)- T2N1M1 Stage 4 SCC,1,7
+Metastatic Squamous Cell Lung Cancer With Underlying Idiopathic Pulmonary Fibrosis,1,7
+MRSA Pneumonia Complicated By Empyema,1,7
+Mucinous Cystic Neoplasm,1,7
+Multifocal Brain Abscess,1,7
+"Mycotic Aneurysm, Superior Mesenteric Artery",1,7
+Nevus Ota And Melanoma,1,7
+Niemann Pick Disease Aka Sphingomyelin-Cholesterol Lipidosis,1,7
+"Non-Small Cell (Squamous Cell) Carcinoma Of The Lung (RLL); T3N2M0, Corresponding To Stage III-A",1,7
+Noncardiogenic Pulmonary Edema,1,7
+Nutritional Rickets.,1,7
+Raynaud'S Disease,1,7
+"RENAL ARTERIOVENOUS MALFORMATION, CONGENITAL - CIRSOID TYPE",1,7
+Retroperitoneal Hematoma,1,7
+Retropharyngeal Inflammation,1,7
+Rhizomelic Chondrodysplasia Punctata,1,7
+Rib Metastasis From Colon Adenocarcinoma (With Metastatic Involvement Of The Liver).,1,7
+Right Upper Lobe Pneumococcal Pneumonia.,1,7
+RSNA 2003 COTD Lhermitte-Duclos,1,7
+RSV+ Bronchiolitis,1,7
+Sagittal Sinus Thrombosis,1,7
+Salter-Harris Injury Of Proximal Radius,1,7
+Schistosomiasis Japonicum Of The Colon And Appendix Confirmed By Biopsy Of Colon Polyps Containing Calcified S. Japonicum Eggs.,1,7
+Septic Pulmonary Emboli,1,7
+Sialolith,1,7
+Situs Ambiguous (Heterotaxy),1,7
+Small Bowel Diverticulosis,1,7
+Stable Left Pneumothorax And Stable Left Pleural Effusion,1,7
+Stage III T3N1 (1 Of 22 Lymph Node Positive) Adenocarinoma Of Sigmoid Colon,1,7
+Stage IIIB Adenocarcinoma,1,7
+"Stage IV Hodgkins Lymphoma, Pleural Effusion",1,7
+Stroke,1,7
+Sub-Acute Thromboembolism Of SMA,1,7
+Subacute Painless Thyroiditis With Transient Hyperthyroidism,1,7
+"Subarachnoid Hemorrhage, Aneurysm",1,7
+Superior Mesenteric Vein Laceration,1,7
+Superior Vena Cava Syndrome Secondary To Lung Cancer,1,7
+Takayasu Arteritis (Characteristic Clinical/Radiologic,1,7
+TB Meningitis,1,7
+Thrombosis Of The Right Superior Anastomotic Vein (Vein Of Trolard),1,7
+Transitional Cell Carcinoma (T2 Low Grade Papillary Urothelial Carcinoma),1,7
+"Transmesenteric Hernia (Internal Hernia), Small Bowel Volvulus",1,7
+Tuberous Sclerosis W/ Pulmonary Lymphangioleiomyomatosis (LAM),1,7
+Tubo-Ovarian Abscess For Boards - Look For An IUD In The Pelvis Which Increases The Risk For Developing TOA,1,7
+Usual Interstitial Pneumonia,1,7
+VACTERL Association,1,7
+Vertebral Osteomyelitis And Diskitis With Presacral Abscess,1,7
+Vesicoureteral Reflux & Duplex Kidney,1,7
+Xanthogranulomatous Pyelonephritis,1,7
+BILATERAL AXILLARY LYMPHADENOPATHY SECONDARY TO LUPUS (SLE),4,8
+Bisphosphonate-Related Osteonecrosis Of The Jaw,4,8
+"BORDERLINE LEPROMATOUS LEPROSY (1997 Uniformed Services Dermatology Seminar, Case#4) Submitted By: LCDR Bradley S. Graham, MC, USNR; CDR David J. Barnette, Jr., MC, USN",4,8
+Brown Recluse Spider Bite,4,8
+Bullae Diabeticorum,4,8
+Necrotizing Fasciitis,4,8
+Osseous Sarcoidosis,4,8
+Osteochondroma Of Left Iliac Wing,4,8
+Lemierre'S Syndrome,2,8
+Mediastinal Mature Teratoma,2,8
+"ACTINIC GRANULOMA (ANNULAR ELASTOLYTIC GIANT CELL GRANULOMA) (1997 Uniformed Services Dermatology Seminar, Case#26) Presented By: Jay L. Viernes, Maj, USAF, MC, FS",1,8
+"Adrenocortical Neoplasm, Intermediate Risk",1,8
+"ALL T-CELL SUBTYPE LEUKEMIA CUTIS (1997 Uniformed Services Dermatology Seminar, Case#14) Submitted By: Richard Laws, CPT, MC, USA",1,8
+"Case 1, (27th Annual Uniformed Services Dermatology Seminar, 2003) FAMILIAL BENIGN CHRONIC PEMPHIGUS (HAILEY-HAILEY DISEASE)",1,8
+"Case 11, (27th Annual Uniformed Services Dermatology Seminar, 2003) GRANULAR CELL TUMOR",1,8
+"Case 12 ( 27th Annual Uniformed Services Dermatology Seminar, 2003) FOLLICULOSEBACEOUS CYSTIC HAMARTOMA",1,8
+"Case 14 (27th Annual Uniformed Services Dermatology Seminar, 2003) WELL'S SYNDROME (EOSINOPHILIC CELLULITIS)",1,8
+"Case 15 (27th Annual Uniformed Services Dermatology Seminar, 2003) METASTATIC CUTANEOUS CARCINOID",1,8
+"Case 16 (27th Annual Uniformed Services Dermatology Seminar, 2003) VERRUCIFORM XANTHOMA",1,8
+"Case 17 (27th Annual Uniformed Services Dermatology Seminar, 2003) CUTANEOUS CARTILAGINOUS REST OF THE NECK (WATTLE)",1,8
+"Case 18 (27th Annual Uniformed Services Dermatology Seminar, 2003) PYTHIUM INSIDIOSUM INFECTION IN AN IMMUNOCOMPROMISED PATIENT",1,8
+"Case 19 (27th Annual Uniformed Services Dermatology Seminar, 2003) METASTATIC PANCREATIC ADENOCARCINOMA",1,8
+"Case 2, (27th Annual Uniformed Services Dermatology Seminar, 2003) FAMILIALPOLYDACTYLY (AUTOSOMAL DOMINANT BILATERAL POSTAXIAL POLYDACTYLY)",1,8
+"Case 25 (27th Annual Uniformed Services Dermatology Seminar, 2003) ANGIOLEIOMYOMA OF THE EAR",1,8
+"Case 26 (27th Annual Uniformed Services Dermatology Seminar, 2003) ATYPICAL SPITZOID TUMOR",1,8
+"Case 27 (27th Annual Uniformed Services Dermatology Seminar, 2003) PERIORAL GRANULOMATOUS DERMATITIS",1,8
+"Case 28 (27th Annual Uniformed Services Dermatology Seminar, 2003) INFANTILE DIGITAL FIBROMATOSIS",1,8
+"Case 3, (27th Annual Uniformed Serivces Dermatology Seminar, 2003) LINEAR LICHEN PLANUS",1,8
+"Case 4, (27th Annual Uniformed Services Dermatology Conference, 2003) ETANERCEPT INDUCED SARCOIDAL GRANULOMAS OF THE SKIN",1,8
+"Case 5, (27th Annual Uniformed Services Dermatology Seminar, 2003) DERMATOMYOSITIS",1,8
+"Case 6, (27th Annual Uniformed Services Dermatology Conference, 2003) METASTATIC LUNG ADENOCARCINOMA",1,8
+Cervical Necrotizing Fasciitis With Descending Necrotizing Mediastinitis,1,8
+Chemical Conjunctivitis With Corneal Sloughing,1,8
+Chronic Interstitial Lung Disease Secondary To SLE,1,8
+Coats Disease,1,8
+"COWDEN'S SYNDROME (1997 Uniformed Services Dermatology Seminar, Case#21B) Submitted By: LT Charles Miller, MC, USNR",1,8
+"CUTANEOUS B-CELL FOLLICULAR LYMPHOMA (1997 Uniformed Services Dermatology Seminar, Case#15A) Submitted By: Anna S. Clayton, Maj, USAF, MC, FS",1,8
+Cutaneous Chron Disease,1,8
+Cutaneous Larva Migrans,1,8
+Cutaneous Leishmaniasis,1,8
+"Cutaneous T-Cell Lymphoma (Case 1, 25th Annual Uniformed Services Dermatology Seminar, San Antonio, TX)",1,8
+Cystosarcoma Phyllodes,1,8
+"Erosive (Inflammatory) Osteoarthritis (Typical Radiologic Appearance, Absence Of Skin Or Other Bony Involvement, Negative Laboratory Evaluation).",1,8
+"ERUPTIVE XANTHOMA (1997 Uniformed Services Dermatology Seminar, Case #9) Mitchell Stashower, LT MC USNR)",1,8
+"ERUPTIVE XANTHOMA (1997 Uniformed Services Dermatology Seminar, Case#9B) LCDRJames M. Polo, MC, USN",1,8
+"ERYTHROPOIETIC PROTOPORPHYRIA (1997 Uniformed Services Dermatology Seminar, Case #29) Mary K. Mather, MAJ, MC, USA",1,8
+EVALI,1,8
+"EXOGENOUS OCHRONOSIS (1997 Uniformed Services Dermatology Seminar, Case #30) Presented By: Diane Touart, Maj, MC, USA",1,8
+Fibroblastic Meningioma WHO I Of The Falx Cerebri,1,8
+"FIBROEPITHELIOMA OF PINKUS (1997 Uniformed Services Dermatology Seminar, Case#25) Presented By: George C. Keough, CPT, MC, USAR; Martha L. McCollough, COL, MC, USA",1,8
+Foregut Malformation Cyst,1,8
+Granulomatous Polyangiitis (GPA) With Pulmonary-Renal Syndrome And Distal Extremity Necrosis,1,8
+Grave'S Ophthalmopathy,1,8
+"High-Grade Soft Tissue Sarcoma In A Fusocellular Pattern, Confirmed By Immunohistochemistry",1,8
+"HIV-ASSOCIATED EOSINOPHILIC FOLLICULITIS (1997 Uniformed Services Dermatology Seminar, Case#19); Submitted By: Elizabeth Piantanida, MAJ, MC, USA",1,8
+"HYPERKERATOSIS LENTICULARIS PERSTANS (FLEGEL'S DISEASE) (1997 Uniformed Services Dermatology Seminar, Case#12) Submitted By: Jeffrey J. Meffert, LtCol USAF MC",1,8
+"INCONTINENTIA PIGMENTI - VERRUCOUS STAGE (1997 Uniformed Services Dermatology Seminar, Case#8) Diane Touart, Maj, MC, USA",1,8
+INFECTED GALACTOCELE,1,8
+Intravascular Lymphomatosis (IVL),1,8
+Lamellar Ichthyosis,1,8
+Lichen Planus,1,8
+Linear Morphea En Coup De Sabre,1,8
+Low Grade B-Cell Lymphoma MALT Type With Plasmacytic Differentiation,1,8
+Low Grade Myxofibrosarcoma,1,8
+"LYMPHOMATOID PAPULOSIS (1997 Uniformed Services Dermatology Seminar, Case#18A) Submitted By: Stephen Flax CDR, MC, USN",1,8
+"LYMPHOMATOID PAPULOSIS (1997 Uniformed Services Dermatology Seminar, Case#18B) Submitted By: LCDR Bradley S. Graham, MC, USNR",1,8
+Miliaria Rubra (Heat Rash),1,8
+Mycoplasma Pneumoniae-Induced Rash And Mucositis (MIRM),1,8
+Mycosis Fungoides,1,8
+Nasal Dermoid Sinus Cyst,1,8
+Nephrogenic Fibrosing Dermopathy/Nephrogenic Systemic Fibrosis,1,8
+"NEUROCRISTIC HAMARTOMA (1997 Uniformed Services Dermatology Seminar, Case#20) Submitted By: David S. Mezebish, LCDR, MC (FS), USN",1,8
+"NEUROTHEKEOMA AND NERVE SHEATH MYXOMA (1997 Uniformed Services Dermatology Seminar, Case#11) LCDR James M. Polo, MC, USN",1,8
+Nevus Of Nanta,1,8
+"NODULAR PRETIBIAL MYXEDEMA (1997 Uniformed Services Dermatology Seminar, Case#22) Presented By: Joseph L. Wilde, CPT, MC, USA",1,8
+Nodular Sclerosing Hodgkin’S Lymphoma,1,8
+Non-Keratinizing Squamous Cell Carcinoma,1,8
+Non-Secretory Myeloma,1,8
+Reflex Sympathetic Dystrophy,1,8
+"RETICULAR ERYTHEMATOUS MUCINOSIS (1997 Uniformed Services Dermatology Seminar, Case#28) Submitted By: Diane Touart, Maj, MC, USA",1,8
+S. Stercoralis,1,8
+Scabies,1,8
+"SCLEREDEMA (1997 Uniformed Services Dermatology Seminar, Case#23) Presented By: Jay L. Viernes, Maj, USAF, MC, FS",1,8
+"SCLEROTIC FIBROMA (1997 Uniformed Services Dermatology Seminar, Case#21A) Submitted By: Rinna C.Johnson, MAC, MC, USA; Martha L. McCollough, COL, MC, USA",1,8
+Scrofula (Infectious Cervical Lymphadenitis) Caused By M. Tuberculosis,1,8
+"SECONDARY CUTANEOUS B-CELL LYMPHOMA, FOLLICULAR CENTER CELL TYPE (1997 Uniformed Services Dermatology Seminar, Case#15B) Submitted By: Mark W. Cobb, CAPT, MC, USN",1,8
+SECONDARY SYPHILIS AND NEUROSYPHILIS,1,8
+Seminoma - Dx Path Proven.,1,8
+"SILICONE GRANULOMA (1997 Uniformed Services Dermatology Seminar, Case#6) Presented By: LCDR William F. Smith, MC, USNR",1,8
+Sparsely Granulated Growth Hormone Adenoma,1,8
+"Stage II Sarcoidosis Manifiesting With Garland’S Triad, Aorticopulmonary Window Lymphadenopathy And Parenchymal Disease At The Lung Bases.",1,8
+Subcutaneous Abscess Of Nasal Tip,1,8
+"Systemic Anaplastic Large Cell (Ki-1) Lymphoma With Cutaneous Involvement (Case 2, 25th Annual Uniformed Services Dermatology Seminar, 2001; Presented By Jeanne P. Osborne, MD, CPT, MC, USAF, And Bradley Graham, MD, LCDR, MC, USNR, Naval Medical Center, San Diego)",1,8
+"Breast Cancer, Metastatic",12,9
+Synovial Cyst,8,9
+Azygous Lobe,7,9
+Transitional Cell Carcinoma,6,9
+Metastatic Neuroblastoma,5,9
+Neuroblastoma,5,9
+Thymoma,5,9
+B-Cell Lymphoma Of The Lacrimal Sac,4,9
+Bilateral Breast Carcinoma,4,9
+Biliary Cystadenoma,4,9
+Bladder (Jack) Calculi,4,9
+Brain Abscess (Gram Positive Cocci),4,9
+Bronchogenic Cyst,4,9
+Broncholithiasis,4,9
+Non-Hodgkin'S Lymphoma - B-Cell Lymphoma,4,9
+"Omental Cake, Likely Recurrence Of Prior Breast CA",4,9
+Oncocytoma,4,9
+Orbital Osteoid Osteoma,4,9
+"Orbital Venous Varix, Right Side",4,9
+Osteoma Skull,4,9
+Osteosarcoma Mandible,4,9
+Schwannoma,4,9
+Colon Adenocarcinoma,3,9
+Metastatic Melanoma,3,9
+Metastatic Renal Cell Carcinoma,3,9
+Thyroid Goiter,3,9
+Tubo-Ovarian Abscess,3,9
+Adenocarcinoma Of The Lung.,2,9
+Classic Nodular Sclerosing Hodgkin’S Lymphoma (Stage II),2,9
+Eosinophilic Granuloma,2,9
+Hodgkin Lymphoma,2,9
+Intramuscular Lipoma,2,9
+Ivory Vertebral Body,2,9
+Metastatic Adenocarcinoma Of The Lung,2,9
+Morton'S Neuroma,2,9
+Retroperitoneal Liposarcoma,2,9
+"Schwannoma, Thoracic",2,9
+Scrofula - Infectious Cervical Lymphadenitis,2,9
+Serous Cystadenoma,2,9
+Simple Renal Cyst,2,9
+Wegener'S Granulomatosis,2,9
+Acromegaly From Pituitary Macroadenoma,1,9
+Adenocarcinoma In Situ (Bronchioloalveolar Cell Carcinoma),1,9
+Adenocarcinoma Of Large Intestine,1,9
+Adenocarcinoma Of The Lung Metastatic To Brain,1,9
+Adenocarcinoma Of The Lung Metastatic To The Cauda Equina,1,9
+Adrenal Hemorrhage And Liver Laceration,1,9
+Adrenal Lipoma,1,9
+Adrenal Rest Tumor,1,9
+Angioinvasive Aspergillosis,1,9
+Anterior Pneumothorax,1,9
+Calcified And Herniated Thoracic Disc,1,9
+Colorectal Adenocarcinoma,1,9
+"Colorectal CA Metastasis To Lung, Fine Needle Aspiration",1,9
+CONGENITAL CYSIC ADENOMATOID MALFORMATION OF THE LUNG,1,9
+Contained Gallbladder Perforation,1,9
+CT Guided Lung Biopsy Of A Well-Differentiated Adenocarcinoma,1,9
+Emphysematous Cholecystitis,1,9
+Enchondroma As Secondary Radiographic Finding In Patient With Left Foot Pain - Case Study,1,9
+Epidermoid Cyst Of The Testis,1,9
+Fibrocystic Change With Adenosis,1,9
+Focal Fibrosis,1,9
+Foregut Duplication Cyst,1,9
+Fundic Gland Polyp.,1,9
+Gastric Bezoar,1,9
+Glomus Glomus Jugulare Tumor (Paraganglioma),1,9
+Glomus Jugulare Tumor On Left Carotid Tody Glomus Tumor On Right,1,9
+Hampton Hump,1,9
+Hemobilia,1,9
+Hepatic Flexure,1,9
+Hepatocellular Carcinoma - Radiology And Cytology Correlation,1,9
+Hereditary Pancreatitis,1,9
+Hodgkins Lymphoma.,1,9
+Hyperparathyroidism - Parathyroid Adenoma,1,9
+Iliac Vein Compression Sydrome,1,9
+Incidental Malrotation,1,9
+Increased Liver Attenuation (Amiodarone),1,9
+Infiltrating Ductal Carcinoma Of The Breast,1,9
+Infiltrating Lobular Carcinoma Confirmed By US Core Biopsy,1,9
+"Invasive Ductal Carcinoma, Grade I (Well Differentiated)",1,9
+INVASIVE LOBULAR CARCINOMA (Diagnosis Was Confirmed By Ultrasound Guided Core Biopsy),1,9
+Jejunal Lipoma,1,9
+L4-L5 Herniated Disc With A Sequestered Fragment,1,9
+Large Cell Carcinoma Causing A Hydropneumothorax,1,9
+Laryngeal Lipoma,1,9
+Left Lower Lobe Pneumonia,1,9
+Left Renal Mass,1,9
+"Left Upper Lobe Collapse Caused By An Enlarging, Obstructing Small Cell Lung Carcinoma.",1,9
+Likely Intracystic Pappilloma,1,9
+Linitis Plastica,1,9
+Lipoma Arborescens (MRI),1,9
+Lithopedian,1,9
+Location Of Mucoceles,1,9
+Ludwig Angina,1,9
+Lung Abscess (Solitary) Caused By MRSA,1,9
+Lung Metastasis,1,9
+Lymphangioma - Confirmed By Surgery And Pathology,1,9
+Malignant Melanoma With Metastatic Lesion To L5,1,9
+Malignant Metastatic Melanoma,1,9
+Malignant Pleural Effusion Metastatic Disease (Breast Vs. NSCLC) Pulmonary Embolism,1,9
+Melanoma,1,9
+Mesenteric Carcinoid Tumor,1,9
+Mesoblastic Nephroma,1,9
+Metastatic Bladder Oncocytoma Confirmed By Lung Biopsy And Cystoscopy.,1,9
+Metastatic Colon Cancel,1,9
+"Metastatic Lung Cancer, Intramedullary Spinal Cord Mass",1,9
+Metastatic Medullary Thyroid Cancer,1,9
+Metastatic Renal Carcinoma,1,9
+Metastatic Spinal Cord Tumor From Small Cell CA Of Lung,1,9
+Metastatic Squamous Cell CA,1,9
+Metastatic Squamous Cell Carcinoma,1,9
+"Mucinous Cystadenoma, Ovarian Struma",1,9
+Mucocele Of The Appendix,1,9
+Multiple Osteochondroma,1,9
+Myointimoma.,1,9
+Myxofibrosarcoma (Metastatic),1,9
+Nasal Juvenile Angiofibroma,1,9
+Necrotizing Fasciitis And Fourier'S Gangrene,1,9
+Non Small Cell Lung Carcinoma,1,9
+Non-Functioning Pancreatic Islet Cell Tumor,1,9
+Non-Hodgkin&#8217;S Lymphoma. (Presumed Previous Biopsy),1,9
+Non-Hodgkin’S Lymphoma Stage II,1,9
+Non-Small Cell Carcinoma Of Lung,1,9
+Non-Small Cell Lung Cancer (Large-Cell/Clear-Cell Variant),1,9
+"Rapunzel Syndrome, Gastric Trichobezoar",1,9
+Recurrent Breast Carcinoma,1,9
+Recurrent Metastatic Melanoma To Lung,1,9
+Renal Abscess With Subsequent Ultrasound-Guided Drainage,1,9
+Renal Lymphoma,1,9
+RUL Pneumonia,1,9
+Sacral Schwannoma,1,9
+Samarium 153 EDTMP Palliative Bone Treatment,1,9
+Sclerosing Stromal Tumor,1,9
+Scrotolith - Etiology Unknown,1,9
+Septic Arthritis W/ Cellulitis (Staph Aureus Recovered From Joint Aspirate),1,9
+Septic Arthritis With Effusion,1,9
+Septic Emboli,1,9
+Serous Cystadenoma (Macrocystic Variant),1,9
+Silicone Granulomas Of The Breast (Based On Review Of Old Films And Surgical,1,9
+Sister Mary Joseph Node,1,9
+Skeletal Metastasis.,1,9
+Small Cell Lung Cancer,1,9
+Small-Cell Lung Cancer (Biopsy),1,9
+Spinal Cord Lipoma,1,9
+"Spine, Aneurysmal Bone Cyst",1,9
+"Spine, Osteoid Osteoma",1,9
+Squamous Cell Carcinoma Of The Lung,1,9
+Squamous Cell Lung Carcinoma,1,9
+SUBDIAPHRAGMATIC (Intraperitoneal) BRONCHOGENIC CYST,1,9
+Swallowed Foreign Body (Chicken Bone). The Patient Had A,1,9
+Teratoma,1,9
+Tethered Cord,1,9
+Thoracic Aortic Aneurysm,1,9
+Thoracic Ganglioneuroma,1,9
+Toxic Thyroid Adenoma,1,9
+Traumatic Oil Cyst,1,9
+Trophoblastic Disease,1,9
+Tubular Ectasia,1,9
+Urothelial Carcinoma - High Grade Non-Invasive Papillary Transitional Cell Carcinoma.,1,9
+Uterine Leiomyosarcom With Pulmonary Metastasis,1,9
+Von Hippel-Lindau Syndrome,1,9
+Wandering Spleen,1,9
+Osteochondritis Dissecans,28,10
+Bucket Handle Meniscal Tear Of The Knee,12,10
+Bucket-Handle Meniscal Tear,12,10
+Os Acromiale,12,10
+Osteolysis Of Distal Clavicle.,12,10
+Osteochondritis Dessicans Of The Distal Femur,8,10
+OSTEOCHONDRITIS DISSECANS,8,10
+Tibial Plateau Fracture,8,10
+ACL Tear,5,10
+Talocalcaneal Coalition,5,10
+Anterior Shoulder Dislocation,4,10
+Biceps Tendon Dislocation,4,10
+Biceps Tendon Dislocation; Posterior To Subscapularis.,4,10
+Bilateral Supraspinatus And Infraspinatus Calcific Tendinitis.,4,10
+Bucket Handle Medial Meniscal Tear Of The Knee,4,10
+Bucket Handle Tear Of Meniscus,4,10
+Bucket Handle Tear Of The Medial Meniscus,4,10
+"Bucket Handle Tear, Medial Meniscus",4,10
+Bucket-Handle Medial Meniscal Tear,4,10
+Meniscal Tear,4,10
+O'Donoghue'S 'Unhappy Triad',4,10
+Os Acromiale.,4,10
+Osteochondral Defect/Injury Of The Talar Dome.,4,10
+Osteochondral Lesion Of The Talus.,4,10
+Osteochondritis Dessicans Of Capitulum,4,10
+Osteochondritis Dissecans Of The Talus,4,10
+Osteochondritis Dissecans Of The Tarsal Navicular,4,10
+Osteochondritis Dissecans Stage IV,4,10
+Segond Fracture,4,10
+Traumatic Transient Lateral Patellar Dislocation.,4,10
+Achilles Tendon Rupture,3,10
+Calcaneal Stress Fracture,3,10
+SLAP Lesion Of The Glenoid Labrum,3,10
+ACL Ganglion,2,10
+ACL Injury,2,10
+Acromioclavicular Joint Separation,2,10
+Adhesive Capsulitis,2,10
+Anterior Dislocation Right Shoulder,2,10
+Avulsion Fracture Of The Anterior Superior Iliac Spine,2,10
+Calcific Tendinitis,2,10
+Calcific Tendonitis,2,10
+Femoroacetabular Impingement Syndrome,2,10
+Hill Sachs Lesion,2,10
+Lateral Femoral Notch Sign,2,10
+Meniscal Ossicle,2,10
+Quadriceps Tendon Rupture,2,10
+"Right Knee Multi-Ligamentous Injury: Lateral Collateral Ligament; Popliteus Tendon; Popliteofemoral Ligament; Anterior Cruciate Ligament; And, Posterior Cruciate Ligament.",2,10
+Rotator Cuff Tear,2,10
+Tibial Stress Fracture,2,10
+Accessory Navicular Syndrome,1,10
+Accessory Peroneus Quartus Muscle,1,10
+Acetabular Protrusio,1,10
+"Acetabulum, Labrum Tear",1,10
+ACL Graft Impingement,1,10
+Acromioclavicular Joint Separation (Grade III),1,10
+ALPSA (Anterior Labroligamentous Periosteal Sleeve Avulsion) Lesion,1,10
+Anterior Cruciate Ganglion,1,10
+Anterior Cruciate Ligament Disruption,1,10
+Anterior Cruciate Ligament Tear,1,10
+Anterior Dislocation Of The Shoulder,1,10
+Anterior Glenohumeral Dislocation,1,10
+Anterior Shoulder Dislocation/Instability,1,10
+Avulsion Fracture Anterior Superior Iliac Spine,1,10
+Calcaneocuboid Coalition,1,10
+Carpal Dislocations,1,10
+"Cervical Disc Herniation, Right Shoulder Rotator Cuff Tear (Supraspinatus), Right Shoulder Labral Tear, Scapholunate Ligament Tear, Bilateral Carpal Tunnel Syndrome, Bilateral Cervical Sprain/Strain",1,10
+Complete Anterior Cruciate Ligament Tear.,1,10
+Cuneonavicular Tarsal Coalition,1,10
+Cystic Adventitial Disease,1,10
+Enthesophyte Secondary To Degenerative Change,1,10
+Femoral Acetabular Impingement Syndrome,1,10
+Findings Of Posterior Dislocation With Reverse Hill-Sach'S Deformity And Reverse Bankhart'S Injury,1,10
+Flap Tear (Oblique Tear) Of The Meniscus,1,10
+Freiberg Infraction,1,10
+Glenoid Hypoplasia,1,10
+Glenolabral Articular Disruption,1,10
+Grade III Acromioclavicular Joint Separation,1,10
+"Hill-Sachs Lesion, Osseous Bankart Lesion. Evidence Of Prior Anterior Glenohumeral Dislocation.",1,10
+"Impingement Of The Rotator Cuff , Full-Thickness Tear Of Supraspinatus Tendon",1,10
+Incomplete Carpal Coalition,1,10
+"Incomplete Tear Of Right Supraspinatus Tendon And Healed Fracture Of Right Humeral Head, Cervical Disc Protrusions C3-C7.",1,10
+Isolated Posterior Cruciate Ligament Tear,1,10
+Kienbock Disease,1,10
+Knee Gross Anatomical Sections,1,10
+Labral Tear Of The Acetabulum,1,10
+Lateral Meniscal Tear,1,10
+Lateral Notch Sign,1,10
+"Left Medial Meniscal Posterior Horn Tear, Bucket Handle.",1,10
+Ligament Of Wrisberg,1,10
+Lunotriquetral Ligament Tear,1,10
+"Medial Epicondyle Avulsion, Entrapment Between Trochlea And Olecranon",1,10
+Medial Meniscal Tear With A Flipped Fragment.,1,10
+Medial Meniscus Bucket Handle Tear.,1,10
+Medial Tibial Stress Syndrome,1,10
+Meniscal Cyst,1,10
+Meniscal Cyst And Lateral Meniscal Tear.,1,10
+Meniscal Radial Tear,1,10
+Meniscal Tear (Radiologic And Athroscopic Confirmation),1,10
+"Metallosis Secondary To Loosening Of Metallic Back Of Patellar Prosthesis Of Total Knee Arthroplasty, Confirmed Intraoperatively During Arthroplasty Revision.",1,10
+Mixed Connective Tissue Disease,1,10
+Monostotic Fibrous Dysplasia,1,10
+Multipartite Patella,1,10
+QUADRICEPS TENDON RUPTURE,1,10
+Quadriceps Tendon Tear,1,10
+Quadrilateral Space Syndrome,1,10
+Radial Tear Of The Anterior Horn Of The Lateral Meniscus,1,10
+"Recurrent Rotator Cuff Tears, Suspicion For Avascular Necrosis Of Head Of Humerus",1,10
+Recurrent Shoulder Dislocation/Instability,1,10
+Rim Rent Tear Of Supraspinatus Tendon,1,10
+Rupture Of The Patellar Tendon With Associated Tibial Tubercle Avulsion Fracture.,1,10
+Sacral Stress (Fatigue) Fracture,1,10
+Sacroiliitis,1,10
+Salter Harris Type IV Fracture,1,10
+Scapular Fracture,1,10
+Segond Fracture With Associated ACL Tear. Confirmed On MRI.,1,10
+Split Tear Of The Peroneus Brevis Tendon,1,10
+Spondylolysis With Spondylisthesis Due To Bilateral Pars Defects,1,10
+Sublabral Foramen,1,10
+SURGICAL REPAIR OF A HILL-SACHS DEFORMITY WITH ASSOCIATED BANKART LESION,1,10
+Talocalcaneal Coalition (Dx By MRI),1,10
+Talocalcaneal Tarsal Coalition,1,10
+Talonavicular Coalition,1,10
+Tarsal Coalition,1,10
+Tear Of The Achilles Tendon- Almost Complete (Grade II Tear),1,10
+The Patellar Plica Syndrome,1,10
+The Pellegrini-Stieda Syndrome,1,10
+Transient Patellar Dislocation,1,10
+"Ulnar Collateral Ligament Tear, Stener Lesion",1,10
+OCD And Meniscal Tear,4,11
+Atlantoaxial Dissociation,1,11
+Contrast Enhancement,1,11
+COTD ELS Tumor,1,11
+Endograft Leak,1,11
+Functional Capacity Evaluation Correlated With Diagnostic Studies,1,11
+Hardware Failure From Previous Spinal Fusion Surgery Following Trauma,1,11
+Infections,1,11
+Kienbock'S Disease.,1,11
+Lhermitte-Duclos,1,11
+Multiple Injuries Post MVA,1,11
+Myositis Ossificans Traumatica,1,11
+New Case Builder,1,11
+Normal Anatomy,1,11
+Normal Chest Review,1,11
+Rhabdomysarcoma,1,11
+SAF,1,11
+Schwannoma (By Imaging Studies),1,11
+Trauma II,1,11
+Trauma Slides,1,11
+Type II Endoleak,1,11
+Meningioma,29,12
+Brain Death,24,12
+Multiple Sclerosis,18,12
+Glioblastoma Multiforme,17,12
+Bilateral Subacute (Isodense) Subdural Hematomas,12,12
+Juvenile Pilocytic Astrocytoma,10,12
+Craniopharyngioma,9,12
+Tuberous Sclerosis,9,12
+Band Heterotopia,8,12
+Brain Abscess,8,12
+Brain Stem Astrocytoma,8,12
+Cavernous Angioma,8,12
+Chiari I Malformation,8,12
+Optic Glioma,8,12
+Optic Neuritis,8,12
+Acute Disseminated Encephalomyelitis,7,12
+Cerebellar Hemangioblastoma,7,12
+Choroid Plexus Papilloma,7,12
+Ependymoma,6,12
+Epidermoid Brain Tumor,5,12
+Epidermoid Inclusion Cyst,5,12
+Ganglioglioma,5,12
+Intracranial Hypotension,5,12
+Intracranial Lipoma,5,12
+Subdural Hematoma,5,12
+Acute Disseminated Encephalomyelitis (ADEM),4,12
+Balo Concentric Sclerosis,4,12
+Basal Ganglia Infarct,4,12
+Basal Ganglia Infarction - Enhancing,4,12
+Battered Child Syndrome. Chronic Bilateral Subdural Hematomas. Multifocal Areas Of Acute/Chronic Cerebral Contusions/Edema/Encephalomalacia.,4,12
+"Bone Infarcts, Sickle Cell Disease",4,12
+Colloid (Neuroepithelial) Cyst Of The Third Ventricle,4,12
+Extramedullary Hematopoiesis,4,12
+Germinal Matrix Hemorrhage,4,12
+Hemangioblastoma,4,12
+Hypothalamic Hamartoma,4,12
+Leptomeningeal Carcinomatosis,4,12
+Medulloblastoma,4,12
+Open Lip Schizencephaly,4,12
+Optic Disc Drusen,4,12
+"Optic Disc Drusen, Calcification",4,12
+Optic Nerve Sheath Meningioma,4,12
+Osteoma Cutis - Likely Secondary To Remote Acne.,4,12
+Toxoplasmosis,4,12
+Vestibular (Acoustic) Schwannoma,4,12
+Acute Epidural Hematoma,3,12
+Acute Subdural Hematoma,3,12
+Arteriovenous Malformation,3,12
+Atypical Teratoid/Rhabdoid Tumor,3,12
+Cavum Septi Pellucidi And Cavum Vergae,3,12
+Choroid Plexus Carcinoma,3,12
+Giant Tumefactive Perivascular Spaces,3,12
+Glioblastoma,3,12
+Nontraumatic Subarachnoid Hemorrhage,3,12
+Radiation Necrosis,3,12
+Sturge Weber Syndrome,3,12
+Subarachnoid Hemorrhage,3,12
+Wernicke Encephalopathy,3,12
+"Anoxic Brain Injury, Anoxia",2,12
+"Astrocytoma, Low-Grade, Supratentorial",2,12
+Capillary Telangiectasia,2,12
+Cerebellar Astrocytoma (Pilocytic Astrocytoma),2,12
+Cerebral Abscess,2,12
+Cerebral Arteriovenous Malformation,2,12
+Cerebral Infarct (L MCA Territory),2,12
+Cerebrospinal Fluid Leak,2,12
+Corpus Callosum Lipoma,2,12
+Cortical Dysplasia,2,12
+Creutzfeldt-Jakob Disease,2,12
+Ependymoma WHO Grade 2,2,12
+Epidural Abscess,2,12
+Epidural Hematoma,2,12
+Fahr Disease,2,12
+Gemistocytic Astrocytoma,2,12
+"Gray Matter Heterotopia, Focal Type",2,12
+Hemangioblastoma Of Cerebellum,2,12
+Herpes Simplex Encephalitis (HSE),2,12
+Heterotopic Gray Matter,2,12
+Hypothalamic Hamartoma Tuber Cinereum,2,12
+Intracranial Dermoid Inclusion Cyst,2,12
+Left PICA Infarct,2,12
+Marchiafava Bignami Disease,2,12
+MOYAMOYA,2,12
+Neurocytoma,2,12
+Neurosarcoid,2,12
+Ruptured Dermoid Inclusion Cyst,2,12
+Subependymal Gray Matter Heterotopia,2,12
+"Subependymoma, Lateral Ventricle",2,12
+Superficial Siderosis Of The CNS Meninges,2,12
+Tuberous Sclerosis Complex,2,12
+Venous Angioma,2,12
+Absence Of Perfusion Of The Brain (Brain Death),1,12
+ACA Aneurysm In Suprasellar Cistern,1,12
+Acute Cerebral Infarction,1,12
+"Acute Dural Venous Sinus Thrombosis (DVST), Secondary Temporal Lobe Venous Hemorrhagic Infarction",1,12
+Acute Infarct,1,12
+Acute Infarct Detection With Non-Contrast CT,1,12
+Acute Infarct Left Basal Ganglia. Associated Calcification And Likely Developmental Venous Anomaly Without Conspicuous Signs Of Thrombosis.,1,12
+"Acute Intracranial Hemorrhage, Best Demonstrated On FLAIR MR Imaging.",1,12
+Acute On Chronic Bilateral Subdural Hematomas.,1,12
+Acute Subdural Hematoma (Left Convexity),1,12
+Acute Subdural Hematoma (Right Convexity),1,12
+Alzheimer'S Disease,1,12
+Alzheimer'S Disease Based On PET,1,12
+Alzheimer’S Disease,1,12
+Amebic Meningoencephalitis Due To Balamuthia Mandrillaris,1,12
+Amyotrophic Lateral Sclerosis (ALS),1,12
+Anaplastic Ependymoma,1,12
+Anoxic Brain Injury Due To Acute Basilar Artery Thrombosis,1,12
+"Arachnoid Cyst Associated, Spontaneous Subdural Hematoma",1,12
+Arachnoid Cyst Foramen Magnum,1,12
+"Arachnoid Cyst, Sella",1,12
+Arachnoid Granulation,1,12
+"Astrocytoma, Pilocytic WHO Gr 1",1,12
+Calcified Subdural Hematoma,1,12
+Carcinomatous Meningitis (Leptomeningeal Metastases),1,12
+Cavernous Angioma Right Thalamus,1,12
+Cavernous Hemangioma (Cavernoma),1,12
+"Cavernous Malformation, Thoracic Spinal Cord",1,12
+Cavernous Malformations Of The Brain,1,12
+Cavum Septi Pellucidi And Cavum Vergae (Vergae'S Ventricle),1,12
+Cavum Septum Pellucidum And Vergae.,1,12
+Cavum Veli Interpositi (Velum Interpositum),1,12
+Central Nervous System Lupus Erythematosus (SLE) With Extensive Cortical Dystrophic Calcification Of The Falx Cerebrii.,1,12
+Central Pontine Myelinolysis (CPM) (Osmotic Myelinolysis),1,12
+Cerebellar AVM With PICA Aneurysm,1,12
+"Cerebellar Metastasis, Melanoma",1,12
+Cerebellopontine Angle Lipoma,1,12
+Cerebellopontine Angle Meningioma,1,12
+"Cerebral Cavernous Malformation (""Hemangioma"")",1,12
+Cerebral Cavernous Malformation (Angioma),1,12
+"Cerebral Cavernous Malformation, Left Parietal Lobe",1,12
+Cerebral Cavernous Malformation.,1,12
+Cerebral Hemorrhage,1,12
+Cerebral Mycotic Aneurysm,1,12
+Cerebrospinal Fluid Hyperintensity On FLAIR Imaging Due To Oxygen Administration,1,12
+"Child Abuse, Subdural Hematoma, Retinal Hemorrhage",1,12
+Chloroma Or Granulocytic Sarcoma,1,12
+Cholesterol Granuloma Of The Right Petrous Apex.,1,12
+Chondrosarcoma Metastatic To Brain,1,12
+Choroid Plexus Papilloma - Fourth Ventricle,1,12
+CNS Angiitis With Perivascular Mononuclear Cells,1,12
+CNS Cryptococcosis,1,12
+CNS Lymphoma,1,12
+CNS Sarcoid (Neurosarcoid),1,12
+Colloid Cyst (Syn. Neuroepithelial Cyst),1,12
+"Colloid Cyst 3rd Ventricle, Incidental Pineal Region Cyst",1,12
+Colloid Cyst.,1,12
+Crossed Cerebellar Diaschisis,1,12
+Crossed Cerebellar Diaschisis (Most Likely Based Upon Scintigraphic Appearance And,1,12
+"Cryptococcus, Cryptococcoma",1,12
+Ecchordosis Physaliphora,1,12
+Embolic Infarctions Right MCA Territory,1,12
+Embryonal Tumor With Abundant Neuropil And True Rosettes (ETANTR),1,12
+Endolymphatic Sac Tumor,1,12
+Enlarged Subarachnoid Space,1,12
+"Ependymal Neoplasms, Ependymoma WHO Grade II",1,12
+"Ependymoma, Malignant",1,12
+Ethylene Glycol Poisoning,1,12
+Extradural Arachnoid Cyst Versus Focal Dural Ectasia,1,12
+Fabry Disease,1,12
+Fahr'S Disease.,1,12
+Gangliocytoma,1,12
+"Germinal Matrix Hemorrhage, Grade I",1,12
+Giant Cell Ependymoma,1,12
+Glioblastom Multiforme (GBM),1,12
+Gray Matter Heterotopia,1,12
+Hemangioblastoma In Von Hippel-Lindau Disease,1,12
+Hemangioblastomas In VHL,1,12
+Hemimegalencephaly,1,12
+Hemorrhage,1,12
+"Hemorrhage In Basal Ganglia, Hypertensive, Acute Stroke",1,12
+Herpes Encephalitis,1,12
+Herpes Simplex Encephalitis (HSV Type 1),1,12
+Herpes Simplex Encephalitis Type II.,1,12
+HHV-6 Encephalitis,1,12
+HSV Encephalitis,1,12
+Huntington Chorea,1,12
+Hydrocephalus Secondary To Intraventricular Hemorrhage. Periventricular Leukomalacia,1,12
+Hyperdense Middle Cerebral Artery Sign,1,12
+Hypertensive Encephalopathy In An Eclamptic / Hypertensive Patient.,1,12
+Hypertensive Hemorrhage,1,12
+Hypertensive Intracerebral Hemorrhage,1,12
+Hypertrophic Pachymeningitis,1,12
+Hyponatremia From Water Intoxication,1,12
+Intracranial Epidermoid Cyst (Retroclival),1,12
+Intracranial Venous Thrombosis,1,12
+Intraparenchymal Hemorrhages Associated With Prematurity.,1,12
+"Intravascular Lymphoma (Large Cell) Lymphoma, Of The B-Cell Phenotype (CD20 Positive).",1,12
+Intraventricular Tumors,1,12
+Isodense Epidural Hematoma,1,12
+Krabbe Disease,1,12
+L Parietal Ischemic Infarct,1,12
+Large Subarachnoid Space,1,12
+Left Frontal Cavernous Malformation With DVA.,1,12
+Leigh&#34;S Disease (Subacute Necrotizing Encephalopathy).,1,12
+Leigh'S Disease (Subacute Necrotizing Encephalopathy).,1,12
+Lentiform Fork Sign Of Basal Ganglia In HELLP Syndrome.,1,12
+Leptomeningeal Carcinomatosis From Endometrial Carcinoma.,1,12
+Lhermitte Duclos,1,12
+Lipoma Of The Corpus Callosum.,1,12
+Low Grade (WHO Gr2) Diffuse Astrocytoma,1,12
+Lupus Myelitis,1,12
+"Lymphoma, CNS",1,12
+"Lymphoma, CNS Primary, PCNSL",1,12
+Lymphomatous Meningitis,1,12
+Malignant Peripheral Nerve Sheath Tumor (MPNST),1,12
+Massive Left Hemisphere Stroke,1,12
+MCA Territory Cerebral Infarction,1,12
+Medulloblastoma Confirmed By Pathology.,1,12
+Medulloepithelioma,1,12
+Meningioma Of Planum Sphenoidale,1,12
+"Meningioma, Cerebellopontine Angle, WHO Grade 2",1,12
+"Meningioma, Falx",1,12
+"Meningioma, Multiple",1,12
+"Meningioma, WHO Grade 1",1,12
+"Meningioma, WHO Grade I",1,12
+"Meningoencephalitis, Probably Viral",1,12
+Mesial Temporal Hypometabolism (Sclerosis),1,12
+Metachromatic Leukodystrophy,1,12
+"Methanol Intoxication, Putamen Infarction",1,12
+"Methanol Toxicity, Putamen (Basal Ganglia)",1,12
+Methotrexate Induced Leukoencephalopathy,1,12
+Microbleeds,1,12
+Microvascular Ischemia Due To Amphetamine Use,1,12
+Middle Cerebral Artery Stroke,1,12
+MISME-Too - Neurofibromatosis Type 2,1,12
+Mixed Pilocytic/Pilomyxoid Astrocytoma,1,12
+Moya Moya Disease Ruptured Anterior Communicating Artery Aneurysm,1,12
+"Multiple Acute Infarcts, Both Cerebellar Hemispheres Gigantic DVA Of Posterior Fossa",1,12
+Multiple Acute Posterior Circulation Infarcts Due To Left Vertebral Artery Dissection.,1,12
+Multiple Meningiomas Likely Radiation Induced.,1,12
+Multiple Sclerosis - (Tumefactive Demyelination),1,12
+Myxopapillary Ependymomas,1,12
+Neurocystericosis,1,12
+Neuroepithelial Cyst,1,12
+Neurofibromatosis With Neurofibroma,1,12
+Neuronal Migration Disorder - Possibly A Closed-Lip Schizencephaly,1,12
+"Nontraumatic, Non-Aneurysmal Subarachnoid Hemorrhage",1,12
+Normal Pressure Hydrocephalus (NPH),1,12
+Radiation Induced Cerebral Cavernous Malformation,1,12
+Reversible Posterior Leukoencephalopathy From Eclampsia (Toxemia Of Pregnancy),1,12
+Right Intraparenchymal Cerebellar Hemorrhage,1,12
+Right Transverse Sinus Thrombosis,1,12
+Ruptured Anterior Communicating Artery Aneurysm Complicated By Vasospasm Post-Clipping,1,12
+Ruptured Dermoid Tumor (Inclusion Cyst) Of CNS; Possible Developing Acute Stroke Too Early For CT Diagnosis,1,12
+Ruptured Meckel'S Cave Dermoid Inclusion Cyst,1,12
+"Sarcoidosis, Pachymeningeal And Leptomeningeal",1,12
+"Severe Diffuse Axonal Injury (Shearing Injury) Of The Lobar White Matter, Corpus Callosum, And Cerebellum With Cortical Edema",1,12
+Silicone Globe Injection,1,12
+"Spinal Cord Astrocytoma, Malignant",1,12
+Spinal Cord Cavernous Hemangiomas,1,12
+Spinal Meningioma,1,12
+Spinal Metastases,1,12
+Spine Dural Arteriovenous Fistula,1,12
+Spongiform Encephalopathy; Presumed Variant Creutzfeldt-Jacob Disease,1,12
+"Spongioform Encephalopathy, Presumed Variant Creutzfeldt-Jacob Disease",1,12
+Spontaneous Pneumocephalus,1,12
+Sturge-Weber Syndrome,1,12
+Sturge-Weber Syndrome (Encephalo-Trigeminal Angiomatosis),1,12
+"Subacute Infarction, Broca&#39;S Area & Arcuate Fasciculus",1,12
+Subarachnoid Hemorrhage From Sinus Thrombosis,1,12
+Subarachnoid Hemorrhage Secondary To Aneurysm Rupture,1,12
+"Subarachnoid Hemorrhage, Causes",1,12
+"Subarachnoid Hemorrhage, Perimesencephalic SAH",1,12
+Subcortical Band Heterotopia. Diagnosis Was Confirmed With Brain MRI.,1,12
+Subdural Empyema,1,12
+"Subdural Hematoma, Diffuse Subarachnoid Hemorrhage",1,12
+"Subdural Hematoma, Tentorium",1,12
+Subependymoma (WHO Gr 1) Fourth Ventricle,1,12
+Supependymal Gray Matter Heterotopia,1,12
+Superior Saggital Sinus Thrombosis And Right Transverse Sinus Thrombosis Secondary Dehydration,1,12
+"Suprasellar Large Cell Lymphoma, Of The B-Cell Phenotype (CD20 Positive).",1,12
+Tension Pneumocephalus,1,12
+Thromboembolic Stroke Secondary To Septic Emboli,1,12
+"TORCH Infection By Hx Enlarging Hemorrhagic Cyst Mass, Inflammatory",1,12
+Traumatic Brain Contusion And Adjacent Hemorrhage,1,12
+Traumatic Brainstem Injury,1,12
+Traumatic Intracerebral Hematoma,1,12
+Treated CNS Toxoplasmosis,1,12
+Tuberous Sclerosis Complex (TSC),1,12
+Tumefactive Demyelination (Multiple Sclerosis),1,12
+Vascular Malformation With Dystrophic Calcification And Osseous Metaplasia,1,12
+Venous Angioma Of The Brain,1,12
+Vitamin B12 Deficiency (Sub-Acute Combined Degeneration),1,12
+"Von Hippel-Lindau, VHL, Hemangioblastoma",1,12
+Wernicke-Korsakoff Syndrome,1,12
+Who Grade IV Astrocytoma (Glioblastoma Multiforme),1,12
+Acute Appendicitis,32,13
+Appendicitis,10,13
+Cholelithiasis,10,13
+Crohn'S Disease,10,13
+Intussusception,9,13
+Acute Cholecystitis,8,13
+Biliary Leak,8,13
+Choledocholithiasis,8,13
+Epiploic Appendagitis,8,13
+Necrotizing Enterocolitis,8,13
+Omental Torsion,8,13
+Crohn Disease,7,13
+Cecal Volvulus,6,13
+Situs Inversus Totalis,6,13
+Ulcerative Colitis,6,13
+Adenomyomatosis,5,13
+Colon Cancer,5,13
+Biliary Necrosis From Hepatic Artery Thrombosis,4,13
+Bladder Injury In Association With Parturition,4,13
+Bronchogenic Cyst.,4,13
+Closed Loop Obstruction,4,13
+Intestinal Malrotation,4,13
+Ischemic Colitis,4,13
+Malrotation,4,13
+Oriental Cholangitis,4,13
+Ruptured Appendicitis,4,13
+Small Bowel Lymphoma,4,13
+Spigelian Hernia,4,13
+Acute Calculous Cholecystitis,3,13
+Cholangiocarcinoma,3,13
+Emphysematous Cystitis,3,13
+Gallbladder Carcinoma,3,13
+Meckel'S Diverticulum,3,13
+Mesenteric Adenitis,3,13
+Rectus Hematoma,3,13
+Segmental Omental Infarct,3,13
+Sigmoid Volvulus,3,13
+Abdominal Abscess,2,13
+Acute Appendicitis With An Appendicolith,2,13
+Amyand'S Hernia,2,13
+Appendiceal Rupture,2,13
+Appendicitis With Appendicolith,2,13
+Cholecystitis,2,13
+Chronic Pancreatitis,2,13
+Cirrhosis Of The Liver,2,13
+Colo-Colic Intussusception,2,13
+Colonic Atresia,2,13
+Epiploic Appendigitis.,2,13
+Gallstone Pancreatitis,2,13
+Gallstones,2,13
+Jejunal Atresia (Proximal),2,13
+Midgut Malrotation,2,13
+Schistosomiasis,2,13
+Small Bowel Obstruction Secondary To Adhesions,2,13
+The Wall-Echo-Shadow (WES) Sign,2,13
+Tubulovillous Adenoma,2,13
+Ventriculus Terminalis,2,13
+WES Sign Of Cholelithiasis,2,13
+Abdominoscrotal Hydrocele,1,13
+Acalculous Acute Cholecystitis,1,13
+Acute Acalculous Cholecystitis,1,13
+ACUTE APPENDICITIS - SONOGRAPHIC DIAGNOSIS,1,13
+Acute Appendicitis Diagnosed By Ultrasound,1,13
+Acute Appendicitis In Cystic Fibrosis Patient,1,13
+Acute Appendicitis With An Appendicolith.,1,13
+Acute Appendicitis With Appendicolith,1,13
+"Acute Appendicitis, Non Ruptured",1,13
+Acute Diverticulitis,1,13
+Acute Gangrenous Cholecystitis,1,13
+Acute Pancreatitis,1,13
+Acute Pyelonephritis (Pyuria With Positve Culture For E. Coli).,1,13
+Acute Suppurative Appendicitis With Serositis,1,13
+Acute Symptomatic Cholecystitis,1,13
+Adenocarcinoma Of The Ampulla Of Vater.,1,13
+Adenomyomatosis Confirmed By Ultrasound.,1,13
+Afferent Roux Limb Of Small Bowel,1,13
+AIDS Nephropathy AIDS Cholangiopathy,1,13
+Alagille Syndrome,1,13
+"Angiodysplasia, Lower Gastrointestinal Bleed",1,13
+Appendiceal Mucocele From Simple Retention Cyst,1,13
+Appendicitis With Pelvic Abscess,1,13
+Appendicolith Without Appendicitis,1,13
+Ascariasis (Intestinal Roundworms),1,13
+Calcified Uterine Leiomyoma,1,13
+Cecal Adenocarcinoma,1,13
+"Celiac Sprue (Gluten Enteropathy), Intussusception",1,13
+Cholecystitis And Percutaneous Cholecystotomy,1,13
+Choledochal Cyst,1,13
+"Choledochal Cyst, Type IV",1,13
+Choledocholithiasis - Obstructive With Ascending Cholangitis,1,13
+Choledocolithiasis,1,13
+Choledocolithiasis With Probable Gallstone Pancreatitis,1,13
+Cholelithiasis Without Associated Cholecystitis.,1,13
+Cholescintigraphy,1,13
+"Chronic Calcifying Pancreatitis, Secondary To Alcohol Abuse",1,13
+"Cirrhosis, Chronic Hepatitis C Virus Infection",1,13
+Colon Cancer Diagnosed Following Colonoscopy And Right Hemicolectomy.,1,13
+"Colon Obstruction, Metastatic Ovarian Adenocarcinoma",1,13
+Colonic Inguinal Hernia,1,13
+Colonic Stercolith,1,13
+Colorectal Signet-Ring Carcinoma,1,13
+Complicated Cholecystitis: Gangrenous Cholecystitis With Focal Perforation And Pericholecystic Abscess,1,13
+Congestive Heart Failure With Nutmeg Liver.,1,13
+Consitipation,1,13
+Crohn'S Disease (Colonoscopy With Biopsy),1,13
+Crohn'S Disease (Presumptive Diagnosis),1,13
+Crohn'S Disease - With Ileo-Rectal Fistualization,1,13
+Crohn'S Disease Of The Terminal Ileum,1,13
+Crohns,1,13
+Crohns Disease,1,13
+Crohn’S Disease,1,13
+Crohn’S Disease Complicated By Partial Small Bowel Obstruction,1,13
+Cryptorchidism,1,13
+Edematous Gallbladder Wall (Not Rupture),1,13
+Enterocutaneous Fistula,1,13
+Epididymo-Orchitis,1,13
+Epiploic Appendigitis,1,13
+"Femoral Hernia, Right",1,13
+Gall Bladder Wall Thickening,1,13
+Gallbladder Hydrops,1,13
+"Gallbladder Polyp, Histological Diagnosis Unknown",1,13
+Gallbladder Wall Edema With Sludge,1,13
+Gastric Diverticula,1,13
+Gastrointestinal (I.E. Colonic) Bleeding,1,13
+"Gastrointestinal Bleed, Lower Tract",1,13
+GASTROINTESTINAL BLEEDING,1,13
+Giant Sigmoid Diverticulum,1,13
+Hepatic Laceration With Biloma.,1,13
+"Hepatocellular Carcinoma, With Portal Hypertension, Portal Vein Thrombosis, Esophageal Varices, ""Caput Medusa"", Ascites",1,13
+High Grade B Cell Lymphoma Possibly Burkitt'S With Atypical Morphology,1,13
+High Grade Common Bile Duct Obstruction,1,13
+High Grade Small Bowel Obstruction,1,13
+Hirschprung Disease,1,13
+Hirschsprung'S Enterocolitis,1,13
+Hydrocolpos Secondary To Imperforate Hymen,1,13
+Hydrops Of The Gallbladder,1,13
+Hypertrophic Pyloric Stenosis.,1,13
+Idiopathic Constipation/Retained Stool,1,13
+Idiopathic Intussusception,1,13
+Idiopathic Pneumatosis Coli,1,13
+Ileal Atresia,1,13
+Ileal Diverticulosis,1,13
+Ileo-Colic (Ileo-Cecal) Intussusception,1,13
+Ileo-Colic Intussusception,1,13
+Incarcerated Hernia,1,13
+Incidental Malrotation And Acute Appendicitis,1,13
+Intestinal Malrotation With Midgut Volvulus,1,13
+Intestinal Non-Rotation,1,13
+Intraperitoneal Adhesions And Partial Small Bowel Obstruction,1,13
+Intussusception Secondary To B Cell Lymphoma,1,13
+Intussusception Secondary To Metastatic Renal Cell Carcinoma To The Small Bowel.,1,13
+"Intussusception, Adult",1,13
+"Intussusception, Burkitt'S Lymphoma",1,13
+"Intussusception, Intraluminal Adenocarcinoma, Ileocecal Junction",1,13
+Intussusception- Colocolic,1,13
+"Invasive Colon Cancer, Moderately Differentiated Adenocarcinoma",1,13
+Klatskin Tumor,1,13
+"Krukenberg Tumor, Primary Gastric Adenocarcinoma",1,13
+Large B Cell Lymphoma Of The Liver With Malignant Biliary Obstruction,1,13
+"Low Grade, Non Invasive Papillary Urothelial Carcinoma.",1,13
+Lupus Enteritis,1,13
+"Malrotation, Intestinal",1,13
+Meckel Diverticulum,1,13
+Meckel&#39;S Diverticulum,1,13
+Meckel'S Diverticulum With What Are Listed As Fecoliths,1,13
+Meconium Ileus,1,13
+Meconium Ileus Secondary To Cystic Fibrosis,1,13
+Meconium Plug Syndrome (Small Left Colon Syndrome),1,13
+Mesenteric And Portal Venous Thrombosis,1,13
+Mesenteric Ischemia Secondary To Superior Mesenteric Vein Thrombosis That Extends Into The Portal Vein.,1,13
+Mesenteric Lymphadenitis,1,13
+Metastatic Intrahepatic Cholangiocarcinoma,1,13
+Metastatic Ovarian Adenocarcinoma Verified By Ex-LAP/Pathology.,1,13
+Midgut Malrotation With Appendicitis,1,13
+Moderately Differentiated Adenocarcinoma (Hereditary Nonpolyposis Colon Cancer),1,13
+"Morgagni Hernia (Adult, Incidental)",1,13
+Necrotizing Enterocolitis (NEC),1,13
+Necrotizing Pancreatitis,1,13
+No Definitive Pathologic Diagnosis. Radiologic,1,13
+Non-Hodgkins Lymphoma (Large B-Cell) Of The Proximal Small Bowel,1,13
+Normal Appendix By Ultrasound,1,13
+R Femoral Hernia With Small Bowel Obstruction,1,13
+"Rabdomyosarcoma, Prostate. Botryoid Subtype",1,13
+Recurrent Bochdalek Hernia,1,13
+Recurrent Pyogenic Cholangitis (A.K.A. Oriental Cholangitis Or Oriental Cholangiohepatitis),1,13
+Reidel'S Lobe Of The Liver,1,13
+Right Sided Diverticulitis,1,13
+Right-Sided Epididymitis,1,13
+"Ruptured Appendicitis With Abscess, Appendicolith, Uncomplicated Cholelithiasis",1,13
+"Sarcoidosis, Abdomen And Liver",1,13
+Sarcoidosis.,1,13
+Sigmoid Colon Perforation Secondary To Instrumentation,1,13
+Sigmoid Diverticulits With Enterovesicular Fistula,1,13
+Sigmoid Diveticulitis,1,13
+Small Bowel Bleed From 8cm Wide Shallow Ulcer.,1,13
+Small Bowel Lymphoma - Diffuse Large B Cell,1,13
+Small Bowel Obstruction From Adhesions,1,13
+Small Bowel Obstruction From Inguinal Hernia,1,13
+Small Bowel Obstruction Secondary To Transient Intussusception.,1,13
+Small Bowel Volvulus,1,13
+"Splenic Cyst, Acquired (Splenic Infarction Or Trauma) Vs. Congenital",1,13
+Spontaneous Intestinal Perforation,1,13
+Sporadic Burkitt'S Lymphoma (Diffuse Small Noncleaved Cell Lymphoma),1,13
+Stone Within Meckel'S Diverticulum,1,13
+Subacute Cholecystitis,1,13
+Superior Mesenteric Venous Thrombosis,1,13
+"Symptomatic Gastrinoma, Diagnosed By Labaratory And OctreoScan.",1,13
+Torsion Of The Appendix Testes (Presumptive),1,13
+Toxic Megacolon (Complication Of Ulcerative Colitis),1,13
+Transient Adult Jejunojejunal Intussusception Secondary To IBD (Crohn Disease).,1,13
+"Transmesenteric Internal Hernia, Small Bowel Volvulus",1,13
+TYPE IV CHOLEDOCHAL CYST,1,13
+Typhlitis (Neutropenic Colitis),1,13
+Ventral Abdominal Hernia,1,13
+Zollinger-Ellison Syndrome Wtih Metastatic Gastrinomas,1,13
+Basilar Skull Fracture,8,14
+"Biliary Leak, Status Post Laparoscopic Cholecystectomy",8,14
+Bochdalek Hernia,8,14
+"Osteochondritis Dissecans, Juvenile-Type",8,14
+Metastatic Prostate Cancer,5,14
+Berry Aneurysm,4,14
+Bicuspid Aortic Valve With Aortic Stenosis And Aortic Dilatation.,4,14
+Bilateral Cavernous Sinus Metastatic Lymphoma,4,14
+Bilateral Clinical Lumbosacral Radiculopathy Secondary To Disc Herniation At L4/L5 And At L5/S. EMG Supported L5 And S1 Radiculopathy Left Side. Mechanical Back Pain.,4,14
+Bilateral Pheochromocytoma,4,14
+Bilateral Popliteal Artery Entrapment Syndrome,4,14
+Biliary Atresia,4,14
+"Blunt Thoracic Trauma Leading To Rib Fractures, Pneumothorax, Massive Subcutaneous Emphysema, Pneumomediastinum, And Hemothorax",4,14
+"Bone Metastasis, Secondary To Prostate Cancer.",4,14
+BORDERLINE NORMAL GASTRIC EMPTYING,4,14
+Bosniak Classification Importance In The Presence Of Spinal Trauma,4,14
+Bow Hunter'S Syndrome,4,14
+Breast Implant Rupture (Intracapsular),4,14
+"Breast Implant, Rupture, Extracapsular Silicone Of Age Indeterminate",4,14
+Budd-Chiari Syndrome,4,14
+Olivopontocerebellar Atrophy (OPCA),4,14
+Ollier'S Disease (Enchondromatosis),4,14
+Optic Nerve Meningioma - Intraconal,4,14
+Optic Nerve Staphyloma,4,14
+Optic Neuritis (NOS),4,14
+Oral Antral Fistula,4,14
+Orbital Optic Nerve Meningioma,4,14
+"Osteomyelitis, Chronic, No Organisms Cultured",4,14
+Ganglioneuroma,3,14
+Graves Disease,3,14
+Morgagni Hernia,3,14
+Toxic Multinodular Goiter,3,14
+Adenocarcinoma,2,14
+Cardiac Amyloidosis,2,14
+Clear Cell Chondrosarcoma,2,14
+Clival Chordoma,2,14
+INFILTRATING DUCTAL CARCINOMA,2,14
+Langerhans Cell Histiocytosis (Eosinophilic Granuloma Of Bone),2,14
+Medial Deviation Of Internal Carotid Artery,2,14
+Metastatic Pancreatic Adenocarcinoma,2,14
+Mucocele,2,14
+Thyroid Ophthalmopathy (Grave'S Disease),2,14
+Thyroid Orbitopathy,2,14
+Acetabular Fracture,1,14
+"Acetabulum, Partial Labrum Tear - Paralabral Cyst",1,14
+Achilles Tendon Tear,1,14
+ACL Tear With Associated Segond Fracture And Kissing Contusions,1,14
+ACTH-Secreting Pituitary Microadenoma,1,14
+Acute Ischemic Stroke,1,14
+Acute Subdural Hematoma With Temporal Bone Fracture,1,14
+Adenocarcinoma Of The Gallbladder Patient A: Solid Mass Patient B: Localized Or Diffuse Thickening Patient C: Intraluminal Mass.,1,14
+Adenocarcinoma Of The Gastroesophageal Junction,1,14
+Adrenoleukodystrophy (ADL).,1,14
+"Alzheimer'S Disease (FDG PET Pattern, And",1,14
+Amebic Abscess Of The Liver With A Sympathetic Pleural Effusion,1,14
+Amiodarone-Induced Hyperthyroidism,1,14
+"Angiolipoma,Spine",1,14
+Annular Apple Core Colonic Lesion: A Differential Diagnosis.,1,14
+Aortic Coarctation Repair; Postsurgical Imaging,1,14
+Arachnoid Cyst Versus Epidermoid Cyst,1,14
+Aspiration Of Jet Fuel,1,14
+Assessing Anemia On Thoracic CT,1,14
+"Atelectasis, LLL",1,14
+Avascular Necrosis Of Hip,1,14
+Avascular Necrosis Of The Femoral Heads.,1,14
+AVM Of The Right Posterior Parietal Lobe,1,14
+Calcification Of The Splenic Artery And Aorta.,1,14
+Calcified Pericardium,1,14
+Calcifying Myocardium From Previous Infarction,1,14
+"Cancer, Pulmonary Nodule, Vertebral Metastases (Absent Pedicle And Lung Mass)",1,14
+Carotid Body Tumor,1,14
+Carotid Cavernous Fistula And ICA Aneurysm,1,14
+"Case 30 (27th Annual Uniformed Services Dermatology Seminar, 2003) MID-LINE SACRAL HEMANGIOMA ASSOCIATED WITH A CONGENITAL ENTERIC SINUS CYST",1,14
+CAVERNOUS HEMANGIOMA,1,14
+Cerebral Infarction Encompassing The Left MCA And ACA Territories With Occlusion Of The Left ICA.,1,14
+"Cervical Spine Fracture, Simple (Compression) Type.",1,14
+Cervical Spine Myelopathy: Significance Of Symptom Recognition And Imaging Interpretation In Diagnosis - A Case Report,1,14
+Chest Wall Hemangiomas (Hemangiomatosis),1,14
+Chiari Malformation Type 1,1,14
+"Cholelithiasis With No Symptoms Of Cholecystitis. Gallbladder Wall Thickening (Edema), Caused By Hepatitis A.",1,14
+Cisterna Chyli,1,14
+Clip Migration Following Sterotactic Core Breast Biopsy,1,14
+Colocolic Intussusception Of The Transverse Colon,1,14
+Congenital Absence Of A Pedicle,1,14
+Congenital Diaphragmatic Hernia (Bochladek-Type),1,14
+Cowden\'S Syndrome,1,14
+Crohn'S Disease On PET And Tc-99m HMPAO Tagged WBC Scanning,1,14
+"Cysticercosis (Brain, Skeletal Muscle)",1,14
+Eagle'S Syndrome,1,14
+Enchondroma. Pathologic Proof.,1,14
+Endometriosis Of Left Rectus Abdominis Muscle,1,14
+Enostosis (Also Known As A Bone Island),1,14
+"Epidural Brain Abscess, CNS",1,14
+ERCP Complication: Perforation Of The Duodenum.,1,14
+Femoral Neck Stress Fracture - Acute,1,14
+Femur Stress Fracture,1,14
+Fetiform Teratoma (Homunculus),1,14
+Fibrous Dysplasia Of The Clivus,1,14
+Findings Consistent With Brain Death,1,14
+Fingerprint Artifact,1,14
+FNH - Focal Nodular Hyperplasia,1,14
+Free Tc99m In A V/Q Scan Localized To The Gastric Mucosa And The Thyroid Gland.,1,14
+Frontonasal Encephalocele,1,14
+"Gallbladder Wall Thickening, Secondary To Portal Venous Hypertension From Hepatic Venocclusive Disease (After Bone Marrow Transplant)",1,14
+Ganglioglioma.,1,14
+"Gastric Trichobezoar (Hairball), Rapunzel Syndrome",1,14
+Gastrinoma,1,14
+Glioblastoma Multiforme With Gliomatosis Cerebri,1,14
+Gluteus Minimus Partial Tear,1,14
+Grade III Intraventricular Hemorrhage With Hydrocephalus And Hematocrit Effect.,1,14
+Graves' Disease With An Underlying Multinodular Goiter Is Most Likely,1,14
+Hepatic Artery Pseudoaneurysm,1,14
+Hepatic Congestion Secondary To Congestive Heart Failure,1,14
+Hepatic Insufficiency,1,14
+Hepatocellular Carcinoma Confirmed On US-Guided Needle Biopsy.,1,14
+High-Probability V/Q Study For Pulmonary Embolus,1,14
+Hill-Sach’S Lesion With Underlying Subcortical Bone Contusion And Subchondral Cyst Formation Consistent With Chronicity.,1,14
+"Hodgkin'S Disease (Mixed Cellularity), Minimally FDG-Avid.",1,14
+Hyperparathyroidism Parathyroid Adenoma,1,14
+"Hypertrophic Pyloric Stenosis, Confirmed Intraoperatively",1,14
+Hypoplastic A1 Segment Of ACA,1,14
+Idiopathic Intussusception Located Within The Mid-Transverse Colon,1,14
+Ileal Carcinoid Tumor Metastases To The Para-Aortic Nodes In The Chest And Abdomen.,1,14
+"Impaction Fracture Of Proximal Humerus, With Loose Body Partial Calcification Of Cartilage",1,14
+Increasing Calcifications In A Patient With A,1,14
+Infiltrating Ductal Carcinoma - Left Breast (Surgical Path Confirmed) Focal Lobular Carcinoma In Situ - Right Breast (Surgical Path Confirmed),1,14
+Infiltrating Ductal Carcinoma Of The Breast (Confirmed By MRI-Guided Core Biopsy),1,14
+Inguinal Herniation Of The Bladder,1,14
+Intervertebral Disk Herniation,1,14
+Intraocular Spindle B Melanoma,1,14
+Intraoperative Ultrasound Localization Of The Lingual Arteries,1,14
+Intrasellar Cyst With Spurious Hyperprolactinemia,1,14
+"Invasive Lobular Breast Carcinoma A Small Area (Approximately 5mm) Of Invasive Lobular Carcinoma In The Midst Of Ductal Carcinoma In-Situ, Mostly Comedo Type. The Invasive Component Is Well-Differentiated, ER+, PR+, Her2 Negative. Areas Of Lobular Carcinoma In-Situ Are Present Within The Resected Mass. A Sentinel Lymph Node Was Negative For Malignancy.",1,14
+IVC Thrombus With Bilateral Deep Venous Thrombosis,1,14
+Juxtacaval Fat Collection,1,14
+"L5-S1 Disk Herniation With Sequestered Disk Material In The Spinal Canal, Compressing The Cauda Equina And Causing Myelopathic Symptoms",1,14
+Lateral Epicondylitis,1,14
+Left Sided Infrarenal Inferior Vena Cava.,1,14
+Left Supraclinoid ICA Saccular Aneurysm,1,14
+Leiomyosarcoma Of The Inferior Vena Cava,1,14
+"Lhermitte Duclos Disease, Cowden Disease",1,14
+Likely Marine-Lenhart Syndrome,1,14
+"Lipomatous Hypertrophy Of The Atrial Septum. (HU Correlated Visually And Metrically With Normal Fat, And This Is The Typical Location Of A Known, Common Entity.",1,14
+Loosening Of A Surgical Prosthesis Without Osteomyelitis.,1,14
+Lumbar Compression Fracture,1,14
+Lumbar Spinal Stenosis And Impairment Evaluation,1,14
+"Lumbar Spine, Epidural Abscess With Osteomyelitis/Discitis",1,14
+Lymph Node With Tattoo Pigment,1,14
+Malignant Peripheral Nerve Sheath Tumor (MPNST) With Divergent Rhabdomyosarcoma Differentiation Vs Pleomorphic Sarcoma,1,14
+"MCA Territory Cerebral Infarction With A ""Hyperdense MCA Sign""",1,14
+"Medial Collateral Ligament Injury, Grade II/Partial Tear",1,14
+Meningeal Hemangiopericytoma,1,14
+Meningioma (Path Proven),1,14
+Meningioma With Pial Invasion,1,14
+Metastatic Breast Cancer To The Liver And Lumbar Spine. Other Areas Of Increased Radiotracer Uptake Represent Arthritis And/Or Stress Changes.,1,14
+Metastatic Breast Cancer With Diffuse Osteoblastic Metastases To Bone.,1,14
+Microcardia,1,14
+Morquio Syndrome Myalgia Fibromyalgia,1,14
+Morquio-Brailsford Disease.,1,14
+Motion Artifact Simulating Acute Thoracic Aortic Dissection,1,14
+Multiple Tuberculomas (Tuberculosis). Subgaleal Abscess.,1,14
+"Multiple, Bilateral Intraductal Papillomas Of The Breast",1,14
+MVA-Induced Lumbar Radiculopathy Complicated By Prostate Adenocarcinoma Osseous Metastases,1,14
+Myocardial Infarction With Ventricular Aneurysm,1,14
+MYXOID LIPOSARCOMA,1,14
+"Myxoid/Round Cell Liposarcoma, Metastatic To Chest Wall",1,14
+Myxopapillary Ependymoma.,1,14
+Neoplastic Disease,1,14
+Neuroblastoma With Intraspinal Extension,1,14
+Neurocutaneous Melanosis,1,14
+Neurofibromatosis Type 1 With Lumbosacral Plexus Involvement.,1,14
+Neurofibromatosis Type 2,1,14
+"Neurofibromatosis-1, NF1, NF-1",1,14
+Neurogenic Pulmonary Edema,1,14
+Non Occlusive Deep Venous Thrombus Of The Common Femoral Vein,1,14
+Non-Displaced Transverse Fracture Of Right Femoral Neck.,1,14
+Nonketotic Hyperglycemic Hemichorea/Hemiballismus,1,14
+Normal,1,14
+"Normal Pressure Hydrocephalus, NPH",1,14
+"Quadriceps Tendon Rupture, Medial Retinacular Tear",1,14
+Radiculopathy From Left Posterior-Lateral Sequestered Disc Vs. Right Thecal Sac Displacement – A Case Study,1,14
+Radiofrequency Ablation Of Osteoid Osteoma,1,14
+Rectovaginal Fistula,1,14
+Recurrence Of Paraganglioma,1,14
+Recurrent High-Grade Astrocytoma,1,14
+Renal Captopril Scan: Segmental Renal Artery Stenosis (Of Branch/Accessory Artery),1,14
+Renal Infarct As A Complication Of A Dissection Flap In A Patient With Marfan'S Syndrome.,1,14
+Retained Lap Sponge,1,14
+Retrieval Of Inferior Vena Cava Filter,1,14
+Retroodontoid Pseudotumor,1,14
+Retroperitoneal Bleeding Associated With A High Puncture And Distal External Iliace Artery Pseudoaneurysm,1,14
+Right Distal Femur Osteomyelitis,1,14
+Right-Sided Parathyroid Adenoma (Surgical),1,14
+Sacroiliitis Without Identified Etiology.,1,14
+Scheuermann'S Disease,1,14
+"Schizencephaly (Unilateral, Closed Lip)",1,14
+"Secondary Glioblastoma, 3 Yrs From Primary Astrocytoma",1,14
+Semilobar Holoprosencephaly - As Part Of A Trisomy 13 Ring Abnormality.,1,14
+Sheehan'S Syndrome,1,14
+Shifting Breast Attenuation (Imaging Characteristics),1,14
+Shoulder Labral And Rotator Cuff Tear: Diagnosis And Chiropractic Management,1,14
+Silicone Granulomas Of The Breast (Confirmed By Ultrasound Guided Biopsy),1,14
+Simple (Solitary Or Unicameral) Bone Cyst,1,14
+Simple Vs. Complex Renal Cysts,1,14
+Sinus Pericranii,1,14
+Soft Tissue Lipoma,1,14
+SOLITARY PARATHYROID ADENOMA,1,14
+"Spine, Intradural Lipoma (Isolated)",1,14
+Splenic Laceration With Coil Embolization,1,14
+Splenic Laceration Without Coil Embolization,1,14
+Splenosis,1,14
+"Status Post Cholecystectomy, Stenting Of The Left Common Iliac Artery Stent, And Bilateral Gonadal Vein Embolization For Pelvic Congestion Syndrome!",1,14
+Subacute Thyroiditis With Focal Involvement Of The Right Upper Pole.,1,14
+Subarachnoid Hemorrhage Ruptured 7 Mm Anterior Communicating Artery Aneurysm,1,14
+Subclavian Stenosis With Angiographic Evidence Of Subclavian Steal Syndrome,1,14
+Suboptimal PET Study Due To Recent Exercise,1,14
+Subperiosteal Cephalohematoma,1,14
+Supernumerary Nipple (Confirmed By Physical,1,14
+Superscan Indicative Of Diffuse Osteoblastic Disease From Metastatic Prostate Adenocarcinoma.,1,14
+Suspected Meningioma,1,14
+SVC Syndrome Secondary To Central Catheter-Related Venous Thrombosis.,1,14
+T-99m HDP And Subacute Osteomyelitis,1,14
+Takayasu&#34;S Arteritis,1,14
+The Wall-Echo Shadow (WES) Sign,1,14
+"This Patients TCD Results Place Her In The ""Normal"" Category Described By STOP.",1,14
+Thromboembolic Stroke,1,14
+Thyroid Nodules Of Undetermined Significance.,1,14
+Toxic Adenoma,1,14
+Trans-Jugular Intrahepatic Portosystemic Shunt,1,14
+Transthyretin Cardiac Amyloidosis (ATTR-CA),1,14
+Trapezium Fracture (Occult) Scaphoid Contusion,1,14
+Triangular Fibrocartilage Complex Tear,1,14
+Tuberculosis Pott'S Disease,1,14
+Type III Dens Fracture,1,14
+Typical Bronchial Carcinoid,1,14
+Unknown,1,14
+Uveal (Choroidal)Melanoma Of The Left Globe With Extension Of Tumor Into The Retro-Ocular Tissues,1,14
+Ventriculoperitoneal Shunt Failure Secondary To Tubing Disconnection.,1,14
+"Ventriculus Terminalis (Aka ""Fifth Ventricle"")",1,14
+Vertebral Body Endplate Osteonecrosis In Sickle Cell Disease,1,14
+Vertebral Body Osteonecrosis In Sickle Cell Disease,1,14
+Vertebral Hemangioma (Diagnosed By MRI).,1,14
+Wilms Tumor In The Setting Of Known Nephroblastomatosis,1,14
+Oligodendroglioma,16,15
+Arachnoid Cyst,14,15
+Ocular Melanoma,8,15
+Arteriovenous Malformation (AVM),7,15
+Central Neurocytoma,7,15
+Colloid Cyst,7,15
+Intraventricular Meningioma,6,15
+"Astrocytoma, WHO Grade 2",4,15
+Basilar Artery Aneurysm Originating Between The Superior Cerebellar Artery (SCA) And The Posterior Cerebral Artery (PCA),4,15
+"Basilar Artery Thrombosis, Cerebral Infarction",4,15
+Basilar Tip Aneurysm,4,15
+Bell'S Palsy Inflammatory Change Of The Left Facial Nerve,4,15
+Bell'S Palsy MRI Facial Nerve Enhancement,4,15
+Brain Metastasis,4,15
+"Brain, Choroid Plexus,Metastatic Colon Carcinoma",4,15
+"Oligodendroglioma, Malignant",4,15
+"Oligodendroglioma, WHO Grade 2",4,15
+Optic Gliomas In A Patient With Neurofibromatosis 1.,4,15
+Optic Nerve Meningioma,4,15
+Optic Pathway Glioma (Pilocytic Astrocytoma) And Neurofibromatosis-1,4,15
+"Orbit, Hemangioma",4,15
+Osteoma Left Frontal Sinus,4,15
+Osteonecrosis Of Humeral Head,4,15
+Acoustic (Vestibular) Schwannoma,3,15
+Adult Medulloblastoma,3,15
+"AVM, Arterio-Venous Malformation, Vascular Malformation",3,15
+Langerhan Cell Histiocytosis,3,15
+Anaplastic Astrocytoma,2,15
+"Anaplastic Astrocytoma, Grade III, Grade 3",2,15
+Anaplastic Oligodendroglioma,2,15
+"Aneurysm, Cerebral",2,15
+"Astrocytoma, Low-Grade",2,15
+Cerebral Arteriovenous Malformation (AVM),2,15
+Cerebral Cavernous Malformation,2,15
+Giant Aneurysm,2,15
+Glioblastoma Multiforme (WHO Grade 4 Astrocytoma),2,15
+Gliofibroma,2,15
+HYPOTHALAMIC GLIOMA,2,15
+Medulloblastoma (PNET),2,15
+Myxopapillary Ependymoma,2,15
+Adenocarcinoma Of The Lung Metastatic To Cerebellum,1,15
+Agenesis Of The Corpus Callosum Heterotopic Subependymal Grey Matter,1,15
+"Anaplastic Meningioma, WHO 3",1,15
+Anaplastic Oligodendroglioma (WHO Gr 3),1,15
+"Aneurysm, Left Middle Cerebral Artery Trifucation",1,15
+Aneurysmal Dilation Of The Vein Of Galen Secondary To AV Fistulae (Vein Of Galen Aneurysm),1,15
+Arteriovenous Malformation (AVM) Ruptured,1,15
+Arteriovenous Malformation (AVM) With Large Aneurysm.,1,15
+Arteriovenous Malformation Right Occipital Lobe,1,15
+Arteriovenous Malformation Right Temporal Lobe Atresia Right Middle Ear And External Auditory Canal,1,15
+Astrocytoma Grade II (Diffuse),1,15
+"Astrocytoma, Diffuse, WHO Grade 2",1,15
+"Astrocytoma, Low Grade",1,15
+"Astrocytoma, WHO Grade II",1,15
+Atypical Meningioma - WHO 2,1,15
+Atypical Rhabdoid Tumor Of Orbit,1,15
+Carotid Artery Dissection With Distal Embolization Of Middle Cerebral Artery.,1,15
+"Cavernous Hemangioma, Giant",1,15
+Cavernous Angioma (Cavernous Malformation) With Hemorrhage,1,15
+Cavernous Angioma And Developmental Venous Anomaly,1,15
+Cavernous Angioma With DVA,1,15
+"Cavernous Carotid Aneurysm, Incidental",1,15
+Cavernous Malformation With Adjacent Basal Ganglionic Hemorrhage,1,15
+Central Nervous System Metastasis Of Invasive Pleomorphic Lobular Carcinoma Of The Breast,1,15
+Cerebellar Infarction In SCA Distribution,1,15
+Cerebellar Pilocytic Astrocytoma,1,15
+Cerebellopontine Angle Meningioma Planum Meningioma,1,15
+Cerebral Arterial Dolichoectasia,1,15
+Cerebral Arterial Dolichoectasia With Acute Cerebral Infarction,1,15
+Cerebral Arteriovenous Malformation (AVM) DVA Pons,1,15
+"Cerebral Cavernous Malformations; And, Convexity Meningioma",1,15
+Cerebral Cavernous Malformation (Cavernous Angioma),1,15
+Cerebral Cavernous Malformation (Cavernous Angiomas),1,15
+"Cerebral Infarct, PCA Territory, Bilateral",1,15
+Cerebral Infarction,1,15
+"Cerebral Infarction, Hyperdense MCA Sign",1,15
+"Cerebral Infarction, Hyperdense Middle Cerebral Artery Sign (MCA)",1,15
+"Cerebral Infarction, Laminar Necrosis, Left MCA",1,15
+"Cerebral Malignant Neoplasm, Uncertain Origin",1,15
+Chondrosarcoma Of Skull Base,1,15
+Chordoid Glioma,1,15
+Choroid Plexus Lipoma,1,15
+Choroidal Fissure Cyst,1,15
+Complete Occlusion Of The Left Internal Carotid Artery,1,15
+"Cortical Cerebral Vein Thrombosis, Frontal Lobe Venous Infarct",1,15
+Craniovertebral Junction Meningioma,1,15
+"Cystic Meningioma, Atypical",1,15
+Ependymoma Cervical Spinal Cord,1,15
+Ependymoma L2,1,15
+"Ependymoma, 4th Ventricle",1,15
+"Ependymoma, Cervical Spinal Cord",1,15
+"Ependymoma, Extraventricular (Histology)",1,15
+Ependymoma. Grade II,1,15
+Epidermoid (Inclusion Cyst),1,15
+Ewing Sarcoma Of Petrous Bone,1,15
+Facial Nerve Paralysis,1,15
+"Fibrillary Astrocytoma, WHO Grade 2 To 3",1,15
+Fibrous Dysplasia Skull,1,15
+Gangliocytoma WHO Grade 1,1,15
+GBM (Glioblastoma Multiforme) With Leptomeningeal Carcinomatosis,1,15
+"Germinoma, Primary Intracranial",1,15
+Giant Cell Astrocytoma In Tuberous Sclerosis,1,15
+Giant Fusiform Left Vertebral Artery Aneurysm,1,15
+Giant Intracranial Aneurysm,1,15
+"Giant Intracranial Aneurysm, Partially Thrombosed",1,15
+Glioblastoma Multiforme (Astrocytoma WHO Gr 4),1,15
+Glioblastoma Multiforme (Diffuse Astrocytoma Grade 4),1,15
+Glioma Involving Tectal Plate,1,15
+Gliosarcoma,1,15
+"Hemangioblastoma, Pituitary Stalk",1,15
+Hemimegalencephaly With Polymicrogyria,1,15
+Intra-Articular Ganglion,1,15
+"Intracranial Venous Anomaly Or Malformation , Developmental Venous Anomaly",1,15
+Intravascular B Cell Lymphoma,1,15
+Intraventricular Cerebellar Astrocytoma (Pilocytic Astrocytoma),1,15
+Juvenile Pilocytic Astrocytoma (JPA),1,15
+Labyrinthine Aplasia,1,15
+Lhermitte Duclos And Cerebellopontine Angle Meningioma,1,15
+Lipomyelomeningocele With Spinal Cord Syrinx,1,15
+Malignant Central Neurocytoma,1,15
+Malignant Melanoma With Diffuse Leptomeningeal Spread,1,15
+MCA Infarct With Basal Ganglia Hemorrhage,1,15
+Medulloblastoma With Leptomeningeal Spread,1,15
+Meningeal Hemangiopericytoma Cervical Spine,1,15
+Meningioma Ethmoid Roof,1,15
+Meningioma Petrous Apex,1,15
+"Meningioma, Intraossous",1,15
+"Metastatic Carcinoma, Unknown Primary",1,15
+"Middle Meningeal Artery Aneurysm, Ruptured",1,15
+Moya-Moya,1,15
+Moya-Moya (Multiple Progressive Intracranial Arterial Occlusions),1,15
+"Multiple Aneurysm, Cerebral",1,15
+Multiple Sclerosis Cervical Spinal Cord,1,15
+Neurocytoma (Extraventricular) With Ganglion Cell Development,1,15
+Neurofibromatosis Type 1 With Hypothalmic And Chiasmatic Glioma,1,15
+Retinoblastoma-Bilateral,1,15
+Right MCA Infarction,1,15
+Right Middle Cerebral Artery Territory Infarct,1,15
+Right Sided Optic Neuritis,1,15
+Rosette Forming Glioneuronal Tumor Of The Pineal Gland,1,15
+Ruptured Cerebral Arteriovenous Malformation (AVM),1,15
+Ruptured Left PICA Aneurysm,1,15
+"Secondary CNS Lymphoma, Subarachnoid Spread (Carcinomatous Meningitis)",1,15
+Spinal Cord Pilocytic Astrocytoma,1,15
+Straight Sinus Aneurysm,1,15
+Subacute Posterior Inferior Cerebellar Artery Infarct,1,15
+Subependymoma Of The Fourth Ventricle,1,15
+Superior Sagittal Sinus Thrombosis With Bilateral Frontal Lobe Venous Infarction,1,15
+T-Cell Acute Lymphoblastic Leukemia (ALL),1,15
+Tanycytic Ependymoma,1,15
+Tectal Plate Glioma,1,15
+"Third Ventricle Anaplastic Astrocytoma, Grade III, Grade 3",1,15
+Tumefactive Demyelination,1,15
+"Vertebral Artery Dissection, Wallenberg Lateral Medullary Infarction, Cerebellar Infarct",1,15
+"Vestibular Schwannoma, Incidental DVA Of Cerebellum Vermis",1,15
+Ovarian Vein Thrombosis,12,16
+Testicular Torsion,8,16
+Hodgkin'S Lymphoma,7,16
+Intralobar Pulmonary Sequestration,6,16
+Hepatoblastoma,5,16
+Langerhans Cell Histiocytosis,5,16
+B-Cell Lymphoma,4,16
+Bacterial Tracheitis,4,16
+Benign Gastric Ulcer,4,16
+Benign Metastasizing Leiomyoma,4,16
+Bilateral Carotid Body Tumors,4,16
+Bilateral ICA Dissection Status Post MVA In A Patient With Fibromuscular Dysplasia,4,16
+"Bilateral Ovarian Teratomas (""Dermoid Cyst"")",4,16
+Bilateral Sacral Fractures,4,16
+Bladder Diverticula,4,16
+"Brain Abscess, Chronic And Acute Micro-Abscesses",4,16
+Brain Biopsy Confirmed Glioblastoma Multiforme.,4,16
+Brain Biopsy Confirmed Patient Has Glioblastoma Multiforme.,4,16
+"Breast Angiosarcoma, Post-Irradiation With Metastasis",4,16
+Breast Implant Rupture,4,16
+"Breast, Infiltrating Ductal Carcinoma, Poorly Differentiated.",4,16
+Bullet Fragment Embolus,4,16
+Congenital Cystic Adenomatoid Malformation,4,16
+Fibromuscular Dysplasia,4,16
+Optic Neuritis (Imaging And Clinical,4,16
+Orbital Sarcoidosis,4,16
+Osetitis Pubis,4,16
+"Osteoblastic Metastases To Bone,Breast Cancer, Stage IV Ductal Carcinoma,",4,16
+Osteoid Osteoma Confirmed By Radiographic Appearance And Clinical,4,16
+OSTEOMYELITIS OF FEMUR,4,16
+Osteomyelitis Right Parietal And Occipital Bones,4,16
+Ovarian Cancer,4,16
+"Ovarian Cystic Teratoma (""Dermoid"" Or ""Dermoid Cyst"")",4,16
+Ovarian Hyperstimulation Syndrome,4,16
+Autonomous Functioning Thyroid Nodule.,3,16
+Femoral Artery Pseudoaneurysm,3,16
+Retropharyngeal Abscess,3,16
+Acute Mesenteric Ischemia,2,16
+Calcification Of The Vas Deferens,2,16
+Cardiogenic Pulmonary Edema – CHF Exacerbation Secondary To New Onset Atrial Fibrillation.,2,16
+Clear Cell Sarcoma Of The Kidney,2,16
+Empty Sella Syndrome,2,16
+Ewing'S Sarcoma,2,16
+Gardner'S Syndrome,2,16
+Grade IV Renal Laceration,2,16
+Hepatic Fatty Infiltration With Focal Sparing,2,16
+Hydrocele,2,16
+Malignant Germ Cell Tumor (Mixed),2,16
+Malignant Melanoma,2,16
+Neurofibromatosis Type 1,2,16
+Rathke'S Cleft Cyst,2,16
+Renal Cell Carcinoma.,2,16
+Solitary Thyroid Nodule,2,16
+Splenic Laceration,2,16
+Swimming-Induced Pulmonary Edema (SIPE),2,16
+Syrinx Associated With Chiari I Malformation,2,16
+Tetralogy Of Fallot,2,16
+Abdominal Wall Hematoma Following The Initiation Of Therapeutic Anticoagultion.,1,16
+"Abscess, Central Nervous System",1,16
+AC Joint Dislocation,1,16
+Acute Appendicitis With Pathologic Evidence Of Chronic Lymphocytic Infiltrate.,1,16
+Acute Osteomyelitis.,1,16
+Acute Otomastoiditis (Non-Coalescent),1,16
+Acute Pulmonary Embolism,1,16
+Adenocarcinoma Of Gastric Antrum,1,16
+Adrenal Mass - Considered To Be Benign Lesion With Stability Over 10 Months Of Imaging. Likely Myelolipoma Given Imaging Characteristics.,1,16
+Amiodarone Induced Thyroiditis,1,16
+"Amiodarone Liver, Increased Attenuation (Density) On CT",1,16
+AMIODARONE THYROTOXICOSIS,1,16
+Angiomyolipoma With Hemorrhage,1,16
+Anterior Mediastinal Mass Differential Diagnosis,1,16
+Anterior Mediastinal Nonseminomatous Germ Cell Tumor,1,16
+Arterial Pseudoaneurysm,1,16
+"Arteriovenous Malformation, Hematoma, Left Parietal Lobe",1,16
+Askin Tumor Of Chest Wall,1,16
+Aspergillosis And The Air-Crescent Sign,1,16
+Atrial Septal Defect.,1,16
+"Autosomal Dominant ""Adult"" Polycystic Kidney Disease (ADPKD). Family Hx Revealed PT'S Father With",1,16
+Catheter Fracture With Leakage,1,16
+Cerebral Aneurysm - Left Anterior Communicating Artery,1,16
+Cerebral Fat Embolism,1,16
+"Cerebral Infarction, Hyperdense Middle Cerebral Artery Sign",1,16
+Cervical Cancer - Stage IIIB With Ureteral Obstruction,1,16
+Cervical Cancer With Bilateral Hydronephrosis,1,16
+Chilaiditi Syndrome,1,16
+Classic Bosniak Class III Complex Renal Cyst,1,16
+Combat Related Eye Injury,1,16
+Congenital Adrenal Hyperplasia,1,16
+Congenital Diaphragmatic Hernia - Right Bochdalek,1,16
+Congenital Pseudoarthrosis Of The Clavicle,1,16
+Congestive Heart Failure Secondary To An Endocardial Cushion Defect,1,16
+Cor Triatriatum,1,16
+Crossed Fused Renal Ectopia,1,16
+"Eccrine Acrosoiroma, Poroma Type",1,16
+Epiglottitis Secondary To AML- M5,1,16
+Extraskeletal Ewing'S Sarcoma CT Guided Fine Needle Aspiration Confirmed The Diagnosis.,1,16
+False Positive PET Results In Pneumonia,1,16
+Fat Embolism,1,16
+"Fibromuscular Dysplasia, Renal Infarct",1,16
+Filling Defects At Ductography,1,16
+FOCAL FATTY SPARING IN EMBRYOLOGICAL VENTRAL PROCESS OF PANCREAS,1,16
+Focal Nodular Hyperplasia Cirrhosis (Regenerating Nodule) Budd-Chiari Syndrome,1,16
+Foreign Body Ingestion Of Rare Earth Magnets,1,16
+"Foreign Body Perforation, Intra-Abdominal Abscess",1,16
+"Fourth Branchial Cleft Sinus Tract, Polymicrobial Infection",1,16
+Goodpasture Syndrome,1,16
+Grading Gliomas Using RCBV Perfusion Imaging,1,16
+Granuloma,1,16
+"Granulosa Cell Tumor, Confirmed By Pathological Evaluation.",1,16
+Graves' Disease With Large Hypofunctional Thyroid Mass.,1,16
+Gynecomastia Secondary To Cardiac Cirrhosis(Secondary To CHF) And Digitalis Use.,1,16
+Hematobilia (Hemobilia),1,16
+Hemorrhagic Contusion.,1,16
+Hepatocellular Carcinoma With Extension To The Right Atrium,1,16
+Hereditary Nonpolyposis Colon Cancer: Adenocarcinoma Of The Colon Renal Cell Carcinoma (Clear Cell Type),1,16
+"High Grade Adenocarcinoma, Primary Lung With Metastasis To Brain",1,16
+Hirschsprung Disease Enterocolitis,1,16
+"History, Clinical Course, And Imaging",1,16
+"Hodgkin'S Disease, Nodular Sclerosing Subtype",1,16
+Hyaline Membrane Disease,1,16
+Hypertrophic Pulmonary Osteoarthropathy (Based On Clinical Presentation And Radiographic,1,16
+IED Fragment Embolism To Left Posterior Cerebral Artery,1,16
+Ileal Perforation Secondary To Indomethacin Administration,1,16
+Iliopsoas Abscess,1,16
+"Immature Teratoma, FIGO Stage T1aNXMX",1,16
+In This Particular Post-Operative Setting Abscess And Hematoma Are Most Likely (Unless There Was Abgiguity Regarding The Initial Appendicitis Diagnosis).,1,16
+Infantile Multicentric Myofibromatosis,1,16
+Infantile Myofibroma,1,16
+Infectious Cavitary Abcess,1,16
+Inferior Vena Cava Filters,1,16
+Infiltrating Breast Cancer,1,16
+Infiltrating Ductal Carcinoma Dx. By MRI,1,16
+"Inflammatory Breast Cancer, Metastatic To Thoracic Spine (Stage IV)",1,16
+Intracranial (Osteo)Chondroma,1,16
+Intralobar Pulmonary Sequestration With Superimposed Pneumonia,1,16
+Intraperitoneal Adhesions With Anastomotic Stricture And Partial Small Bowel Obstruction,1,16
+Juvenile Dermatomyositis,1,16
+Lacunar Skull,1,16
+Langerhans Cell Histiocytosis - Radiographic Diagnosis,1,16
+Left Minor Fissure,1,16
+Left PICA Infarct Confirmed With MRI. MR Angiogram Images And CT Angiogram Images Demonstrated A Patent Vertebral System And Patent Left PICA. A Focal Stenosis Was Detected At The Origin Of The Left Posterior Inferior Cerebellar Artery.,1,16
+"Left Upper Lobe Collapse, Squamous Cell Carcinoma",1,16
+Limbal Dermoid,1,16
+Liver Metastases From Breast Cancer,1,16
+"Liver Metastases, From Bronchogenic Carcinoma",1,16
+Low Danis-Weber Type C Fracture,1,16
+"Lung Cancer, Golden'S S Sign",1,16
+Lung Herniation; Atrial Fibrillation With Flutter,1,16
+Madelung Disease Aka. Launois-Bensauade Disease Or Benign Symmetric Lipomatosis,1,16
+Malignant Rhabdomyosarcoma,1,16
+Malrotation And Midgut Volvulus,1,16
+Medium Sized Saccular Aneurysm In The Right Anterior Inferior Cereballar Artery,1,16
+Mesial Temporal Sclerosis,1,16
+Metastatic Breast Cancer To Lungs - Nodules,1,16
+Metastatic Colon Cancer,1,16
+Metastatic Disease,1,16
+Metastatic Ductal Carcinoma (Breast),1,16
+Metastatic Paraganglioma,1,16
+"Metastatic Testicular Neoplasm, Most Likely Choriocarcinoma Or Mixed NSGCT",1,16
+Microcystic Meningioma,1,16
+Moyamoya Disease,1,16
+Multiple Myeloma Diagnosis Was Confirmed By Biopsy Of Humeral Lesion And Bone Marrow Aspirate.,1,16
+Multiple Pulmonary Emboli (Acute On Chronic) Asymptomatic,1,16
+Nasopharyngeal Embryonal Rhabdomyosarcoma,1,16
+Necrotizing Soft Tissue Infection,1,16
+Neonatal Adrenal Hemorrhage,1,16
+Non Accidental Trauma Vs Artifact,1,16
+Non Communicating Hydrocephalus Due To Aqueductal Stenosis,1,16
+"Nonseminomatous Germ Cell Tumor (T1) Of The Left Testicle Consisting Of Embryonal Carcinoma, Teratoma, And Yolk Sac.",1,16
+Radiopaque Esophageal Foreign Body (Chewing Gum),1,16
+Reactivated Pulmonary Tuberculosis,1,16
+Reactive Lymphadenopathy In The Setting Of COVID-19 Vaccination,1,16
+Reflex Sympathetic Dystrophy (Also Referred To As Chronic Regional Pain Syndrome).,1,16
+Renal Forniceal Rupture,1,16
+Renal Infarct,1,16
+Renal Transplant Decreased Function Secondary To Rejection,1,16
+Retinal Hemmorhage Secondary To Diabetic Retinopathy,1,16
+Reversible Encephalopathy Syndrome (PRES)With Hemorrhage,1,16
+Rheumatic Valve Disease,1,16
+Right Incarcerated Ovarian Inguinal Hernia.,1,16
+Sand Aspiration,1,16
+Schistosomiasis Japonicum,1,16
+SCIMITAR SYNDROME,1,16
+"Seminoma, Classic Type With Scattered Syncitiotrophoblast Elements",1,16
+Septic Arthritis,1,16
+Septo-Optic Dysplasia (De Morsier Syndrome),1,16
+Sickle Cell Disease Changes,1,16
+Silicone Granuloma Of The Breast,1,16
+Single Kidney - Renal Agenesis,1,16
+Situs Inversus,1,16
+Skeletal Muscle Metastases (SMM) Of Neuroblastoma,1,16
+Solitary Fibrous Tumor Of Pleura Confirmed By Histology With Immuno-Histochemical Profile.,1,16
+"Splenic Laceration, Grade V",1,16
+Spontaneous Pneumothorax,1,16
+Stage IV Melanoma Migration Of Broken Catheter,1,16
+Stage V Bilateral Wilms' Tumor,1,16
+Staging Non-Small Cell Lung Cancer,1,16
+Stanford Type B Aortic Dissection,1,16
+"Subarachnoid Hemorrhage, Cerebral Aneurysm",1,16
+"Subdural Empyema, Frontotemporal Brain Abscess From Dehiscence Of The Posterior Wall Frontal Sinus.",1,16
+Superior Mesenteric Artery Dissection,1,16
+Suprasellar Epidermoid Cyst,1,16
+Swyer-James Syndrome,1,16
+TESTICULAR FRACTURE,1,16
+Testicular Neoplasm,1,16
+This Is A Differential Case. Final Diagnosis Is Pending,1,16
+Thoracic Neuroblastoma,1,16
+THYMIC NEUROENDOCRINE CARCINOMA.,1,16
+Toddler'S Fracture Of Left Tibia,1,16
+Transitional Cell Carcinoma Of The Bladder,1,16
+Traumatic Ruptured Spleen,1,16
+Type I Chiari Malformation,1,16
+"Urethral Cancer, Transitional Cell Carcinoma, T2N0M0",1,16
+Urinary Bladder Diverticulum,1,16
+Uterus Didelphys With Hematometrocolpos And Multicystic Dysplastic Kidney,1,16
+Varicocele Secondary To Aborrant Drainage Of Right Gonadal Vein Into The Right Renal Vein,1,16
+VENOUS THORACIC OUTLET SYNDROME,1,16
+Vertebral Metastasis On Indium-111 Tagged WBC Scanning,1,16
+Vesico-Urachal Diverticulum,1,16
+Vit D Def.,1,16
+Bicornuate Uterus,28,17
+Ovarian Torsion,20,17
+Omphalocele,16,17
+Ectopic Pregnancy,13,17
+Hydrosalpinx,10,17
+Bilateral Renal Agenesis,8,17
+Adenomyosis,7,17
+Unicornuate Uterus,5,17
+BICORNUATE UTERUS,4,17
+Bicornuate Uterus Is Most Likely Although A Septate Uterus Should Be Excluded By US Or MRI.,4,17
+Breast Implant Normal Mammographic,4,17
+Gastroschisis,4,17
+Ruptured Ectopic Pregnancy,4,17
+Uterine Leiomyoma,4,17
+Uterine Synechiae,4,17
+Ectopic Pregnancy-Unruptured,3,17
+Ectopic Pregnancy.,3,17
+Salpingitis Isthmica Nodosa,3,17
+Septate Uterus,3,17
+Asherman'S Syndrome,2,17
+Choroid Plexus Cysts,2,17
+Endometrial Polyp,2,17
+Incompetent Cervix,2,17
+Subchorionic Hemorrhage,2,17
+Uterine Fibroid Embolization,2,17
+Arcuate Uterus,1,17
+Cavum Septum Pellucidum,1,17
+Cervical Ectopic Pregnancy,1,17
+Cervical Incompetence,1,17
+Cesarean Scar Ectopic Pregnancy,1,17
+Congenital Cystic Adenomatoid Malformation Of The Lung,1,17
+Cystic Hygroma (Turner'S Syndrome),1,17
+Ectopic (Tubal)Pregnancy,1,17
+Ectopic Pregnancy (Within Left Fallopian Tube).,1,17
+Ectopic Pregnancy With Pseudosac,1,17
+Endometrial Adenocarcinoma,1,17
+Endometrial Atrophy With Polyp,1,17
+Endometrial Hyperplasia/Tamoxifen Effect (Pathology Pending),1,17
+ENDOMETRIAL POLYP,1,17
+Endometrial Polyps,1,17
+Exophytic Uterine Leiomyoma,1,17
+Fetal Magnetic Resonance Imaging,1,17
+Fetal Nuchal Cords,1,17
+Fetal Tuberous Sclerosis,1,17
+Giant Placental Chorioangioma Highly Suspected By Color Doppler Study And Confirmed By Histopatholoic,1,17
+Hematocolpos,1,17
+Hematosalpinx Due To Tubal Ectopic Pregnancy,1,17
+Horshoe Kidney Bicornuate Uterus,1,17
+Hydatidiform Mole (Molar Pregnancy),1,17
+HYPERPLASTIC ENDOMETRIAL POLYP,1,17
+Hypoplastic Uterus With T- Shaped Uterine Contour,1,17
+Intratesticular Varicoceles,1,17
+Intrauterine Device - Normal Ultrasound Appearance,1,17
+Left Tubal Ectopic Pregnancy,1,17
+Lithopedion,1,17
+Male-To-Female Transsexual,1,17
+Marginal/Partial Placenta Previa,1,17
+Meconium Plug Likely Secondary To Functional Immaturity Of The Colon Or Small Left Colon Syndrome (Formerly Called Meconium Plug Syndrome),1,17
+Molar Pregnancy (Gestational Trophoblastic Neoplasia),1,17
+Normal Peri-Capsular Reactive Fluid,1,17
+RECURRENT DCIS LEFT BREAST,1,17
+Right Adnexal Ectopic Pregnancy,1,17
+RULE OUT ECTOPIC PREGNANCY,1,17
+Septal Veins Of The Cavum Septum Pellucidi,1,17
+Septate Vs Bicornuate Uterus,1,17
+Submucosal Uterine Leiomyoma (Fibroid),1,17
+Succenturiate Lobe Of The Placenta,1,17
+This Abnormality Is Radiologically Consistent With An Endometrial Polyp.,1,17
+Threatened Abortion (Incompetent Cervix),1,17
+Tubular Ectasia (Cystic Dilatation) Of Rete Testes,1,17
+Two Vessel Umbilical Cord,1,17
+Two Vessel Umbilical Cord / Single Umbilical Artery,1,17
+Ultrasound Of Blighted Ovum,1,17
+Undescended Testicles,1,17
+Unfused Amnion - Normal For Gestational Age,1,17
+Unicornuate Uterus With Rudimentary Left Horn,1,17
+Uterine Artery Embolization For Uterine Fibroids,1,17
+Uterine Artery Embolization Of Uterine Fibroids,1,17
+Uterine Cervical Diverticulum,1,17
+Uterine Leiomyoma (Fibroid),1,17
+Uterine Scarring,1,17
+Uterine Synechiae Vs Vanished Twin,1,17
+Vesicovaginal Fistula,1,17
+Basilar Skull Fracture--Temporal Bone Involvement,4,18
+Bilateral Mandibular Condyle Fractures,4,18
+"Bilateral Pleural Effusions, Bilateral Pelvic Hematomas, Fracture/Tract Of Left Iliac, Left 5th Rib Fracture, Thickening Of Gastric Wall - Non-Specific Changes, And Post Surgical Changes To Left Upper Quadrent Status Post Splenectomy.",4,18
+Bilateral Tibial Stress Fractures,4,18
+Bipartite Talus,4,18
+Boerhaave'S Syndrome (Esophageal Rupture),4,18
+"Breast Hematoma, Rib Fracture And Subsegmental Atelectasis",4,18
+Brodie’S Abscess,4,18
+Burkitt Lymphoma,4,18
+Obstructive Uropathy With Urinoma Secondary To Urethral Squamous Cell Carcinoma,4,18
+Oculo-Auriculo-Vertebral Syndrome (OAVS),4,18
+Orbital Retrobulbar Dermoid Cyst,4,18
+Os Odontoideum,4,18
+Os Triangulare,4,18
+Osseous Hemangioma - The CT Correlation With Recent MRI Showing Serpiginous Contrast Enhancement Within The Cortically Based Lesion And The Constellation Of CT,4,18
+"Osteochondritis Dissecans, Stage IV",4,18
+Osteonecrosis,4,18
+Ovarian Germ Cell Tumor: Mature Cystic Teratoma With Yolk Sac Component.,4,18
+Acute Coronary Syndrome,3,18
+Cervical Spinal Stenosis And Myelopathy With Lumbar Radiculopathy,2,18
+Chronic Osteomyelitis,2,18
+Hepatocellular Carcinoma And Bone Metastasis.,2,18
+Nasopharyngeal Carcinoma,2,18
+Sacrococcygeal Teratoma,2,18
+Walker Warburg Syndrome,2,18
+Acute Cholecystitis In The Setting Of Primary Sclerosing Cholangitis,1,18
+"Acute L5-S1 Radiculopathy, Myelopathy Of Cervical Spine At Upper C4",1,18
+Acute On Chronic Osteomyelitis Post-Traumatic Changes With Deformity After Trauma,1,18
+Acute Pancreatitis.,1,18
+Acute Skull Osteomyelitis Following Peri-Orbital Cellulitis,1,18
+"Adrenal Pheochromocytoma, Unilateral",1,18
+Adrenocortical Carcinoma,1,18
+Allergic BronchoPulmonary Aspergillosis (ABPA),1,18
+Alveolar Rhabdomyosarcoma,1,18
+Anaplastic Thyroid Carcinoma,1,18
+"Angiomyolipoma (Sporadic), Cholelithiasis",1,18
+Anomalous Left Main Coronary Artery And Interarterial Vessel,1,18
+"Apical Hypertrophic Cardiomyopathy, Episodes Of Ventricular Tachycardia.",1,18
+"As Above, The Differential Diagnosis Is: Esophageal Duplication, Bronchogenic Cyst, Or Lymphangioma.",1,18
+Ascending Thoracic Aortic Aneurysm,1,18
+Avascular Necrosis (AVN) Of Femoral Heads Bilaterally,1,18
+Avascular Necrosis Of Femoral Heads Bilaterally With Associated Osteoarthritic Changes.,1,18
+C. Difficile Colitis,1,18
+Calcium Pyrophosphate Dihydrate Crystal Deposition Disease (CPPD) (Pseudogout),1,18
+Calvarial Hemangioma,1,18
+Cavitary Lung Nodule,1,18
+Cellulitis Without Concomittant Osteomyelitis,1,18
+Central Pontine Myelinolysis,1,18
+Cerebellar PICA Infarction,1,18
+"Cervical Sprain, Cervical Canal Stenosis With Foraminal Stenosis, Degenerative Disc Disease In Cervical And Lumbar Spine, Lumbar Spondylosis, Lumbar Radiculopathy",1,18
+"Charcot Arthropathy, I.E. Neuropathic Joints",1,18
+"Chromophobe Renal Cell Carcinoma, Eosinophile Type, That Perforates Renal Capsule And Infiltrates Perirenal Fat Tissue",1,18
+Chronic S1 Radiculopathy,1,18
+Closed Loop Small Bowel Obstruction,1,18
+COMPLEX OVARIAN CYST PRESENTATION OF OVARIAN FIBROMA,1,18
+"Congenital Diaphragmatic Hernia, Left-Sided Bochdalek (Posterolateral)",1,18
+Congenital Obstructive Posterior Urethral Membrane (Posterior Urethral Valve) With Grade V Left Ureter Reflux And Right Secondary Ureterovesical Junction Obstruction.,1,18
+Congenital Pulmonary Vein Stenosis,1,18
+Congenital Renal Artery Stenosis Of The Right Kidney Of Uncertain Etiology.,1,18
+Congenital Unilateral Pulmonary Vein Atresia (Right),1,18
+CONTRAST-INDUCED NEPHROPATHY,1,18
+"Crohn'S Disease - Gastroduodenal Involvement, Antral Aphthous Ulcerations, Sinus Tract Along Greater Curvature",1,18
+CSF LEAK,1,18
+Cystic Fibrosis With Bronchiectasis,1,18
+EMBRYONAL RHABDOMYOSARCOMA -Botryoid Type.,1,18
+Enchondromatosis (Ollier'S Disease),1,18
+ENTEROCELE (Characteristic,1,18
+Epidermoid Tumor,1,18
+"Epididymal Cystadenomas, Von Hippel-Lindau Disease",1,18
+"Esophageal Atresia, Type A",1,18
+Esophagitis (Candida Albicans),1,18
+Ewing Sarcoma Of The Tibia,1,18
+Facial Trauma S/P MVA,1,18
+Fat Necrosis With Traumatic Oil Cysts.,1,18
+Femoroacetabular Impingement (FAI),1,18
+"Fracture Of Left 3rd, 4th, And 5th Metatarsals.",1,18
+Fracture Of The Dens And Atlanto-Axial Instability.,1,18
+Frontal Sinus Mucocele,1,18
+Full Thickness Injury To The Mid Portion Of The Anterior Cruciate Ligament. Medial Collateral Ligament Tear Of Anterior Proximal Fibers. Partial Tear Of The Posterior Cruciate Ligament At The Tibial Attachment. Lateral Tibial Plateau Impaction Fracture. Bone Marrow Edema At The Lateral Femoral Condyle. Tear Involving The Posterior Horn Of The Medial Meniscus.,1,18
+Gallbladder Carcinoma.,1,18
+"Gallstone Ileus, Colon Carcinoma (Incidental)",1,18
+Gastric Inflammatory Fibroid Polyp,1,18
+Giant Cell Bone Tumor,1,18
+Grade 2 Anterior Spondylolisthesis At The Level Of L4/L5.,1,18
+GSW T10 With Paraplegia,1,18
+"Hemangioblastoma, Von Hippel-Lindau Disease",1,18
+Hepatic Artery Chemoembolization Of HCC.,1,18
+"Hepatolenticular Degeneration, Wilson'S Disease",1,18
+Herpes Encephalitis HSV-1,1,18
+HILL-SACHS DEFORMITY WITH ASSOCIATED BANKART LESION,1,18
+Hirschsprung'S Disease,1,18
+Horseshoe Kidney (Midline Renal Fusion),1,18
+Hunter Syndrome,1,18
+Hypertrophic Cardiomyopathy,1,18
+"Hypoxic-Ischemic Injury, Rhinovirus",1,18
+Incarcerated Diaphragmatic Hernia Presenting As Colonic Obstruction.,1,18
+"Inflammatory Pseudotumor, Myofibroblastic Tumor",1,18
+Infrarenal Abdominal Aortic Aneurysm,1,18
+Intervertebral Disk Herniation With Subsequent C6 Radiculopathy.,1,18
+Intracranial Immature Brain Teratoma,1,18
+"Intraventricular Hemorrhage (Grade IV IVH Right, Grade III IVH Left) With Hydrocephalus",1,18
+Intussusception. Pancreatic Atrophy From Cystic Fibrosis,1,18
+Ischemic Stoke In Right Temporal-Parietal Lobes Secondary To Emboli From Carotid Bulb Atheroma,1,18
+Isolated Left Ventricular Noncompaction,1,18
+"Juvenile Angiofibroma, Nasal",1,18
+Keyhole Fracture Of The Skull,1,18
+Kienbock’S Lunatomalacia,1,18
+Klippel Trenaunay Weber Syndrome,1,18
+Kyphoplasty Cement Leak,1,18
+Langerhans Cell Histiocytosis.,1,18
+Langerhans' Cell Histiocytosis,1,18
+Large Concha Bullosa (Middle Turbinate Syndrome),1,18
+Laryngeal Papillomatosis With Malignant Transformation,1,18
+Left Lower Lobe And Partial Right Middle And Right Lower Lobe Atelectasis Secondary To Mucous Plugging In This Patient With Asthma.,1,18
+Left Subclavian Stenosis,1,18
+Lemierre Syndrome,1,18
+Lemierre'S-Like Syndrome,1,18
+Lipohemarthrosis (S/P BKA For IED & Shrapnel Injury),1,18
+Lipomyelocele,1,18
+Lung Adenocarcinoma And CNS Metastasis,1,18
+Malignant Embryonal Rhabdomyosarcoma,1,18
+Marfan Syndrome,1,18
+Marfan'S Syndrome,1,18
+Mastoiditis Complicating Right Middle Ear Infection.,1,18
+Mature Sacrococcygeal Teratoma,1,18
+Metastatic Squamous-Cell Lung Carcinoma,1,18
+Midaortic Syndrome,1,18
+Moyamoya Disease Secondary To Sickle Cell Disease,1,18
+Mucinous Cystic Neoplasm Of The Pancreas,1,18
+Mucoepidermoid Cancer Of The Parotid Gland,1,18
+Multi-Organism Osteomyelitis In Patient,1,18
+Multi-Trauma,1,18
+Multifocal Bone Infarcts (Osteonecrosis) In A Patient With Systemic Lupus Erythematosus.,1,18
+"Multilevel Cervical Disc Herniation, Acute Bilateral C5 Radiculopathy, Potential Cervicogenic Headaches (Needs Local Anesthetic Nerve Block To Confirm)",1,18
+"Multiple Lumbar Radiculopathies, Multi-Level Disk Herniations, Shoulder Slap Injury",1,18
+Multiple Myeloma And Secondary Amyloidosis And,1,18
+Mycobacterial Avium Complex Pulmonary Infection,1,18
+Nephroblastomatosis With Bilateral Wilms Tumors,1,18
+"Neurofibroma, Likely Neurofibromatosis Type I.",1,18
+"Neurosarcoid, CNS Sarcoid",1,18
+Non-Small Cell Squamous Lung Carcinoma,1,18
+Nonaccidental Trauma,1,18
+Normal Head CT - Young Adult,1,18
+Normal Myocardial Perfusion Imaging Study With Inferior Wall Attenuation Artifact That Corrected After Application Of Attenuation Correction Software.,1,18
+Normal Ultrasound Of The Spine,1,18
+Reactive Thymus,1,18
+Renal Cell Carcinoma With Lytic Metastasis,1,18
+Respiratory (Laryngotracheal) Papillomatosis,1,18
+"Retropharyngeal Abscess, C1-C2 Fixed Rotatory Subluxation",1,18
+Rhabdomyosarcoma (Alveolar Type),1,18
+Rhinosporidiosis Nasal Cavity With Septal Perforation,1,18
+Rickets (Vitamin D Dependent),1,18
+"Right L5 Radiculopathy, Lumbar Sprain/Strain, Lumbar Disc Herniation, And Lumbar Spinal Stenosis",1,18
+"Right Main Stem Intubation, With Consequent Pulmonary Interstitial Emphysema Complicated By Tension Pneumothorax",1,18
+RSNA-COTD Infected Dermoid Cyst,1,18
+Ruptured Ovarian Cyst,1,18
+Scimitar Syndrome (Anomalous Pulmonary Systemic Circulation),1,18
+SCLERODERMA,1,18
+Septic Pulmonary Embolism,1,18
+Sequela Of Deflux Procedure,1,18
+Short-Segment Hirschsprung'S Disease,1,18
+Situs Inversus With Dextrocardia,1,18
+Small Intestinal Ulceration And Perforation With An Inflammatory Pseudocyst,1,18
+Soft Tissue Myxoma,1,18
+Spinal Leptomeningeal Neurosarcoidosis Of The Conus Medullaris,1,18
+Splenic Artery Aneurysm,1,18
+Stage IVB Non-Hodgkin’S Lymphoma (Pre B-Cell Variety) Diagnosed By Biopsy,1,18
+Stanford Type A Dissection,1,18
+Subcutaneous Emphysema From Pulmonary-Parietal Fistula From Misplaced Catheter,1,18
+Subdiaphragmatic Extralobar Pulmonary Sequestration,1,18
+"Symptomatic Syringomyelia, Complicated By Herniation Of The Thoracic Spinal Cord And Cervical Spinal Stenosis Secondary To Traumatic Disc Herniation",1,18
+Tendon Xanthomas In Familial Hypercholesterolemia,1,18
+"Thanatophoric Dysplasia (Dwarfism), Type I",1,18
+Tolosa Hunt,1,18
+Toxic Megacolon,1,18
+TRANSJUGULAR INTRAHEPATIC PORTOSYSTEMIC SHUNT (TIPS),1,18
+Traumatic Intraperitoneal Bladder Perforation,1,18
+Tuberous Sclerosis (Bourneville Disease),1,18
+Tuberous Sclerosis Complex (TSC) With Lymphangioleiomyomatosis (LAM),1,18
+Unicameral Bone Cyst,1,18
+Unilateral (Right) Renal Ectopia,1,18
+Upper Extremity DVT,1,18
+URINOMA,1,18
+UTERINE FIBROID EMBOLIZATION,1,18
+Variant Pulmonary Venous Anatomy (No Clinical Significance),1,18
+"Venous Thrombosis Of The Vein Of Galen, Straight Sinus, And Dominant Left Transverse Venous Dural Sinus.",1,18
+Vertebral Osteomyelitis And Discitis,1,18
+Vestibular (*Acoustic) Schwannoma,1,18
+Wandering Spleen With Splenic Infarction,1,18
+Wegener Granulomatosis,1,18
+"Wilms Tumor, Stage IV",1,18
+Wilms’ Tumor (Nephroblastoma). Negative Left Renal Involvement. Negative Mesenteric Lymph Node Pathology.,1,18
+"Wilms’ Tumor, Stage I (Stage III At Biopsy) With Favorable Histology",1,18
+X-Linked Adrenoleukodystrophy,1,18
+Zenker'S Diverticula Mid-Esophageal Diverticula Epiphrenic Diverticula,1,18
+Horseshoe Kidney,12,19
+Bladder Diverticulum,8,19
+Bladder Rupture,8,19
+ADPKD -Autosomal Dominant Polycystic Kidney Disease,7,19
+Acute Pyelonephritis,6,19
+Autosomal Recessive Polycystic Kidney Disease,5,19
+Calyceal Diverticulum,5,19
+Medullary Nephrocalcinosis,5,19
+Bilateral Duplex Collecting Systems With Obstruction Of Left Upper Pole Moiety,4,19
+Bilateral Grade III Vesicoureteral Reflux,4,19
+BLADDER DIVERTICULA,4,19
+Blind-Ending Ureter,4,19
+Nephrolithiasis,4,19
+Obstructive Cystic Renal Dysplasia,4,19
+Obstructive Hydronephrosis,4,19
+Obstructive Nephropathy,4,19
+Urethral Stricture,4,19
+Autosomal Dominant Polycystic Kidney Disease,3,19
+Crossed Fused Ectopia,3,19
+Medullary Sponge Kidney,3,19
+Nephrolithiasis - Kidney Stones,3,19
+Staghorn Calculus,3,19
+Vesicoureteral Reflux,3,19
+Simple Ureterocele,2,19
+"Transitional Cell Carcinoma, Bladder",2,19
+Vesicourachal Diverticulum,2,19
+Amioradone Induced Chemical Thyrotoxicosis,1,19
+Cortical Nephrocalcinosis Due To Acute Renal Cortical Necrosis,1,19
+Crescent Sign (Of Recoverable Renal Function),1,19
+Crossed Renal Ectopy (With Ureterocele) Anomalies Of Renal Form,1,19
+EXTRARENAL PELVIS,1,19
+FACELESS KIDNEY SIGN RENAL DUPLICATION,1,19
+"Giant Hydronephrosis, With Hydroureter Secondary To Large Ureterolith.",1,19
+Grade 1 Reflux.,1,19
+Grade 2 Reflux On The Left.,1,19
+Grade V Vesicoureteral Reflux,1,19
+Horseshoe Kidney - Appearance Is Diagnostic.,1,19
+Horseshoe Kidney With Partial Duplication Of A Collecting System And A Staghorn Calculus,1,19
+Hydronephrosis Of The Right Ureter Secondary To Extrinsic Mass Compression From A Leiomyoma Of The Uterus (Demonstrated By CT).,1,19
+Idiopathic Vesicoureteral Reflux Grade 2/3 Reflux On The Right And Grade 1 On The Left (See Factoid).,1,19
+IgG-4 Related Disease,1,19
+Left Infrarenal Inferior Vena Cava,1,19
+Medullary Nephrocalcinosis Likely Secondary To Wilson'S Syndrome,1,19
+Medullary Nephrocalcinosis Secondary To Hypophosphatemic Rickets,1,19
+Medullary Nephrocalcinosis.,1,19
+Medullary Sponge Kidney Disease,1,19
+Multicystic Dysplastic Kidney (Right) (Ureteropelvic Junction Obstruction (Left)),1,19
+Multicystic Dysplastic Kidney Disease,1,19
+"Nephrolithiasis (Ureteral Stone), Hydronephrosis & Perinephric Fluid, Hydroureter & Periureteral Fluid",1,19
+Nephrolithiasis - Simultaneous UVJ And UPJ Obstruction,1,19
+"Nephrolithiasis With ""Twinkle"" Artifact On Color Dopler Ultrasound",1,19
+Reflux,1,19
+Renal Artery Stenosis,1,19
+Renal Ectopia-Crossed Unfused/Separate,1,19
+Renal Injury,1,19
+Renal Oxalosis,1,19
+"Renal Tubular Acidosis, Medullary Nephrocalcinosis",1,19
+Renal Vein Thrombosis In A Transplant Kidney,1,19
+Renovascular Hypertension,1,19
+Retrocaval Ureter,1,19
+Retroperitoneal Fibrosis,1,19
+Right Grade II Vesicoureteral Reflux,1,19
+Right Hydronephrosis,1,19
+Right Kidney - Multicystic Dysplastic. Left Kidney - Normal,1,19
+Sclerosing Immune Complex Glomerulonephritis Consistent With Focal Lupus Nephritis ISN/RPS Class III A/C,1,19
+Simple Ureteroceles,1,19
+Spidery Collecting System,1,19
+Transitional Cell Cancer Of Bladder,1,19
+Transitional Cell Carcinoma Of The Bladder Resulting In Bilateral Hydronephrosis,1,19
+"Transitional Cell Carcinoma, Confirmed By Cytology.",1,19
+Triple Phosphate Renal Calculus,1,19
+Unilateral Renal Agenesis.,1,19
+UPJ Obstruction - Imaging Diagnosis,1,19
+"UPJ Obstruction, Imaging Diagnosis.",1,19
+UPJ Obstruction.,1,19
+Ureteral Diverticulum,1,19
+Ureteral Pseudodiverticulosis,1,19
+Ureterolithiasis,1,19
+URETEROPELVIC DUPLICATION,1,19
+Urethral Stricture (Confirmed By Urethroscopy),1,19
+Urinary Bladder Stone,1,19
+Urolithiasis By Helical Computed Tomography,1,19
+Urothelial Cancer,1,19
+UVJ Obstruction,1,19
+Vesicoureteral Reflux Left Partial Duplex Renal Collecting System With Low Bifid Ureter.,1,19
+Vesicoureteral Reflux (Grade III),1,19
+Vesicoureteral Reflux (Grade III).,1,19
+Vesicoureteral Reflux (VUR) Grade II,1,19
+Vesicoureteral Reflux And Radionuclide Cystography,1,19
+Vesicoureteral Reflux Secondary To Ectopic Ureter,1,19
+"Vesicoureteral Reflux, Grade IV",1,19
+"Vesicoureteral Reflux, Grade V",1,19
+"Xanthogranulomatous Pyelonephritis: Renal Calculi, Secondary Hydronephrosis And Chronic Infection.",1,19
+Sarcoidosis,13,20
+Bronchial Carcinoid,12,20
+Adenocarcinoma Of The Lung,10,20
+Bronchiectasis,8,20
+Tension Pneumothorax,7,20
+Hydropneumothorax,5,20
+Right Middle Lobe Pneumonia,5,20
+Sarcoid,5,20
+Bacterial Pneumonia,4,20
+BOOP/COP,4,20
+Bronchiectasis - Bronchial Artery Embolization.,4,20
+Bronchioaveolar Carcinoma,4,20
+Bronchogenic Carcinoma,4,20
+"Bronchogenic Cyst, Congenital",4,20
+Bronchopleural Fistula,4,20
+Croup,4,20
+Cystic Fibrosis,4,20
+Lymphangitic Carcinomatosis,4,20
+Ovarian Cancer Metastasis,4,20
+Scleroderma,4,20
+Azygos Lobe,3,20
+Empyema,3,20
+Non-Small Cell Lung Cancer,3,20
+Right Upper Lobe Pneumonia.,3,20
+Round Atelectasis,3,20
+Active Pulmonary Tuberculosis,2,20
+Acute Chest Syndrome - Sickle Cell Anemia,2,20
+Acute Pneumonia,2,20
+Allergic Bronchopulmonary Aspergillosis (ABPA),2,20
+Amyloidosis,2,20
+Asbestos Pleural Disease,2,20
+Asbestos Pleural Plaques,2,20
+Asbestos Related Pleural Plaques,2,20
+Asthma And Pneumomediastinum,2,20
+Congenital Diaphragmatic Hernia,2,20
+Cushing Disease,2,20
+Fibrous Tumor Of The Pleura,2,20
+Interstitial Lung Disease,2,20
+Malignant Mesothelioma,2,20
+"Malignant Mesothelioma, Epithelioid Type",2,20
+Mucus Plug,2,20
+Right Upper Lobe Atelectasis,2,20
+Round Pneumonia,2,20
+Rounded Atelectasis,2,20
+Subcutaneous Emphysema,2,20
+Transient Tachypnea Of The Newborn (TTN),2,20
+ABPA (Allergic Bronchopulmonary Aspergillosis),1,20
+Acute Respiratory Distress Syndrome,1,20
+Acute Right Middle Lobe Pneumonia,1,20
+Adult Respiratory Distress Syndrome,1,20
+Air Trapping Due To Suspected RSV,1,20
+Airway Foreign Body – Right Bronchus Intermedius,1,20
+Alpha 1-Antitrypsin (Serum Trypsin Inhibitor) Deficiency,1,20
+Alveolar Proteinosis,1,20
+Anerior Pneumothorax; Confirmed By CT.,1,20
+Anterior Mediastinal Mass - Metastatic Carcinoid Tumor,1,20
+ARDS From Near Drowning,1,20
+Asbestos-Related Pleural Disease,1,20
+Asbestos-Related Pleural Disease---Pleural Plaques,1,20
+Asbestosis,1,20
+Aspergilloma,1,20
+Aspiration Pneumonia And Heart Failure,1,20
+Asthma With Air Trapping,1,20
+Calcified Pleural Plaques From Asbestos Exposure,1,20
+Carcinoid Tumor,1,20
+Cardiomyopathy In The Ferret,1,20
+Cavitary Lung Nodule Secondary To Fungal Organism,1,20
+Centrilobular Emphysema,1,20
+Cervical Rib,1,20
+Chest Wall Tumors - Lipoma,1,20
+Chronic Bronchitis,1,20
+Chronic Eosinophilic Pneumonia,1,20
+Community Acquired Legionella Pneumonia,1,20
+Congenital Bronchial Atresia,1,20
+Congenital Lobar Emphysema,1,20
+Congenital Lobar Emphysema- Radiographic,1,20
+Congenital Pulmonary Airway Malformation Type 1 (CPAM 1),1,20
+"Constrictive Pericarditis, Calcified Pericardium",1,20
+COPD And Chronic ILD Secondary To Leukemia With Acute PAP,1,20
+Cowden'S Syndrome,1,20
+Cylindrical Bronchiectasis Secondary To IgA Deficiency,1,20
+Cystic Fibrosis And Lung Transplant,1,20
+Cystic Fibrosis With Tram Tracking And Atelectasis With Air Bronchograms.,1,20
+Ebstein Anomaly,1,20
+Emphysema,1,20
+Endobronchial Tumors,1,20
+Epiglotitis,1,20
+Erionite Pleural Plaques,1,20
+Excipiant Lung Disease – Intravenous Injection Of Compounds That Cause Destruction And Inflammation In The Lung Disproportionately Effect The Lung Bases Due To The The Relatively Increased Blood Flow In These Regions. Most Classically This Is Seen In “Ritalin Lung” Due To The Talc Component.,1,20
+"Excipient Lung Disease - Intravenous Injection Of Compounds That Cause Destruction And Inflammation In The Lung Disproportionately Effect The Lung Bases Due To The Relatively Increased Blood Flow In These Regions. Most Classically This Is Seen In ""Ritalin Lung"" Due To The Talc Component",1,20
+Extrinsic Allergic Alveolitis (Hypersensitivity Pneumonitis)-Acute,1,20
+Fatty Replacement Of The Pancreas Secondary To Cystic Fibrosis,1,20
+Foreign Body Aspiration,1,20
+Foreign Body Aspiration (Peanut),1,20
+Golf Related Rib Stress Fracture,1,20
+"Hari Acupuncture, Gold Needle Left In Place",1,20
+Hematogenous Spread Of Malignancy,1,20
+Histoplasmosis Lymphadenopathy,1,20
+"Hodgkin'S Lymphoma, Nodular Sclerosing Subtype",1,20
+Hydropneumothorax Due To Post-Surgical Air Leak,1,20
+Hypersensitivity Pneumonitis Confirmed After Lung Biospy.,1,20
+Hypertrophic Pulmonary Osteoarthropathy (HPO),1,20
+Idiopathic Pulmonary Fibrosis,1,20
+Idiopathic Pulmonary Fibrosis (Usual Interstitial Pneumonia),1,20
+"Interstitial Fibrosis, End Stage (Honeycomb Lung)",1,20
+Interstitial Pulmonary Edema,1,20
+Left Atrial Enlargement,1,20
+"Left Lower Lobe Bacterial Pneumonia, Pleural Effusion",1,20
+LEFT LOWER LOBE COLLAPSE,1,20
+Left Superolateral Major Fissure,1,20
+Legionnaires' Disease,1,20
+Lingular Pneumonia,1,20
+LLL Anterior Basilar Segmental Pneumonia,1,20
+Lobar Consolidation; Likely Atelectasis Given The Lack Of,1,20
+Lung Bullae,1,20
+Lung Contusion (Rapid Recovery Without Treatment.,1,20
+"Lung, Lobar Collapse (Left Upper Lobe)",1,20
+Lymphangioleiomyomatosis (LAM),1,20
+Lymphangitic Carcinomatosis Secondary To Non-Small Cell Lung CA,1,20
+Massive Tension Hemothorax,1,20
+Meconium Aspiration Syndrome,1,20
+MEDIASTINAL FIBROSIS,1,20
+Metastatic Ovarian Cancer,1,20
+"Miliary Calcifications, Hx Varicella Pneumonia",1,20
+Miliary Tuberculosis,1,20
+Multiple Pulmonary Metastases From Recurrent Melanoma,1,20
+Mycobacterium Avium-Intracellulare Complex,1,20
+Mycoplasma Pneumonia,1,20
+Non-Small Cell Carcinoma,1,20
+Nonspecific Interstitial Pneumonia (NSIP),1,20
+Nonspecific Interstitial Pneumonitis,1,20
+Quadricuspid Pulmonary Valve With Likely Associated Prominance Of The Main Pulmonary Artery. MPA Prominence May Be Due To Component Of Pulmonic Stenosis And Regurgitation.,1,20
+Reactivation TB,1,20
+"Reactivation Tuberculosis (TB) Vertebral Osteomyelitis, Paraspinal Psoas Abscess",1,20
+Respiratory Distress Syndrome In A Newborn,1,20
+Rheumatoid Arthritis And Rheumatoid Lund Nodules,1,20
+"Rib Fractures, CPR",1,20
+Right Middle Lobe Atelectasis,1,20
+RLL Atelectasis,1,20
+RML Pneumonia,1,20
+"Round Pneumonia, Right Upper Lobe",1,20
+Sarcoid - Confirmed Via Biopsy.,1,20
+"Sarcoid, Stage 3",1,20
+Sarcoidosis (Histology),1,20
+Severe Emphysema With Low Probability For Pulmonary Embolism,1,20
+Skin Folds Mimicking Bilateral Pneumothoraces,1,20
+Soft-Tissue Uptake On Bone Scan,1,20
+Solitary Pulmonary Nodule - Calcified Granuloma,1,20
+Spindle Cell Sarcoma,1,20
+Spontaneous Pneumothorax Secondary To Pulmonary Lymphangioleiomyomatosis,1,20
+Squamous Cell Lung Cancer,1,20
+Stage IV Sarcoidosis,1,20
+Subdiaphragmatic Abscess,1,20
+"Tension Hydrothorax, Malignant Pleural Effusion",1,20
+Tracheal Compression From Graves Disease Thyromegaly,1,20
+Triple Matched Defect - Very Low Probability Of A Pulmonary Embolus,1,20
+Tuberculous Pleuritis,1,20
+Typical Carcinoid With Some Atyplical Histologic Features (Bone Biopsy) 24 Hr Urine 5-HIAA 47.7 MG/24HR (Elevated).,1,20
+UIP - Usual Interstitial Pneumonia,1,20
+Unilateral Fibrothorax,1,20
+"Valley Fever (Coccidiomycosis), Cavitary Nodule",1,20
+WEGENERS,1,20
+Westermark'S Sign From Thromboembolic Disease,1,20
+"Brain, Cerebral Abscess",20,21
+Basilar Artery Aneurysm (Basilar Tip Aneurysm),8,21
+Orbital Cellulitis,8,21
+Carotid Artery Dissection,6,21
+Cysticercosis,5,21
+"Basilar Artery Thrombosis, Bilateral Cerebellar And Cerebral Infarcts",4,21
+Battered Child Syndrome. Chronic Bilateral Subdural Hematomas.,4,21
+Behcet Disease Involving The Brain,4,21
+Behcet Disease/Syndrome,4,21
+Benign Orbital Calcifications,4,21
+"Bilateral Epidural Hematoma, Herniation, PCA Infarct",4,21
+Bone Metastasis From Prostate Cancer.,4,21
+Brain Abscess (Gram Positive Beta Streptococcus),4,21
+Brain Abscess (Gram Positive Cocci) With Streptococcus,4,21
+Brain Abscess From Septic Endocarditis,4,21
+"Brain, Cerebral Abscess With Cultures Postive For Streptococcus.",4,21
+"Brain, Cerebral Abscess, Ependymitis And Septic Emboli",4,21
+"Brain, Cerebral Abscess, Staph. Aureus",4,21
+Brainstem Infarct,4,21
+"Breast Cancer, Metastatic To Brain",4,21
+"Breast Cancer, Metastatic To Brain And Temporal Bone",4,21
+"Breast Cancer, Metastatic To Orbit And Brain",4,21
+Bronchogenic Carcinoma Metastatic To Brainstem,4,21
+Burkitt'S Lymphoma,4,21
+"Orbit, Varix Partially Thrombosed",4,21
+Orbital Abscess With Superior Opthalmic Vein Thrombosis,4,21
+Ossified Posterior Longitudinal Ligament (OPLL),4,21
+Glioblastoma Multiforme (GBM),3,21
+Metastatic Breast Cancer,3,21
+Mycotic Aneurysm,3,21
+Neurocysticercosis,3,21
+"Spine, Epidural Abscess",3,21
+Subclavian Steal Syndrome,3,21
+Vertebral Artery Dissection With Cerebellar Infarction,3,21
+Acute Bacterial Meningitis,2,21
+Carotid Cavernous Fistula,2,21
+Cholesterol Granuloma,2,21
+Maple Syrup Urine Disease,2,21
+Spinal Dural Arteriovenous Fistula,2,21
+"Spongioform Encephalopathy, Presumed Variant Creutzfeldt-Jakob Disease",2,21
+Superior Sagittal Sinus Thrombosis,2,21
+Takayasu Arteritis,2,21
+Vertebral Artery Dissection,2,21
+Achalasia In A 6 Month Old,1,21
+ACL Tear And Grade II MCL Sprain,1,21
+Acromegaly,1,21
+Acute Bacterial Meningitis Secondary To Masoitidits And Otitis,1,21
+"Acute Bilateral Subdural Hematomas, Convexity, Interhemispheric, Tentorial",1,21
+Acute Cerebral Ischemia Due To Cavernous Carotid Stenosis Secondary To Meningioma Tx With Gamma Knife Therapy,1,21
+"Acute Mastoiditis, Transverse & Sigmoid Sinus Thrombosis, Subdural Empyema, And Hemorrhagic Venous Infarction",1,21
+Acute Multiple Sclerosis - Enhancing Lesion With Mass Effect.,1,21
+"Acute Myelogenous Leukemia, AML",1,21
+Acute Myocarditis,1,21
+Acute Otomastoiditis With Bezold Abscess,1,21
+Acute Otomastoiditis With Transverse Sinus Thrombosis,1,21
+"Acute Stroke, Hemorrhage In Basal Ganglia",1,21
+Adenocarcinoma Of The Lung Metastatic To The Brain,1,21
+"Adenocarcinoma, Mixed Subtype",1,21
+"Alexander Disease, Rosenthal Fiber Encephalopathy",1,21
+"ALS, Amyotrophic Lateral Sclerosis",1,21
+Alzheimer Disease,1,21
+Amyloid Angiopathy,1,21
+Angioinvasive Aspergillosis With Septic Cerebral Emboli,1,21
+Ankylosing Spondylitis With Fracture Through The T10-11 Disc,1,21
+Anterior Mediastinal Masses,1,21
+Aortic Dissection By CT And MR,1,21
+Arachnoid Cyst With Extension Through Third Ventricle Into Lateral Ventricle,1,21
+Arterial Occlusion Iliac And Popliteal Arteries,1,21
+Aspergilloma Fungus Ball,1,21
+Atypical Liponeurocytoma WHO II,1,21
+AVM With Acute Right MCA Infarction,1,21
+C5-6 Extruded Disk Fragment On Right,1,21
+Canavan Disease,1,21
+"Carcinoma, Small Cell With Metastatic Disease To Spine And Brain",1,21
+Cardiogenic Pulmonary Edema,1,21
+Carotid Dissection With Left MCA And ACA Infarction,1,21
+"Cavernous Sinus Mass, Denervation Atophy Extraocular Muscles",1,21
+Cavum Velum Interpositum,1,21
+Cavum Vergae,1,21
+Central Nervous System Extraosseous Ewings Sarcoma,1,21
+Central Scotoma,1,21
+Cerebellar Abscess Secondary To Mastoiditis,1,21
+Cerebellar Infarction (Stroke),1,21
+Cerebellar Metastatic Disease From Colon Cancer,1,21
+Cerebral Abscesses With Hemolytic Streptococcus,1,21
+Cerebral Hyperperfusion Syndrome Due To Subacute Cerebral Infarction,1,21
+Cerebral Infarction (Basilar Artery Territory) Secondary To Calcified Embolus From Heart,1,21
+Cerebral Venous Thrombosis,1,21
+Cervical Spinal Stenosis Producing Myelopathy,1,21
+Cervical Spine Neurenteric Cyst,1,21
+CHF Exacerbation,1,21
+Chiari I With Cervical Spine Syrinx,1,21
+Chondroblastoma With Secondary Aneurysmal Bone Cyst,1,21
+"Choroid Plexus Neoplasm, Papilloma, Carcinoma",1,21
+Chronic Lymphocytic Leukemia (CLL) Thoracic Spine,1,21
+Chronic Subdural Hematoma With Re-Bleeding,1,21
+Chronic Subdural Hematomas,1,21
+"Classical Hodgkin'S Lymphoma, Nodular Sclerosing Type",1,21
+"Closed-Lip Schizencephaly, Incidental Aneurysm",1,21
+CNS Parenchymal Metastasis,1,21
+CNS Vasculitis,1,21
+Colonic Adenocarcinoma,1,21
+Cranial Epidural Abscess,1,21
+"Crohns Disease, Pulmonary Complications",1,21
+Cryptococcal Meningoencephalitis,1,21
+"Cryptococcus, Cryptococcoma (Presumed)",1,21
+"Cx Spine Epidural Abscess, Bacterial Endocarditis",1,21
+Ectopic Intrathoracic Kidney,1,21
+Embolized Central Venous Catheter,1,21
+Epidural Empyema Secondary To Frontal Sinusitis,1,21
+Epidural Hematoma Of Middle Fossa (Temporal Bone),1,21
+Facial Neuritis From Herpes Zoster,1,21
+Fat Embolism With Cerebral Infarction,1,21
+Fibromuscular Dysplasia With Bilateral Vertebral Artery Dissections,1,21
+Giant Cell Tumor Of Bone,1,21
+Giant Trigeminal Schwannoma,1,21
+"Glioblastoma Multiforme, GBM",1,21
+Guillain-Barre Syndrome,1,21
+Hemangioma Skull Base,1,21
+Hemophilus Flu Meningitis And Subdural Empyema,1,21
+Hepatic Encephalopathy W/Globus Pallidus Hyperintensity,1,21
+Herpes Simplex Encephalitis (HSV2),1,21
+Hypertensive Basal Ganglia Hemorrhage,1,21
+Hypoplastic Cervical Pedicle C3 On Right,1,21
+Increased Liver Attenuation Secondary To Amiodarone Use,1,21
+Indirect Carotid-Cavernous Fistula,1,21
+Intracranial Epidermoid Cyst,1,21
+Isodense Subdural Hematoma,1,21
+Kaposi Sarcoma Of Lung,1,21
+Large Bowel Obstruction Secondary To Sigmoid Stricture,1,21
+Leptomeningeal Angiomatosis,1,21
+Leptomeningeal Sarcoid,1,21
+Lhermitte Duclos With Cowden Syndrome,1,21
+Lipoma Of Hypothalamus,1,21
+Lupus Myelitis.,1,21
+"Marfan'S Syndrome, Aortic Dissection, Cerebral Aneurysm",1,21
+Medulloblastoma With Continuous Spinal Drop Metastasis,1,21
+"Meningioma, Radiation Induced",1,21
+Metastatic Cervical Spinal Cord Tumor From Lung Cancer,1,21
+Metastatic Disease From Colonic Carcinoma,1,21
+Metastatic Lung Cancer To Spine,1,21
+Metastatic Melanoma To Lung,1,21
+"Metastatic Squamous Cell Carcinoma, Lung To Brain",1,21
+"Moya-Moya, Anterior Circulation Infarcts (Bilateral ACA)",1,21
+Mucinous Cystadenoma.,1,21
+Multicentric Glioblastoma Multiforme,1,21
+"Multifocal Brain Abscess, Septic Emboli From Endocarditis",1,21
+"Multiple Meningiomas, Radiation Induced",1,21
+Multiple Myeloma At T5 Level,1,21
+Neurocysticercosis And Ruptured Subarachnoid Aneurysm,1,21
+"Neurocytoma 3rd Ventricle, Multiple Sclerosis",1,21
+"Neuromyelitis Optica (Devic Syndrome, Devic'S Disease)",1,21
+Normal Variant Of Coccyx,1,21
+Rabies Encephalitis,1,21
+Ramsay Hunt Syndrome,1,21
+Renal Cell Carcinoma (Clear Cell ),1,21
+Renal Cell Carcinoma With Metastatic Lesions To The Skull,1,21
+Renal Ectopia With Horseshoe Kidney,1,21
+Retinitis Pigmentosa,1,21
+Retroperitoneal Neurofibroma,1,21
+Right Aortic Arch,1,21
+Rosette Forming Papillary Glioneuronal Tumor,1,21
+Ruptured Brain Abscess And Pyocephalus,1,21
+"Ruptured Globe, Prolapse Of Uveal And Retinal Tissue",1,21
+"Sagittal Sinus Stenosis, Pseudotumor Cerebri",1,21
+SCFE,1,21
+Schwannoma Of Trochlear Nerve On Left,1,21
+Schwannoma Thoracic Spine,1,21
+"Septic Brain Emboli, Endocarditis (MRSA)",1,21
+Sickle Cell Anemia With Bone Infarcts.,1,21
+Sinonasal Metastatic Melanoma,1,21
+Sixth Cranial Nerve Palsy,1,21
+Sphenoid Mucocele With Fungal Sinusitis (Aspergillus Niger)And Secondary Intra-Cranial Extension,1,21
+Spinal Cord Abscess,1,21
+Spinal Cord Astrocytoma,1,21
+Spinal Cord Infarct,1,21
+"Spinal Epidural Hematoma, S1 Right",1,21
+Spinal Stenosis,1,21
+Spinal Tuberculosis/Potts Disease,1,21
+"Spine, Bone Hemangioma With Spinal Cord Compression",1,21
+"Spine, Epidural Abscess (MRSA)",1,21
+"Spine, Epidural Abscess; Septic Arthritis Right Shoulder",1,21
+Spondylodiskitis,1,21
+Stage IV Non-Small Cell Lung Cancer,1,21
+"Subdural Empyema, Streptococcus Mitis",1,21
+Superior Mesenteric Artery Thrombosis,1,21
+Supra-Renal Inferior Vena Cava Thrombus,1,21
+Thalamic Abscess Due To Streptococcus Intermedius,1,21
+Thyroid Gland Hemiagenesis,1,21
+Transverse Myelitis Due To Shistosomiasis Japanicum,1,21
+Traumatic Carotid-Cavernous Fistula,1,21
+Tuberculosis,1,21
+Two Cerebral Artery Aneurysms,1,21
+Urachal Remnant,1,21
+Varicella Zoster With Temporal Lobe Involvement,1,21
+"Vasospasm, Subarachnoid Hemorrhage",1,21
+Venous Infarction From Sinus Thrombosis,1,21
+"Venous Infarction, Thrombosis Of Transverse Sinus And Multiple Cerebral Veins",1,21
+Venous Sinus Thrombosis (Superior Sagittal),1,21
+Vertebral Artery Dissection With Cerebellar Infarcts,1,21
+Vertebral Basilar Artery Dissection With Pontine Infarct,1,21
+Virchow-Robin Spaces Type III,1,21
+West Nile Encephalitis,1,21
+Wilms Tumor - Pathology,1,21
+Blowout Fracture Of Orbit,16,22
+Occipital Condyle Fractures,8,22
+Odontoid Fracture,8,22
+Bilateral Jumped Locked Facets,4,22
+Bilateral Locked Facets,4,22
+"Bilateral Lumbar Spondylolysis, Three Levels",4,22
+Bilateral Perched Facets C5 C6 With Spinal Cord Injury,4,22
+Blowout Fracture Of Orbit (Orbital Floor Fracture) With Associated Medial Orbital Wall Fracture,4,22
+"Blowout Fracture, Left Orbit",4,22
+Brain Herniation With Brain Death,4,22
+Bullet To The Clivus.,4,22
+Burst Fracture Of L1,4,22
+Butterfly Fragment Subtype Of Comminuted Fracture.,4,22
+Cervical Nerve Root Avulsion,4,22
+IED - Improvised Explosive Device,4,22
+Occipital Condyle Fracture,4,22
+Occipital Condyle Fracture- Type III,4,22
+Odontoid Fracture With ICA Dissection,4,22
+Odontoid Fracture. Hyoid Fracture.,4,22
+"Orbit ""Blow-Out"" Fracture",4,22
+Orbit Blowout Fracture,4,22
+Carbon Monoxide Poisoning,3,22
+Anoxic Brain Injury,2,22
+Hangman'S Fracture,2,22
+Lisfranc Fracture,2,22
+Non Accidental Trauma,2,22
+Traumatic Brain Injury,2,22
+Absent Cervical Pedicle C4,1,22
+"Acute Epidural Hematoma, Bleeding Meningeal Artery",1,22
+"Acute, Delayed Epidural Hematoma",1,22
+"Aneurysm, Cerebral Multiple",1,22
+Anoxic (Hypoxic) Injury,1,22
+Anoxic Brain Injury Due To Non-Accidental Drowning,1,22
+"Anterior Dislocation C6 On C7, Bilateral Locked Facets, Spinal Cord Injury",1,22
+Arnold–Chiari Malformation I With Syrinx,1,22
+"Arteriovenous Malformation, Ruptured",1,22
+Atlanto-Occipital Dislocation,1,22
+Atlanto-Occipital Distraction Injury,1,22
+Atlantoaxial Traumatic Dislocation,1,22
+Atlas Fracture,1,22
+Atlato-Axial Dislocation (AOD),1,22
+AVM Cervical Spinal Cord Bleed From A Front-End Motor Vehicle Crash: A Case Study,1,22
+Avulsion Fracture Right Iliac Wing,1,22
+C-7 Clay Shoveler'S Fracture And C-2 Extension Teardrop Fracture,1,22
+C-Spine Fracture With Vertebral Artery Thrombosis,1,22
+"C-Spine Fracture, Spinal Cord Injury, Vertebral Artery Dissection",1,22
+C2-3 Pseudosubluxation,1,22
+Cervical Ribs,1,22
+Cervical Spine Fracture (Unstable) With Cord Injury,1,22
+Chance Fracture,1,22
+Child Abuse/Non-Accidental Trauma,1,22
+Classic Metaphyseal Lesion- Accidental Trauma,1,22
+Clinically,1,22
+"Coalescent Mastoiditis, Longitudinal Temporal Bone Fracture",1,22
+Combined Jefferson And Hangman'S Fractures,1,22
+Complete Disruption Of The Cervical Spine,1,22
+Complex Nasoethmoid And Orbit Fractures With Pneumoorbita And Pneumocephalus,1,22
+Embedded Foreign Body,1,22
+Facial Trauma,1,22
+"Fat Embolism, Brain",1,22
+"Fracture Dislocation At Thoraco-Lumbar Junction, Resulting In Spinal Cord Transection.",1,22
+"Fracture Dislocaton At Thoraco-Lumbar Junction, Resulting In Spinal Cord Transection.",1,22
+Fracture Frontal Bone,1,22
+Fracture Right Mandibular Condyle,1,22
+Grenade Fragment Stable In Transverse Foramina Of The Vertebrae,1,22
+"GSW To Chest, Transection Of Spinal Cord",1,22
+"Head Trauma, TBI, Falls",1,22
+Hepatic Laceration With Hematoma,1,22
+Hypoxic-Ischemic Encephalopathy,1,22
+"Hypoxic/Ischemic Encephalopathy, Drowning, Brain Death",1,22
+IED Shrapnel,1,22
+Incomplete (Greenstick) Fracture Of The Right Clavicle,1,22
+Ingested Foreign Body - Magnet,1,22
+Interrupted Aortic Arch Type C,1,22
+Knotted PICC.,1,22
+Landmine,1,22
+LeFort Type 1 Fracture,1,22
+Lemierre’S Syndrome,1,22
+Lesser Trochanter Avulsion Fracture,1,22
+Linear Skull Fractures With Underlying Frontal Lobe Hematoma,1,22
+Lodox Statscan™,1,22
+Longitudinal Petrous (Temporal Bone) Fracture,1,22
+Lumbar Nerve Root Avulsion,1,22
+Mandible Fracture,1,22
+Maxillary Sinus Hypoplasia,1,22
+"Multiple Sclerosis, Quadrantanopsia",1,22
+Normal Elbow Radiographs,1,22
+Radiology Of Military Aircraft,1,22
+Renal Duplicity (Duplication),1,22
+"Rib Fractures, Hemothorax, Left",1,22
+Right Arch (Repaired Tetralogy Of Fallot),1,22
+Scientific Fantasy,1,22
+Scoliosis,1,22
+Single Gunshot Wound To Head,1,22
+Skull Fracture From Cell Phone,1,22
+Skull Fracture With Epidural Hematoma,1,22
+Spinal Cord Infarct Likely Embolic,1,22
+"Spondylolisthesis, Bilateral Pars Fracture",1,22
+Sternal Wire Dehiscence,1,22
+Surgical Storage Of Craniotomy Fragment Pending Definitive Management,1,22
+"TBI, Brain Contusion, Longitudinal Temporal Bone Fracture.",1,22
+Temporal Bone Fracture With Ossicular Dislocation,1,22
+Tension Pneumocephalus - 'Mount Fuji Sign',1,22
+Test Case For Experience - Memory Loss,1,22
+Tethered Cord Due To Dorsal Dermal Sinus,1,22
+Thyroid Cysts,1,22
+Torus (Buckle) Fracture And Greenstick Fracture,1,22
+Torus Fracture Of The Distal Radius,1,22
+"Traumatic Brain Injury, Diffuse Axonal Injury",1,22
+Traumatic Lumbar Hernia,1,22
+Traumatic Pneumothorax,1,22
+Traumatic SCFE (Salter Harris Type 1 Fracture For The Femoral Head),1,22
+Traumatic Spondylolisthesis (Hangman'S Fracture) Of C2,1,22
+Type 2 Odontoid Fracture,1,22
+Hypertrophic Pyloric Stenosis,19,23
+Achalasia,15,23
+Hiatal Hernia,13,23
+Zenker'S Diverticulum,10,23
+Bezoar,8,23
+Gastric Diverticulum,7,23
+Esophageal Foreign Body - Coin Ingestion,5,23
+Killian-Jamieson Diverticulum,5,23
+Benign Biliary Stricture,4,23
+"Biloma, After Cholecystectomy",4,23
+Boerhaave'S Syndrome,4,23
+Obstructive Atelectasis,4,23
+Organoaxial Hiatal Hernia,4,23
+Schatzki Ring,4,23
+Sliding Hiatal Hernia,4,23
+Zenker Diverticulum,4,23
+Superior Mesenteric Artery Syndrome,3,23
+Annular Pancreas,2,23
+Axial (Sliding) Hiatal Hernia,2,23
+Cricopharyngeal Achalasia,2,23
+Cricopharyngeal Bar,2,23
+Esophageal Cancer,2,23
+Esophageal Foreign Body,2,23
+Esophageal Leiomyoma,2,23
+Esophageal Lipomatosis,2,23
+Hiatus Hernia,2,23
+Malrotation With Midgut Volvulus,2,23
+Squamous Cell Esophageal Cancer,2,23
+ACHALASIA,1,23
+Achalasia - Other Etiologies Ruled Out Endoscopically.,1,23
+Achalasia.,1,23
+"Adenocarcinoma Of The Gastroesophageal Junction, No Evidence Of Barrett Esophagus Found - Stage: T3N0M0",1,23
+Anastomotic Stricture (Pathology Pending At Time Of Submission),1,23
+"Annular ""Apple Core"" Colonic Lesion: A Differential Diagnosis.",1,23
+Aortoesophageal Fistula,1,23
+Cancer Of The Gastro-Esophageal Junction,1,23
+Candida Esophagitis,1,23
+Candida Esophagitis.,1,23
+Candida Pharyngitis And Candida Esophagitis In An Immunosuppressed Patient.,1,23
+Chilaiditi Syndrome/Sign,1,23
+Chilaiditi'S Sign (Patient Asymptomatic),1,23
+Clinically Insignificant Hiatal Hernia.,1,23
+Colonic Duplication,1,23
+Compound Paraesophageal Hernia,1,23
+Cricopharyngeal Bar/Shelf.,1,23
+Enteric Tube In Left Main Stem Bronchus.,1,23
+Eosinophilic Esophagitis,1,23
+Epiphrenic Diverticulum,1,23
+Epiphrenic Diverticulum With Retained Food Contents.,1,23
+Esoghageal Spasm With A Single Pulsion-Type Diverticulum,1,23
+Esophageal Adenocarcinoma,1,23
+Esophageal Adenocarcinoma Arising In Barrett'S Mucosa,1,23
+Esophageal B-Cell Lymphoma,1,23
+Esophageal Intramural Pseudodiverticulosis.,1,23
+Esophageal Perforation Status Post Dilation,1,23
+Esophageal Stricture,1,23
+Fluoroscopic Evaluation Of The Small Bowel In Crohn’S Ileitis,1,23
+Gastric Lymphoma,1,23
+"Gastric MALT Lymphoma, Poorly Differentiated",1,23
+Gastric Organoaxial Rotation With Type 4 Paraesophageal Hernia,1,23
+Gastric Outlet Obstruction From Pyloric Stenosis As Result Of Anti-Inflammatory Induced Peptic Ulcers,1,23
+Gastric Pull Through,1,23
+Gastric Trichobezoar,1,23
+Gastric Volvulus,1,23
+Gastric Volvulus (Organoaxial),1,23
+Gastroesophageal Varices,1,23
+Gastroparesis,1,23
+Gastropexy Anchor Appendiceal Foreign Body,1,23
+Gastrostomy Tube,1,23
+H-Type Tracheoesophageal Fistula,1,23
+Hiatal Hernia W/ Schatzki Ring,1,23
+"Hiatal Hernia, Mixed Sliding (Axial) And Paraesophageal",1,23
+"Hiatal Hernia, Organoaxial Gastric Volvulus",1,23
+Hyperplastic Gastric Polyps,1,23
+IATROGENIC PNEUMOPERITONEUM,1,23
+Idiopathic Achalasia,1,23
+"Ingested Foreign Body (Earring), No Perforation",1,23
+Intraluminal Duodenal Diverticulum,1,23
+"Invasive Colonic Adenocarcinoma: Biopsy Of The Polyp Showed Micro-Invasive Colonic Adenocarcinoma, Without Invasion Of The Lymphatic, Vascular, Or Perineural Space.",1,23
+Juvenile Polyposis Syndrome,1,23
+Laryngeal Penetration,1,23
+Lateral Pharyngeal Pouch,1,23
+Lateral Pharyngeal Pouches,1,23
+Linitis Plastica (Gastric Cancer),1,23
+Malrotation Of Gut.,1,23
+"Malrotation, Intestine",1,23
+"Malrotation, Midgut",1,23
+Midesophageal Diverticulum (Characteristic Radiographic,1,23
+Moderately Differntiated Adenocarcinoma Of Stomach (Antrum). Tissue Sampling During Upper Endoscopy.,1,23
+Nasolacrimal Duct Stenosis At The Level Of The Valve Of Krause,1,23
+Non-Calcified Choledocholithiasis,1,23
+Rapunzel Syndrome (Gastric Bezoar Extending To Cecum),1,23
+Recurrent Pyogenic (Oriental) Cholangiohepatitis With Intrahepatic Biliary Stricture And Stone Formation.,1,23
+Reflux Esophagitis,1,23
+Reflux Stricture,1,23
+Right Main Stem Intubation,1,23
+Right Mainstem Intubation,1,23
+Segmental Bronchus Intubation,1,23
+Sleeve Gastrectomy,1,23
+Sliding Paraesophageal Hernia,1,23
+"Small Bowel Obstruction, Partial, Secondary To Stricture",1,23
+Spontaneous Thoracic Esophageal Perforation (Boerhaave'S Syndrome).,1,23
+Squamous Cell Carcinoma Of The Proximal Esophagus,1,23
+Swallowed Foreign Body,1,23
+Tracheoesophageal Fistula,1,23
+Tracheoesophageal Fistula - N-Type,1,23
+Traction Esophageal Diverticulum,1,23
+"Transmesenteric Internal Hernia, Left Paradudodenal Hernia",1,23
+Type 2 Hiatal Hernia: True Paraesophageal,1,23
+Upper GI Tract Diverticula,1,23
+VACTER Association,1,23
+Vascular Ring,1,23
+Blount'S Disease,12,24
+Bennett'S Fracture Dislocation,8,24
+Bizarre Parosteal Osteochondromatous Proliferation (BPOP),8,24
+Gamekeeper'S Thumb,8,24
+"Odontoid Process Fracture, Type II",8,24
+Radial Head Fracture,8,24
+Bilateral Salter Harris Fracture Type 2A,4,24
+Boxer'S Fracture,4,24
+Congenital Carpal Fusion,4,24
+Fractures Of The Base Of The Fifth Metatarsal,4,24
+Freiberg'S Infraction,4,24
+Slipped Capital Femoral Epiphysis,4,24
+Supracondylar Fracture,4,24
+Torus Fracture/Buckle Fracture Of The Distal Radius,4,24
+Colles' Fracture,3,24
+Jones Fracture,3,24
+Lisfranc Fracture-Dislocation,3,24
+Lunate Dislocation,3,24
+Salter-Harris Fracture,3,24
+Scapholunate Advance Collapse (SLAC) Wrist,3,24
+Scapholunate Dissociation,3,24
+Torus (Buckle) Fracture,3,24
+Calcaneal Fracture,2,24
+Clay Shoveler'S Fracture,2,24
+CPPD Arthropathy Of The Hand,2,24
+Lunotriquetral Coalition,2,24
+Maisonneuve Fracture,2,24
+Normal Variant - Supracondylar Process,2,24
+Salter Harris Fracture Type 1,2,24
+Scapholunate Advanced Collapse,2,24
+Scapholunate Dissociation (Rotary Scaphoid Subluxation),2,24
+SCFE (Slipped Capital Femoral Epiphysis),2,24
+SLIPPED CAPITAL FEMORAL EPIPHYSIS,2,24
+Supracondylar Process,2,24
+Toddler'S Fracture,2,24
+Type II Odontoid Process Fracture,2,24
+Accessory Tarsal Navicular Syndrome,1,24
+Acral Sclerosis,1,24
+Acromioclavicular Joint Separation - Type III,1,24
+Acute Radial Head Fracture And Joint Effusion,1,24
+Acute Slipped Capital Femoral Epiphysis,1,24
+Angulated Complete Distal Diaphyseal Fracture Of Humerus,1,24
+"Articular Avulsion Fracture, Fifth Metatarsal Base",1,24
+Avulsion Fracture Of The Base Of The Fifth Metatarsal,1,24
+Avulsion Fracture Of The Base Of The First Proximal Phalanx At The Insertion Of The Ulnar Collateral Ligament (Gamekeeper’S Thumb Or Skier’S Thumb).,1,24
+Avulsion Fracture Of The Clavicle,1,24
+C-Spine Fracture With Left Vertebral Artery Occlusion,1,24
+Carpal Predominant Rheumatoid Arthritis,1,24
+Characteristic Normal Foot,1,24
+Colles’ Fracture: Frykman Classification I,1,24
+Comminuted Mid Diaphyseal Open Fracture Of Humerus With Shrapnel Embedded In Soft Tissue.,1,24
+Complete Fracture Of The Clavicle,1,24
+Coxa Valga In Cerebral Palsy,1,24
+Elbow Dislocation With Impaction Fracture,1,24
+Elbow Dislocation With Medial Epicondyle Fracture,1,24
+Elbow Fat Pad Sign,1,24
+"Enchondroma, Pathologic Fracture",1,24
+Entrance Wound In Lateral Right Leg,1,24
+Extensor Carpi Ulnaris Tenosynovitis,1,24
+Femoral Neck Fracture Grade 4,1,24
+"Femur, Fracture, Intertrochanteric",1,24
+Fifth Metacarpal Fracture.,1,24
+Finger Fracture,1,24
+Fracture Dislocation At C6-C7.,1,24
+Fracture Of The Base Of 5th Metatarsal.,1,24
+Fracture Of The Base Of The Fifth Metatarsal,1,24
+Fracture Of The Distal Phalanx Of The Right 4th Digit,1,24
+Fracture Of The Distal Radius,1,24
+Fracture Of The Distal Radius With Intraarticular Extension.,1,24
+Fracture Of The Fifth Metatarsal - Jones Fracture,1,24
+Fracture Of The Hamate,1,24
+"Fractured Acromion Process (Right Scapula), Bankart Fracture Of Inferior Glenoid Process",1,24
+Freiberg'S Infraction: Epiphyseal Avascular Necrosis Of The 2nd Metatarsal Head,1,24
+Galeazzi Fracture,1,24
+Girl Gang Fracture,1,24
+Grade 3 AC Joint Injury,1,24
+Great Toe Fracture,1,24
+Gymnast Wrist,1,24
+Gymnast'S Wrist,1,24
+High Energy Pilon (Hammer) Fracture,1,24
+HILL-SACHS DEFORMITY,1,24
+Hook Of The Hamate Fracture,1,24
+"Humerus, Supracondylar Fracture",1,24
+Intraarticular Fracture Of The Distal Phalanx Of The Right 5th Digit,1,24
+Intraarticular Fracture Of The Proximal Phalanx Of The Right 5th Digit,1,24
+Jones Fracture And Dancer'S Fracture,1,24
+Jones Fracture.,1,24
+Juvenile Tillaux Fracture,1,24
+Kienbock Disease/Lunatomalacia,1,24
+Kienbock'S Disease,1,24
+Kirner Deformity,1,24
+Lauge Hansen Stage IV Supination-External Rotation Fracture,1,24
+"Lauge-Hansen Supination-Lateral Rotation Fracture, Type 4.",1,24
+Left 3rd And 4th Metacarpal Fractures.,1,24
+Left Scaphoid And Trapezoid Bone Bruises - Conservative Treatment Of Traumatic Wrist Pain After MRI Confirmation Of Injury A Case Report,1,24
+Limbus Vertebra. No Clinical Significance.,1,24
+Lisfranc Fracture-Dislocation. Diagnosis Is Based On Bone Scan And Plain Film,1,24
+Lisfranc Fracture/Dislocation,1,24
+Lisfranc Injury,1,24
+Lunotriquetral Coalition.,1,24
+Mallet Finger,1,24
+"Mandible ""Ring"" Fracture",1,24
+Mandibular Fracture,1,24
+March Fracture,1,24
+Metaphyseal Fraying,1,24
+Metatarsal Fracture.,1,24
+Midshaft Right 5th Metacarpal Fracture,1,24
+Monteggia Fracture,1,24
+Multiple Enchondromas Of The Hand (Ollier’S Disease),1,24
+Negligent Discharge,1,24
+Rheumatoid Arthritis - Clinical,1,24
+Right Talus Fracture,1,24
+ROCKER-BOTTOM DEFORMITY (Congenital Vertical Talus),1,24
+Salter Harris Fractures,1,24
+Salter Harris II Fracture,1,24
+Salter Harris III Fracture Distal Tibia (Juvenile Tillaux Fracture),1,24
+Salter Harris Type 2 Fracture,1,24
+Salter-Harris Fracture Of 2nd Phalanx,1,24
+Salter-Harris Fractures,1,24
+"Salter-Harris Fractures, Salter And Harris",1,24
+Salter-Harris II Fracture,1,24
+Salter-Harris III Fracture,1,24
+"Salter-Harris Type 1 Fracture, Salter And Harris",1,24
+Salter-Harris Type IV Fracture,1,24
+Scapholunate Dissociation With DISI,1,24
+Seymour Fracture Of The Distal Phalanx Of The Left Great Toe,1,24
+Short 4th Metacarpals,1,24
+"SLAC (Scapholunate Advanced Collapse) Wrist (I.E., Carpal Instability). These Radiographic",1,24
+Slipped Capital Femoral Epiphysis (SCFE),1,24
+Spiral Fractures Of Right 4th And 5th Metacarpal Shafts,1,24
+Spiral Salter-Harris II Fracture,1,24
+Stress Fracture/March Fracture Of The Third Left Metatarsal,1,24
+Stress Reaction In Second Metatarsal,1,24
+Subacute Buckle Fracture Of The Distal Radius,1,24
+Supracondylar Fracture Of The Distal Humerus.,1,24
+"Supracondylar Fracture Of The Humerus, Type II",1,24
+"Supracondylar Process, Diagnosed By Plain Radiograph.",1,24
+Tear Of The Extensor Hallucis Longus Tendon,1,24
+Tibial Spine Avulsion,1,24
+Toddler'S Fracture.,1,24
+Torus Fracture,1,24
+Transscaphoid-Transtriquetrial Perilunate Fracture Dislocation,1,24
+Transverse Fracture Of Base Of Distal Phalanx Of L 5th Digit.,1,24
+Transverse Fracture Through The Proximal Waist Of The Scaphoid (Navicular) Bone.,1,24
+Traumatic Phalanx Dislocation,1,24
+Triangular Fibrocartilage Complex (TFCC) Tear,1,24
+Triplanar Fracture Of The Distal Tibia,1,24
+Triplane Fracture,1,24
+Triplane Fracture.,1,24
+Triquetral Fracture,1,24
+Type II Salter-Harris Fracture,1,24
+Ulnar Impaction Syndrome,1,24
+Vertical Shear Or Malgaigne Fracture,1,24
+Weber Class C Ankle Fracture,1,24

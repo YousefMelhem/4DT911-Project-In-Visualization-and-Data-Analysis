@@ -1,10 +1,10 @@
 {
-  "model_name": "all-MiniLM-L6-v2",
-  "embedding_dimension": 384,
+  "model_name": "dmis-lab/biobert-base-cased-v1.1",
+  "embedding_dimension": 768,
   "num_cases": 7404,
   "normalized": true,
-  "mean_similarity": 0.23238419530476584,
-  "median_similarity": 0.22739892452955246,
-  "extraction_time_seconds": 4.108353137969971,
+  "mean_similarity": 0.924434851407847,
+  "median_similarity": 0.9293058812618256,
+  "extraction_time_seconds": 27.060368061065674,
   "batch_size": 32
 }

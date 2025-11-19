@@ -22,11 +22,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import { select } from 'd3-selection'
-import { scaleBand, scaleLinear } from 'd3-scale'
-import { axisBottom, axisLeft } from 'd3-axis'
-import { max } from 'd3-array'
-import { format } from 'd3-format'
+import * as d3 from 'd3'
 
 /* =========================
  * Types
@@ -47,7 +43,7 @@ const MARGIN = { top: 20, right: 16, bottom: 52, left: 56 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 
-const fmt = format(',')
+const fmt = d3.format(',')
 const labelFor = (b: Bin) => (Number.isFinite(b.binEnd) ? `${b.binStart}–${b.binEnd}` : `${b.binStart}+`)
 
 const svgRef = ref<SVGSVGElement | null>(null)
@@ -59,11 +55,11 @@ const draw = () => {
   const el = svgRef.value
   if (!el) return
 
-  const svg = select(el)
+  const svg = d3.select(el)
   svg.selectAll('*').remove()
 
   const data = (props.bins ?? []).slice()
-  const maxY = max(data, d => d.count) ?? 0
+  const maxY = d3.max(data, (d: Bin) => d.count) ?? 0
 
   if (data.length === 0 || maxY === 0) {
     svg.append('text')
@@ -77,12 +73,12 @@ const draw = () => {
 
   const labels = data.map(labelFor)
 
-  const x = scaleBand<string>()
+  const x = d3.scaleBand<string>()
     .domain(labels)
     .range([MARGIN.left, MARGIN.left + INNER_W])
     .padding(0.1)
 
-  const y = scaleLinear()
+  const y = d3.scaleLinear()
     .domain([0, maxY])
     .nice()
     .range([MARGIN.top + INNER_H, MARGIN.top])
@@ -90,7 +86,7 @@ const draw = () => {
   // Axes
   svg.append('g')
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
-    .call(axisBottom(x))
+    .call(d3.axisBottom(x))
     .selectAll('text')
       .style('font-size', '16px')
       .attr('transform', 'translate(0,4) rotate(0)')
@@ -98,7 +94,7 @@ const draw = () => {
 
   svg.append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
-    .call(axisLeft(y).ticks(5).tickFormat((d: any) => fmt(d)))
+    .call(d3.axisLeft(y).ticks(5).tickFormat((d) => fmt(d as number)))
     .selectAll('text')
       .style('font-size', '16px')
 
@@ -109,14 +105,14 @@ const draw = () => {
     .data(data)
     .enter()
     .append('rect')
-      .attr('x', (_, i) => x(labels[i] ?? '') ?? 0)
-      .attr('y', d => y(d.count))
+      .attr('x', (_: Bin, i: number) => x(labels[i] ?? '') ?? 0)
+      .attr('y', (d: Bin) => y(d.count))
       .attr('width', x.bandwidth())
-      .attr('height', d => y(0) - y(d.count))
+      .attr('height', (d: Bin) => y(0) - y(d.count))
       .attr('rx', 4)
       .attr('fill', '#667eea')
       .append('title')
-        .text((d, i) => `${labels[i]}: ${fmt(d.count)}`)
+        .text((d: Bin, i: number) => `${labels[i]}: ${fmt(d.count)}`)
 
   // Value labels
   g.selectAll('text.value')
@@ -124,16 +120,16 @@ const draw = () => {
     .enter()
     .append('text')
       .attr('class', 'value')
-      .attr('x', (_, i) => {
+      .attr('x', (_: Bin, i: number) => {
         const xi = x(labels[i] ?? '')
         return ((xi !== undefined ? xi : 0) + x.bandwidth() / 2)
       })
-      .attr('y', d => y(d.count) - 6)
+      .attr('y', (d: Bin) => y(d.count) - 6)
       .attr('text-anchor', 'middle')
       .attr('fill', '#2d3748')
       .style('font-size', '16px')
       .style('font-weight', '600')
-      .text(d => fmt(d.count))
+      .text((d: Bin) => fmt(d.count))
 }
 
 onMounted(draw)

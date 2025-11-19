@@ -24,25 +24,6 @@
           </NuxtLink>
         </div>
       </div>
-      
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">7,432</div>
-          <div class="stat-label">Medical Cases</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">40,900+</div>
-          <div class="stat-label">Medical Images</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">99.7%</div>
-          <div class="stat-label">Diagnosis Coverage</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Multiple</div>
-          <div class="stat-label">Modalities</div>
-        </div>
-      </div>
     </div>
     
     <div class="features-section">
