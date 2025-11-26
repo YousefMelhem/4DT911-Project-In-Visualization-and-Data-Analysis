@@ -205,7 +205,7 @@ const isLoading = ref(false)
 const results = ref(null)
 const totalCases = ref(7404)
 const sampleCases = ref([])
-const { warning, success, error: showError } = useDialog()
+const {success, error: showError } = useDialog()
 
 // Methods config
 const methods = [
@@ -221,18 +221,7 @@ const selectMethod = async (method) => {
   // Reset results when changing method
   results.value = null
   comparisonResults.value = null
-  
-  // Show info dialog about the selected method
-  const methodInfo = methods.find(m => m.value === method)
-  try {
-    await warning(
-      'Search Method Changed',
-      `You've selected ${methodInfo.label}: ${methodInfo.description}`
-    )
-  } catch (e) {
-    // User closed the dialog
   }
-}
 
 // Utility function
 const getSimilarityClass = (score) => {

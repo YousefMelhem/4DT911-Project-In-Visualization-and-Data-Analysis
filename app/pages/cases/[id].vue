@@ -186,7 +186,7 @@ const route = useRoute()
 
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
-const { warning, success, error: showError } = useDialog()
+const { success, error: showError } = useDialog()
 
 interface CaseDetail {
   id: string
@@ -332,12 +332,9 @@ const openMedPix = async () => {
   if (!caseData.value?.url) return
   
   try {
-    const confirmed = await warning('External Link', 'This will open the MedPix website in a new tab. Continue?')
-    
-    if (confirmed) {
       window.open(caseData.value.url, '_blank')
       success('Link Opened', 'MedPix website opened in new tab')
-    }
+    
   } catch (e) {
     showError(
       'Link Open Failed',

@@ -323,7 +323,7 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
   min-height: 800px;
   background: white;
   border-radius: 8px;
-  padding: 20px;
+  padding: 12px 12px 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -374,15 +374,15 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
 }
 
 .info-panel {
-  margin-top: 20px;
-  padding: 15px;
+  margin-top: 8px;
+  padding: 8px 10px;
   background: #f8f9fa;
   border-radius: 6px;
   font-size: 14px;
 }
 
 .info-panel p {
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 .clear-btn {

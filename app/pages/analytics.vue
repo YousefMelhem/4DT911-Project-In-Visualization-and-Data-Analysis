@@ -142,7 +142,7 @@ const fetchedAt = ref<Date | null>(null)
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
-const { warning, success, error: showError } = useDialog()
+const {error: showError } = useDialog()
 
 // Shared filters + filtered data via composable
 const {
@@ -178,26 +178,8 @@ const allMainRegions = computed<string[]>(() => {
 /* =========================
  * Filters actions
  * =======================*/
-const resetFilters = async () => {
-  try {
-    const confirmed = await warning(
-      'Reset Filters',
-      'This will clear all active filters and show all cases. Continue?'
-    )
-
-    if (confirmed) {
-      resetFiltersLocal()
-      success('Filters Reset', 'All filters have been cleared.')
-    }
-  } catch (e) {
-    showError(
-      'Reset Failed',
-      'An error occurred while resetting filters. Would you like to try again?',
-      {
-        onConfirm: () => resetFilters()
-      }
-    )
-  }
+const resetFilters = () => {
+  resetFiltersLocal()
 }
 
 /* =========================
@@ -345,11 +327,8 @@ const clusterFilteredData = computed<CaseSummary[]>(() => {
 const handleClusterClick = (clusterId: number) => {
   if (selectedCluster.value === clusterId) {
     selectedCluster.value = null
-    success('Cluster Deselected', 'Showing all cases again')
   } else {
     selectedCluster.value = clusterId
-    const count = clusterFilteredData.value.length
-    success('Cluster Selected', `Filtering ${count.toLocaleString()} cases in this cluster`)
   }
 }
 
@@ -635,8 +614,6 @@ const loadData = async () => {
     rawData.value = json as CaseSummary[]
     totalCases.value = rawData.value.length
     fetchedAt.value = new Date()
-
-    success('Refresh Complete', `Successfully loaded ${totalCases.value.toLocaleString()} cases!`)
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error'
     error.value = errorMessage
@@ -665,11 +642,8 @@ const loadData = async () => {
   }
 }
 
-const handleRefreshClick = async () => {
-  const confirmed = await warning('Refresh Data', 'Continue?')
-  if (confirmed) {
-    await loadData()
-  }
+const handleRefreshClick = () => {
+  loadData()
 }
 
 onMounted(() => {
@@ -752,7 +726,7 @@ onMounted(() => {
             </div>
             <ClientOnly>
               <DiagnosisUMAP 
-                :width="1200"
+                :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
                 @pointClick="handleDiagnosisClick"
@@ -909,14 +883,14 @@ onMounted(() => {
 /* Header - stays full width above layout */
 .page-header {
   text-align: center;
-  padding: 2rem 2rem 1.25rem;
+  padding: 0.75rem 1rem 0.5rem;
 }
 
 .page-header h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #2d3748;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
 }
 
 .page-header p {
@@ -961,7 +935,7 @@ onMounted(() => {
 }
 
 .analytics-main-content {
-  padding: 0 2rem 2rem;
+  padding: 0 1.5rem 1.5rem;
   overflow-x: hidden;
 }
 
@@ -1010,7 +984,7 @@ onMounted(() => {
 /* Loader / error */
 .center-block {
   text-align: center;
-  padding: 4rem 1rem;
+  padding: 2rem 1rem;
 }
 
 .loader {
@@ -1054,7 +1028,7 @@ onMounted(() => {
 /* Content grid */
 .content {
   display: grid;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 /* UMAP Section */
@@ -1062,8 +1036,8 @@ onMounted(() => {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .section-title {
@@ -1085,9 +1059,9 @@ onMounted(() => {
 .cluster-banner {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1115,7 +1089,7 @@ onMounted(() => {
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 0.5rem;
   align-items: start;
 }
 
@@ -1124,7 +1098,7 @@ onMounted(() => {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 1rem;
+  padding: 0.4rem;
   min-width: 0;
 }
 
@@ -1178,15 +1152,15 @@ onMounted(() => {
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.75rem;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .summary-card {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 1rem;
+  padding: 0.4rem;
   text-align: center;
   transition: all 0.3s ease;
 }
@@ -1204,9 +1178,9 @@ onMounted(() => {
 }
 
 .summary-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   color: #2d3748;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
 }
 
 .summary-card p {
@@ -1219,8 +1193,8 @@ onMounted(() => {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 1rem;
-  margin-top: .5rem;
+  padding: 0.75rem;
+  margin-top: .35rem;
   min-width: 0;
 }
 
