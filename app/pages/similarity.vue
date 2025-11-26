@@ -318,12 +318,12 @@ onMounted(() => {
 .similarity-search-page {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem 1.25rem 1.5rem;
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .page-header h1 {
@@ -341,13 +341,13 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  gap: 2rem;
+  margin-bottom: 1rem;
+  gap: 0.75rem;
 }
 
 .method-selector {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
 }
 
@@ -379,20 +379,20 @@ onMounted(() => {
 
 .results-count input {
   width: 80px;
-  padding: 0.5rem;
+  padding: 0.35rem 0.4rem;
   border: 2px solid #e0e0e0;
   border-radius: 6px;
   font-size: 1rem;
 }
 
 .search-section {
-  margin-bottom: 2rem;
+  margin-bottom: 0.4rem;
 }
 
 .search-box {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  gap: .75rem;
+  margin-bottom: 0.35rem;
 }
 
 .search-box input {
@@ -438,7 +438,7 @@ onMounted(() => {
 .search-hint {
   color: #7f8c8d;
   font-style: italic;
-  margin: 0.5rem 0;
+  margin: 0.15rem 0 0.25rem;
 }
 
 .search-hint:has(⚠️) {
@@ -451,8 +451,8 @@ onMounted(() => {
 }
 
 .quick-cases {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
   background: #f8f9fa;
   border-radius: 8px;
 }
@@ -465,11 +465,11 @@ onMounted(() => {
 .case-buttons {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
 
 .case-buttons button {
-  padding: 0.75rem;
+  padding:  0.6rem 0.75rem;
   background: white;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -490,7 +490,7 @@ onMounted(() => {
 
 .loading {
   text-align: center;
-  padding: 3rem;
+  padding: 1.5rem 0.5rem;
 }
 
 .spinner {
@@ -500,7 +500,7 @@ onMounted(() => {
   border-top: 4px solid #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
+  margin: 0 auto 0.5rem;
 }
 
 @keyframes spin {
@@ -509,12 +509,12 @@ onMounted(() => {
 }
 
 .query-info {
-  margin-bottom: 2rem;
+  margin: 0.5rem 0 1rem 0;
 }
 
 .info-card {
   background: #ecf0f1;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 8px;
 }
 
@@ -527,10 +527,10 @@ onMounted(() => {
 }
 
 .similar-cases h2 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .method-badge {
@@ -544,7 +544,7 @@ onMounted(() => {
 .cases-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 1.5rem;
+  gap: 0.75rem;
 }
 
 .case-card {
