@@ -355,7 +355,7 @@ onMounted(() => {
 .case-detail-page {
   min-height: calc(100vh - 80px);
   background: #f5f7fa;
-  padding: 2rem;
+  padding:  1rem;
 }
 
 .loading, .error {
@@ -379,12 +379,12 @@ onMounted(() => {
 }
 
 .case-detail {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .case-header {
-  margin-bottom: 2rem;  
+  margin-bottom: 1.25rem;  
 }
 
 .back-link {
@@ -402,20 +402,20 @@ onMounted(() => {
 }
 
 .case-header h1 {
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   color: #2d3748;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .metadata-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   background: rgb(230, 241, 250);
   color: #2d3748;
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 25px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -510,29 +510,29 @@ onMounted(() => {
   color: #718096;
   font-size: 0.95rem;
   font-style: italic;
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
   border-top: 1px solid #e2e8f0;
 }
 
 .image-gallery {
   background: white;
   border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .main-image {
   width: 100%;
-  height: 500px;
+  height: 550px;
   background: #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .main-image img {
@@ -594,7 +594,7 @@ onMounted(() => {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .info-tabs {
@@ -604,7 +604,7 @@ onMounted(() => {
 }
 
 .tab-btn {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   background: none;
   border: none;
   color: #718096;
@@ -627,7 +627,7 @@ onMounted(() => {
 }
 
 .tab-content {
-  padding: 2rem;
+  padding: 1.5rem 1.5rem 1.25rem;
 }
 
 .info-section h3 {
@@ -678,11 +678,13 @@ onMounted(() => {
 
 .external-link {
   text-align: center;
+  margin-top: -0.25rem;
+
 }
 
 .medpix-link {
   display: inline-block;
-  padding: 1rem 2rem;
+  padding: 0.85rem 1.8rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-decoration: none;
@@ -714,7 +716,7 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .case-header h1 {
-    font-size: 1.75rem;
+    font-size: 1rem;
   }
 
   .main-image {
