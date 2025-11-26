@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="text-chart">
     <div class="chart-header">
       <h3>Text Sections</h3>
       <p class="sub">
@@ -30,11 +30,11 @@ const props = defineProps<{
   items: Item[]
 }>()
 
-const VIEW_W = 760
+const VIEW_W = 660
 // give the labels a bit more breathing room on the right
-const MARGIN = { top: 16, right: 48, bottom: 40, left: 160 } as const
-const ROW_H = 26
-const GAP = 6
+const MARGIN = { top: 8, right: 40, bottom: 26, left: 120 } as const
+const ROW_H = 45
+const GAP = 20
 const fmt = d3.format(',')
 
 const computedHeight = computed(() => {
@@ -136,14 +136,14 @@ watch(computedHeight, draw)
 </script>
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 1rem 1rem 1.25rem;
+.text-chart{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem 1rem 0.5rem;
 }
 .chart-header h3 {
-  margin: 0;
+  margin: 1rem 0.75rem 0.25rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
@@ -155,6 +155,7 @@ watch(computedHeight, draw)
 }
 .chart-body {
   width: 100%;
+  flex: 1 1 auto;
 }
 .svg-chart {
   width: 100%;

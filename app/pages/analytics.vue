@@ -1089,28 +1089,44 @@ onMounted(() => {
 /* Charts grid (12-col) */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0.5rem;
-  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  align-items: stretch;
 }
 
 .chart-card {
-  grid-column: span 6;
+  grid-column: span 1;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 0.4rem;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
 }
 
 .chart-card.full {
   grid-column: 1 / -1;
 }
+.chart-card > * {
+  flex: 1 1 auto;
+  display: flex;
+}
+
+.chart-card > * > * {
+  flex: 1 1 auto;
+}
 
 @media (max-width: 900px) {
+  .charts-grid {
+  grid-template-columns: 1fr;
+  }
+
   .chart-card,
   .chart-card.full {
     grid-column: 1 / -1;
+    min-height: 260px;
   }
 }
 

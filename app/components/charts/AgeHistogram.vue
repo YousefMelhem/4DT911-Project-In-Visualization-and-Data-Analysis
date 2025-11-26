@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="age-chart">
     <div class="chart-header">
       <h3>Age distribution</h3>
       <p class="sub">Fixed bins (0–9, 10–19, …, 90+). Unknown ages excluded from bars.</p>
@@ -38,8 +38,8 @@ const props = defineProps<{
  * Constants & helpers
  * =======================*/
 const W = 700
-const H = 320
-const MARGIN = { top: 20, right: 16, bottom: 52, left: 56 }
+const H = 300
+const MARGIN = { top: 20, right: 16, bottom: 20, left: 48}
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 
@@ -138,14 +138,14 @@ watch(() => props.unknownCount, draw)
 </script>
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 1rem 1rem 1.25rem;
+.age-chart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem 0.75rem 0.5rem;
 }
 .chart-header h3 {
-  margin: 0;
+  margin: 0.5rem 0.5rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
@@ -155,7 +155,10 @@ watch(() => props.unknownCount, draw)
   color: #718096;
   font-size: 0.9rem;
 }
-.chart-body { width: 100%; }
+.chart-body { 
+  width: 100%;
+  flex: 1 1 auto;
+ }
 .svg-chart { width: 100%; height: auto; display: block; }
 .footnote { margin-top: 0.5rem; font-size: 0.85rem; color: #718096; }
 </style>

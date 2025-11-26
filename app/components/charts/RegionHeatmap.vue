@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="region-heatmap">
     <div class="chart-header">
       <h3>Region Co-occurrence</h3>
       <p class="sub">
@@ -30,10 +30,10 @@ const props = defineProps<{
   matrix: RegionMatrix
 }>()
 
-const VIEW_W = 500
-const MARGIN = { top: 70, right: 0, bottom: 0, left: 0 } as const
+const VIEW_W = 400
+const MARGIN = { top: 100, right: 0, bottom: 0, left: 100 } as const
 const COL_LABEL_OFFSET = 5
-const CELL_SIZE = 28
+const CELL_SIZE = 30
 
 const computedHeight = computed(() => {
   const n = props.matrix.labels?.length ?? 0
@@ -173,10 +173,10 @@ watch(computedHeight, draw)
 </script>
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.region-heatmap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 1rem 1rem 1.25rem;
 }
 .chart-header h3 {
@@ -192,6 +192,7 @@ watch(computedHeight, draw)
 }
 .chart-body {
   width: 100%;
+  flex: 1 1 auto;
 }
 .svg-chart {
   width: 100%;

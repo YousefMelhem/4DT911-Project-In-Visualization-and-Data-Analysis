@@ -8,8 +8,8 @@
       <svg
         ref="svgRef"
         class="svg-chart"
-        viewBox="0 0 760 320"
-        preserveAspectRatio="xMidYMid meet"
+        :viewBox="`0 0 ${computedWidth} ${H}`"
+        preserveAspectRatio="none"
         role="img"
         aria-label="Line chart of cases per month"
       />
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import * as d3 from 'd3'
 
 /* =========================
@@ -34,15 +34,21 @@ const props = defineProps<{
 /* =========================
  * Constants & helpers
  * =======================*/
-const W = 760
 const H = 320
 const MARGIN = { top: 20, right: 20, bottom: 46, left: 56 }
-const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 
 const fmtMonth = d3.timeFormat('%b %Y')
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const computedWidth = computed(() => {
+  const n = props.series?.length ?? 0
+
+  const min = 450      
+  const perPoint = 8   
+
+  return Math.max(min, n * perPoint)
+})
 
 /* =========================
  * Render
@@ -50,6 +56,9 @@ const svgRef = ref<SVGSVGElement | null>(null)
 const draw = () => {
   const el = svgRef.value
   if (!el) return
+
+  const W = computedWidth.value
+  const INNER_W = W - MARGIN.left - MARGIN.right
 
   const svg = d3.select(el)
   svg.selectAll('*').remove()
@@ -72,14 +81,14 @@ const draw = () => {
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
     .call(d3.axisBottom(x).ticks(d3.timeMonth.every(approxTickCount)).tickFormat((d) => fmtMonth(d as Date)))
     .selectAll('text')
-      .style('font-size', '10px')
-      .attr('transform', 'translate(0,4)')
+    .style('font-size', '10px')
+    .attr('transform', 'translate(0,4)')
 
   svg.append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
     .call(d3.axisLeft(y).ticks(5))
     .selectAll('text')
-      .style('font-size', '10px')
+    .style('font-size', '10px')
 
   // Area (under line)
   const areaGen = d3.area<Point>()
@@ -112,16 +121,17 @@ const draw = () => {
     .data(data)
     .enter()
     .append('circle')
-      .attr('cx', (d: Point) => x(d.date))
-      .attr('cy', (d: Point) => y(d.count))
-      .attr('r', 3)
-      .attr('fill', '#667eea')
-      .append('title')
-        .text((d: Point) => `${fmtMonth(d.date)}: ${d.count.toLocaleString()}`)
+    .attr('cx', (d: Point) => x(d.date))
+    .attr('cy', (d: Point) => y(d.count))
+    .attr('r', 3)
+    .attr('fill', '#667eea')
+    .append('title')
+    .text((d: Point) => `${fmtMonth(d.date)}: ${d.count.toLocaleString()}`)
 }
 
 onMounted(draw)
 watch(() => props.series, draw, { deep: true })
+watch(computedWidth, draw)
 </script>
 
 <style scoped>
@@ -131,8 +141,8 @@ watch(() => props.series, draw, { deep: true })
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   padding: 1rem 1rem 1.25rem;
 }
-.chart-header h3 { margin: 0; color: #2d3748; font-size: 1.1rem; font-weight: 700; }
-.sub { margin: 0.15rem 0 0.5rem; color: #718096; font-size: 0.9rem; }
+.chart-header h3 { margin: 1rem 0.75rem 0.5rem; color: #2d3748; font-size: 1.1rem; font-weight: 700; }
+.sub { margin: 2rem 0 0.5rem; color: #718096; font-size: 0.9rem; }
 .chart-body { width: 100%; }
 .svg-chart { width: 100%; height: auto; display: block; }
 .empty-note { margin-top: 0.5rem; color: #718096; font-size: 0.9rem; }

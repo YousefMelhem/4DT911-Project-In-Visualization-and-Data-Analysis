@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="gender-chart">
     <div class="chart-header">
       <h3>Gender distribution</h3>
       <p class="sub">Counts of Female, Male, and Unknown</p>
@@ -34,8 +34,8 @@ const props = defineProps<{
  * Constants & helpers
  * =======================*/
 const W = 700
-const H = 280
-const MARGIN = { top: 20, right: 16, bottom: 40, left: 48 }
+const H = 300
+const MARGIN = { top: 8, right: 16, bottom: 42, left: 90 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 const fmt = d3.format(',')
@@ -81,13 +81,13 @@ const draw = () => {
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
     .call(d3.axisBottom(x))
     .selectAll('text')
-      .style('font-size', '18px')
+    .style('font-size', '18px')
 
   svg.append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
     .call(d3.axisLeft(y).ticks(5).tickFormat((d) => fmt(d as number)))
     .selectAll('text')
-      .style('font-size', '16px')
+    .style('font-size', '16px')
 
   // Bars
   const g = svg.append('g')
@@ -95,28 +95,28 @@ const draw = () => {
     .data(data)
     .enter()
     .append('rect')
-      .attr('x', (d: Item) => x(d.label)!)
-      .attr('y', (d: Item) => y(d.count))
-      .attr('width', x.bandwidth())
-      .attr('height', (d: Item) => y(0) - y(d.count))
-      .attr('rx', 6)
-      .attr('fill', '#667eea')
-      .append('title')
-        .text((d: Item) => `${d.label}: ${fmt(d.count)}`)
+    .attr('x', (d: Item) => x(d.label)!)
+    .attr('y', (d: Item) => y(d.count))
+    .attr('width', x.bandwidth())
+    .attr('height', (d: Item) => y(0) - y(d.count))
+    .attr('rx', 6)
+    .attr('fill', '#667eea')
+    .append('title')
+    .text((d: Item) => `${d.label}: ${fmt(d.count)}`)
 
   // Value labels
   g.selectAll('text.value')
     .data(data)
     .enter()
     .append('text')
-      .attr('class', 'value')
-      .attr('x', (d: Item) => (x(d.label)! + x.bandwidth() / 2))
-      .attr('y', (d: Item) => y(d.count) - 6)
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#2d3748')
-      .style('font-size', '18px')
-      .style('font-weight', '600')
-      .text((d: Item) => fmt(d.count))
+    .attr('class', 'value')
+    .attr('x', (d: Item) => (x(d.label)! + x.bandwidth() / 2))
+    .attr('y', (d: Item) => y(d.count) - 6)
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#2d3748')
+    .style('font-size', '18px')
+    .style('font-weight', '600')
+    .text((d: Item) => fmt(d.count))
 }
 
 onMounted(draw)
@@ -124,14 +124,14 @@ watch(() => props.items, draw, { deep: true })
 </script>
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 1rem 1rem 1.25rem;
+.gender-chart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem 0.75rem 0.5rem;
 }
 .chart-header h3 {
-  margin: 0;
+  margin: 0.5rem 0.5rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
@@ -141,6 +141,6 @@ watch(() => props.items, draw, { deep: true })
   color: #718096;
   font-size: 0.9rem;
 }
-.chart-body { width: 100%; }
+.chart-body { width: 100%; flex: 1 1 auto; }
 .svg-chart { width: 100%; height: auto; display: block; }
 </style>

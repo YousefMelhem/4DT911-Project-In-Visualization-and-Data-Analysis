@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="modality-heatmap">
     <div class="chart-header">
       <h3>Modality Co-occurrence</h3>
       <p class="sub">
@@ -30,10 +30,10 @@ const props = defineProps<{
   matrix: ModalityMatrix
 }>()
 
-const VIEW_W = 500
-const MARGIN = { top: 70, right: 0, bottom: 0, left: 0 } as const
+const VIEW_W = 450
+const MARGIN = { top: 70, right: 8, bottom: 0, left: 0 } as const
 const COL_LABEL_OFFSET = 5
-const CELL_SIZE = 28
+const CELL_SIZE = 30
 
 const computedHeight = computed(() => {
   const n = props.matrix.labels?.length ?? 0
@@ -96,17 +96,17 @@ const draw = () => {
 
   // Column labels (top, rotated)
 const colLabelGroup = svg.append('g')
-  .attr('transform', `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
+    .attr('transform', `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
 
-colLabelGroup
-  .selectAll('text.col-label')
-  .data(labels)
-  .enter()
-  .append('text')
+  colLabelGroup
+    .selectAll('text.col-label')
+    .data(labels)
+    .enter()
+    .append('text')
     .attr('class', 'col-label')
     .attr('transform', d =>
       // move to the center of the column, then rotate
-      `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
+        `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
     )
     .attr('text-anchor', 'start') // or 'middle' if you prefer
     .attr('fill', '#4a5568')
@@ -119,14 +119,14 @@ colLabelGroup
     .data(labels)
     .enter()
     .append('text')
-      .attr('class', 'row-label')
-      .attr('x', xStart - 8)
+    .attr('class', 'row-label')
+    .attr('x', xStart - 8)
       .attr('y', d => (y(d)! + y.bandwidth() / 2))
-      .attr('text-anchor', 'end')
-      .attr('dominant-baseline', 'middle')
-      .attr('fill', '#4a5568')
-      .style('font-size', '12px')
-      .text(d => d)
+    .attr('text-anchor', 'end')
+    .attr('dominant-baseline', 'middle')
+    .attr('fill', '#4a5568')
+    .style('font-size', '12px')
+    .text(d => d)
 
   const cells: { row: string; col: string; value: number }[] = []
   for (let i = 0; i < n; i++) {
@@ -142,21 +142,21 @@ colLabelGroup
     .data(cells)
     .enter()
     .append('rect')
-      .attr('class', 'cell')
-      .attr('x', d => x(d.col)!)
-      .attr('y', d => y(d.row)!)
-      .attr('width', x.bandwidth())
-      .attr('height', y.bandwidth())
-      .attr('stroke', '#e2e8f0')
-      .attr('stroke-width', 0.5)
+    .attr('class', 'cell')
+    .attr('x', d => x(d.col)!)
+    .attr('y', d => y(d.row)!)
+    .attr('width', x.bandwidth())
+    .attr('height', y.bandwidth())
+    .attr('stroke', '#e2e8f0')
+    .attr('stroke-width', 0.5)
       .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
-      .append('title')
+    .append('title')
         .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
 
   g.selectAll('text.value')
-  .data(cells)
-  .enter()
-  .append('text')
+    .data(cells)
+    .enter()
+    .append('text')
     .attr('class', 'value')
     .attr('x', d => x(d.col)! + x.bandwidth() / 2)
     .attr('y', d => y(d.row)! + y.bandwidth() / 2)
@@ -174,14 +174,14 @@ watch(computedHeight, draw)
 </script>
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.modality-heatmap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 1rem 1rem 1.25rem;
 }
 .chart-header h3 {
-  margin: 0;
+  margin: 1rem 0.75rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
@@ -193,6 +193,7 @@ watch(computedHeight, draw)
 }
 .chart-body {
   width: 100%;
+  flex: 1 1 auto;
 }
 .svg-chart {
   width: 100%;
