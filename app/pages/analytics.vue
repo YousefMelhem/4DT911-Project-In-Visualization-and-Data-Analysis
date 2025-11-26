@@ -142,7 +142,7 @@ const fetchedAt = ref<Date | null>(null)
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
-const { warning, success, error: showError } = useDialog()
+const {error: showError } = useDialog()
 
 // Shared filters + filtered data via composable
 const {
@@ -178,26 +178,8 @@ const allMainRegions = computed<string[]>(() => {
 /* =========================
  * Filters actions
  * =======================*/
-const resetFilters = async () => {
-  try {
-    const confirmed = await warning(
-      'Reset Filters',
-      'This will clear all active filters and show all cases. Continue?'
-    )
-
-    if (confirmed) {
-      resetFiltersLocal()
-      success('Filters Reset', 'All filters have been cleared.')
-    }
-  } catch (e) {
-    showError(
-      'Reset Failed',
-      'An error occurred while resetting filters. Would you like to try again?',
-      {
-        onConfirm: () => resetFilters()
-      }
-    )
-  }
+const resetFilters = () => {
+  resetFiltersLocal()
 }
 
 /* =========================
@@ -345,11 +327,8 @@ const clusterFilteredData = computed<CaseSummary[]>(() => {
 const handleClusterClick = (clusterId: number) => {
   if (selectedCluster.value === clusterId) {
     selectedCluster.value = null
-    success('Cluster Deselected', 'Showing all cases again')
   } else {
     selectedCluster.value = clusterId
-    const count = clusterFilteredData.value.length
-    success('Cluster Selected', `Filtering ${count.toLocaleString()} cases in this cluster`)
   }
 }
 
@@ -635,8 +614,6 @@ const loadData = async () => {
     rawData.value = json as CaseSummary[]
     totalCases.value = rawData.value.length
     fetchedAt.value = new Date()
-
-    success('Refresh Complete', `Successfully loaded ${totalCases.value.toLocaleString()} cases!`)
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error'
     error.value = errorMessage
@@ -665,11 +642,8 @@ const loadData = async () => {
   }
 }
 
-const handleRefreshClick = async () => {
-  const confirmed = await warning('Refresh Data', 'Continue?')
-  if (confirmed) {
-    await loadData()
-  }
+const handleRefreshClick = () => {
+  loadData()
 }
 
 onMounted(() => {

@@ -38,7 +38,7 @@ export function useDialog() {
       if (state.open && state.type === 'success') {
         close(true)
       }
-    }, opts?.autoCloseMs ?? 3000)
+    }, opts?.autoCloseMs ?? 1000)
     
     return new Promise<boolean>(r => { state.resolver = r })
   }

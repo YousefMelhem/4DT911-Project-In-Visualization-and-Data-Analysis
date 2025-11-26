@@ -136,7 +136,7 @@ const fetchedAt = ref<Date | null>(null)
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
-const { warning, success, error: showError } = useDialog()
+const { success, error: showError } = useDialog()
 
 // Cluster filtering
 const selectedCluster = ref<number | null>(null)
@@ -184,36 +184,16 @@ const clusterFilteredData = computed(() => {
 const handleClusterClick = (clusterId: number) => {
   if (clusterId === -1 || selectedCluster.value === clusterId) {
     selectedCluster.value = null
-    success('Cluster Filter Cleared', 'Showing all cases')
   } else {
     selectedCluster.value = clusterId
-    const count = clusterFilteredData.value.length
-    success('Cluster Filter Applied', `Showing ${count.toLocaleString()} cases in this cluster`)
   }
 }
 
 const totalCases = computed(() => rawData.value.length)
 
 // ===== Filters actions =====
-const resetFilters = async () => {
-  try {
-    const confirmed = await warning(
-      'Reset Filters',
-      'This will clear all active filters and show all cases. Continue?'
-    )
-    if (confirmed) {
-      resetFiltersLocal()
-      success('Filters Reset', 'All filters have been cleared.')
-    }
-  } catch (e) {
-    showError(
-      'Reset Failed',
-      'An error occurred while resetting filters. Would you like to try again?',
-      {
-        onConfirm: () => resetFilters(),
-      }
-    )
-  }
+const resetFilters = () => {
+  resetFiltersLocal()
 }
 
 // ===== Local "pagination" over filteredData =====
