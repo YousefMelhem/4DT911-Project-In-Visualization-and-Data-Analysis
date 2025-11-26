@@ -40,7 +40,7 @@ const config = useRuntimeConfig()
 const DATA_URL = `${config.public.apiUrl}/data/features`
 
 // Larger size for better visibility
-const w = 900
+const w = 760
 const h = 600
 const margin = { top: 30, right: 10, bottom: 40, left: 40 }
 const innerWidth = w - margin.left - margin.right
@@ -327,8 +327,8 @@ watch(() => data.value.length, async (newLength) => {
 
 .umap-wrapper {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1.3fr) 260px;
+  gap: 1rem;
   align-items: start;
 }
 
@@ -354,11 +354,11 @@ watch(() => data.value.length, async (newLength) => {
 
 .cluster-legend {
   width: 100%;
-  max-width: 320px;
+  max-width: 260px;
   background: #f9fafb;
   border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0.8rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .legend-header {

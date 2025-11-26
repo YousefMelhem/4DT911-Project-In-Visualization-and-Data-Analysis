@@ -334,29 +334,29 @@ onBeforeUnmount(() => observer?.disconnect())
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 3rem 2rem 2rem;
+  padding: 1.5rem 1.5rem 1.5rem;
   text-align: center;
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
+  font-size: 2.1rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .page-header p {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   opacity: 0.9;
-  margin-bottom: 2rem;
+  margin-bottom: 1.1rem;
 }
 
 .cases-layout {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 0;
   max-width: 1800px;
   margin: 0 auto;
-  min-height: calc(100vh - 250px);
+  min-height: calc(100vh - 210px);
 }
 
 @media (max-width: 1200px) {
@@ -405,19 +405,19 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 
 .cases-main-content {
-  padding: 2rem;
+  padding: 0.75rem 0.75rem 0.75rem;
   background: #f5f7fa;
 }
 
 .cluster-filter-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .loading,
 .error,
 .no-results {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 2rem 1rem;
 }
 
 .loader {
@@ -462,7 +462,7 @@ onBeforeUnmount(() => observer?.disconnect())
 .cases-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .case-card {
@@ -519,15 +519,15 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 
 .case-info {
-  padding: 14px 16px;        
+  padding: 10px 12px;        
   display: flex;
   flex-direction: column;
-  gap: 12px;                 
+  gap: 8px;                 
 }
 
 .case-info .case-title {
   margin: 0;                 
-  padding: 0 2px; 
+  padding: 8px; 
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -542,11 +542,11 @@ onBeforeUnmount(() => observer?.disconnect())
 
 .case-details {
   margin: 0;
-  padding-top: 12px;
+  padding-top: 8px;
   border-top: 1px solid #e2e8f0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr)); 
-  gap: 8px;
+  gap: 6px;
 }
 
 .detail-row {

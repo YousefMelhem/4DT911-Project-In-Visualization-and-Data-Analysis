@@ -935,7 +935,7 @@ onMounted(() => {
 }
 
 .analytics-main-content {
-  padding: 0 1.5rem 1.5rem;
+  padding: 0.4rem 1.1rem 1rem 0.6rem;
   overflow-x: hidden;
 }
 
@@ -1028,7 +1028,8 @@ onMounted(() => {
 /* Content grid */
 .content {
   display: grid;
-  gap: 0.5rem;
+  row-gap: 0.5rem;
+  column-gap: 0.5rem;
 }
 
 /* UMAP Section */
@@ -1036,8 +1037,8 @@ onMounted(() => {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
+  padding: 0.6rem 0.6rem 0.5rem;;
+  margin-bottom: 0.4rem;
 }
 
 .section-title {
