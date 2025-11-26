@@ -355,7 +355,7 @@ onMounted(() => {
 .case-detail-page {
   min-height: calc(100vh - 80px);
   background: #f5f7fa;
-  padding:  1rem;
+  padding:  2.5rem;
 }
 
 .loading, .error {
@@ -652,7 +652,7 @@ onMounted(() => {
 
 .diagnosis-box {
   background: #f7fafc;
-  border-left: 4px solid #667eea;
+  border-left: 8px solid #667eea;
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
