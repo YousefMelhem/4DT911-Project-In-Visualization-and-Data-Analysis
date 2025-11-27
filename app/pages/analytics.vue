@@ -15,6 +15,7 @@ import RegionHeatmap from '~/components/charts/RegionHeatmap.vue'
 import ModalityRegionHeatmap from '~/components/charts/ModalityRegionHeatmap.vue'
 import DialogBox from '~/components/popup/DialogBox.vue'
 import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
+import SelectionSummaryPanel from '~/components/analytics/SelectionSummaryPanel.vue'
 import {
   useCaseFilters,
   type CaseSummary,
@@ -28,6 +29,22 @@ type Point = { date: Date; count: number }
 type ModalityMatrix = { labels: string[]; grid: number[][] }
 type RegionMatrix = ModalityMatrix
 type ModalityRegionMatrix = { rowLabels: string[]; colLabels: string[]; grid: number[][] }
+
+type DiagnosisUMAPInfo = {
+  x: number
+  y: number
+  cluster: number
+  frequency: number
+}
+
+type CaseWithCoords = {
+  caseData: CaseSummary
+  x: number
+  y: number
+  dist?: number
+}
+
+type TermItem = { term: string; weight: number }
 
 /* =========================
  * Utilities (pure)
@@ -44,6 +61,21 @@ const fmtDate = (iso: string | null) => {
 
 const joinArr = (arr?: string[]) =>
   Array.isArray(arr) && arr.length ? arr.join(', ') : '—'
+
+/** Basic tokenizer for diagnosis text */
+const STOPWORDS = new Set([
+  'and', 'the', 'case', 'patient', 'with', 'for', 'of', 'in', 'on', 'from',
+  'a', 'an', 'to', 'at', 'by', 'without', 'male', 'female', 'old', 'year',
+  'years', 'man', 'woman', 'boy', 'girl'
+])
+
+const tokenizeDiagnosis = (text: string): string[] => {
+  return text
+    .toLowerCase()
+    .split(/[^a-z]+/i)
+    .map(s => s.trim())
+    .filter(s => s.length >= 3 && !STOPWORDS.has(s))
+}
 
 /** Generic symmetric co-occurrence matrix builder */
 const buildCoocMatrix = (
@@ -142,7 +174,7 @@ const fetchedAt = ref<Date | null>(null)
 const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
-const {error: showError } = useDialog()
+const { error: showError } = useDialog()
 
 // Shared filters + filtered data via composable
 const {
@@ -292,7 +324,7 @@ const modalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
 const selectedCluster = ref<number | null>(null)
 const selectedDiagnoses = ref<Set<string>>(new Set())
 
-// Load cluster data for filtering
+// Load diagnosis→cluster mapping for filtering
 const clusterData = ref<Map<string, number>>(new Map())
 
 const loadClusterMapping = async () => {
@@ -315,7 +347,7 @@ const loadClusterMapping = async () => {
 // Filter data by selected cluster
 const clusterFilteredData = computed<CaseSummary[]>(() => {
   if (selectedCluster.value === null) return filteredData.value
-  
+
   return filteredData.value.filter(row => {
     if (!row.diagnosis) return false
     const diagLower = row.diagnosis.toLowerCase()
@@ -411,7 +443,7 @@ const clusterAgeBins = computed(() => {
 })
 
 const clusterUnknownAgeCount = computed(() => {
-  return clusterFilteredData.value.filter(row => 
+  return clusterFilteredData.value.filter(row =>
     row.patient_age === null || row.patient_age === undefined
   ).length
 })
@@ -500,22 +532,22 @@ const clusterModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
 )
 
 // Use cluster-filtered data for charts when cluster is selected
-const displayGenderCounts = computed(() => 
+const displayGenderCounts = computed(() =>
   selectedCluster.value !== null ? clusterGenderCounts.value : genderCounts.value
 )
-const displayModalityCounts = computed(() => 
+const displayModalityCounts = computed(() =>
   selectedCluster.value !== null ? clusterModalityCounts.value : modalityCounts.value
 )
-const displayRegionCounts = computed(() => 
+const displayRegionCounts = computed(() =>
   selectedCluster.value !== null ? clusterRegionCounts.value : regionCounts.value
 )
-const displayAgeBins = computed(() => 
+const displayAgeBins = computed(() =>
   selectedCluster.value !== null ? clusterAgeBins.value : ageBins.value
 )
-const displayUnknownAgeCount = computed(() => 
+const displayUnknownAgeCount = computed(() =>
   selectedCluster.value !== null ? clusterUnknownAgeCount.value : unknownAgeCount.value
 )
-const displayCasesOverTime = computed(() => 
+const displayCasesOverTime = computed(() =>
   selectedCluster.value !== null ? clusterCasesOverTime.value : casesOverTime.value
 )
 const displaySectionCoverage = computed(() =>
@@ -561,6 +593,243 @@ const casesOverTime = computed<Point[]>(() => {
     d.setMonth(d.getMonth() + 1)
   }
   return series
+})
+
+/* =========================
+ * Task 1: UMAP-based typical/atypical + TF-IDF word cloud
+ * =======================*/
+
+// Diagnosis → UMAP metadata
+const diagnosisUMAPMap = ref<Map<string, DiagnosisUMAPInfo>>(new Map())
+const clusterLabelLookup = ref<Record<number, string>>({})
+
+// Load UMAP metadata for diagnoses (for typical/atypical + labels)
+const loadDiagnosisUMAPMeta = async () => {
+  try {
+    const base = `${API_URL}/data/features`
+
+    // UMAP coords + cluster + frequency
+    const umapRes = await fetch(`${base}/diagnosis_umap_coords.json`)
+    if (umapRes.ok) {
+      const umap = await umapRes.json()
+      const map = new Map<string, DiagnosisUMAPInfo>()
+      umap.diagnoses.forEach((diag: string, i: number) => {
+        const key = diag.toLowerCase()
+        map.set(key, {
+          x: umap.umap_x[i],
+          y: umap.umap_y[i],
+          cluster: umap.clusters[i],
+          frequency: umap.frequencies[i],
+        })
+      })
+      diagnosisUMAPMap.value = map
+      console.log(`✅ Loaded UMAP info for ${map.size} diagnoses`)
+    }
+
+    // Cluster labels
+    const labelsRes = await fetch(`${base}/cluster_labels.json`)
+    if (labelsRes.ok) {
+      const labelsJson = await labelsRes.json()
+      const labels: Record<number, string> = {}
+      for (const [k, v] of Object.entries(labelsJson.cluster_labels || {})) {
+        const idx = Number(k)
+        if (!Number.isNaN(idx)) labels[idx] = String(v)
+      }
+      clusterLabelLookup.value = labels
+    }
+  } catch (err) {
+    console.warn('Could not load diagnosis UMAP metadata:', err)
+  }
+}
+
+// Only compute "selection" for Task 1 when a cluster is active.
+// Otherwise, we treat it as empty (no typical/atypical, no word cloud).
+const currentSelectionCases = computed<CaseSummary[]>(() => {
+  if (selectedCluster.value === null) return []
+  return clusterFilteredData.value
+})
+
+// Cases in current selection that have UMAP coords (via diagnosis)
+const selectionWithCoords = computed<CaseWithCoords[]>(() => {
+  const map = diagnosisUMAPMap.value
+  if (!map.size) return []
+
+  const out: CaseWithCoords[] = []
+  for (const row of currentSelectionCases.value) {
+    const diag = row.diagnosis?.trim().toLowerCase()
+    if (!diag) continue
+    const info = map.get(diag)
+    if (!info) continue
+    out.push({
+      caseData: row,
+      x: info.x,
+      y: info.y,
+    })
+  }
+  return out
+})
+
+// KNN-based "density" scoring within the current selection (cluster-only)
+// score = average distance to k nearest neighbours in UMAP space
+type ScoredCase = CaseWithCoords & { score: number }
+
+const scoredSelection = computed<ScoredCase[]>(() => {
+  const pts = selectionWithCoords.value
+  const n = pts.length
+
+  // Only meaningful when a cluster is active and we have multiple points
+  if (selectedCluster.value === null || n <= 1) return []
+
+  const k = Math.min(10, n - 1) // up to 10 neighbours, but never >= n
+
+  const scored: ScoredCase[] = []
+
+  for (let i = 0; i < n; i++) {
+    const p = pts[i]!
+    const dists: number[] = []
+
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue
+      const q = pts[j]!
+      const dx = p.x - q.x
+      const dy = p.y - q.y
+      dists.push(Math.sqrt(dx * dx + dy * dy))
+    }
+
+    dists.sort((a, b) => a - b)
+    const neighbors = dists.slice(0, k)
+    const avg =
+      neighbors.reduce((sum, v) => sum + v, 0) /
+      (neighbors.length || 1)
+
+    scored.push({ ...p, score: avg })
+  }
+
+  // Smaller score = denser neighbourhood = more typical
+  return scored.sort((a, b) => a.score - b.score)
+})
+
+// Helper: normalize diagnosis string for uniqueness
+const normalizeDiagKey = (diag: string | null | undefined): string =>
+  diag ? diag.trim().toLowerCase() : ''
+
+// Typical cases: smallest score, max 1 case per diagnosis
+const typicalCases = computed<CaseSummary[]>(() => {
+  const scored = scoredSelection.value
+  if (!scored.length) return []
+
+  const seenDiag = new Set<string>()
+  const out: CaseSummary[] = []
+
+  for (const p of scored) {
+    const key = normalizeDiagKey(p.caseData.diagnosis)
+    if (!key) continue
+    if (seenDiag.has(key)) continue
+
+    seenDiag.add(key)
+    out.push(p.caseData)
+    if (out.length >= 4) break
+  }
+
+  return out
+})
+
+// Atypical cases: largest score, max 1 case per diagnosis,
+// and avoid reusing diagnoses already chosen as "typical"
+const atypicalCases = computed<CaseSummary[]>(() => {
+  const scored = scoredSelection.value
+  if (!scored.length) return []
+
+  const typicalDiagKeys = new Set(
+    typicalCases.value.map(c => normalizeDiagKey(c.diagnosis))
+  )
+
+  const seenDiag = new Set<string>()
+  const out: CaseSummary[] = []
+
+  for (let idx = scored.length - 1; idx >= 0; idx--) {
+    const p = scored[idx]!
+    const key = normalizeDiagKey(p.caseData.diagnosis)
+    if (!key) continue
+    if (typicalDiagKeys.has(key)) continue
+    if (seenDiag.has(key)) continue
+
+    seenDiag.add(key)
+    out.push(p.caseData)
+    if (out.length >= 4) break
+  }
+
+  return out
+})
+
+
+/** Global DF + IDF over all cases' diagnoses (N = full dataset) */
+const globalTermStats = computed(() => {
+  const df = new Map<string, number>()
+  const N = rawData.value.length
+
+  for (const row of rawData.value) {
+    const diag = row.diagnosis?.toLowerCase()
+    if (!diag) continue
+    const tokens = tokenizeDiagnosis(diag)
+    const unique = new Set(tokens)
+    for (const t of unique) {
+      df.set(t, (df.get(t) ?? 0) + 1)
+    }
+  }
+
+  const idf = new Map<string, number>()
+  for (const [term, dfCount] of df.entries()) {
+    const val = Math.log((N + 1) / (dfCount + 1)) + 1
+    idf.set(term, val)
+  }
+
+  return { N, df, idf }
+})
+
+/** TF (in current selection) × global IDF → top terms for word cloud */
+const topTerms = computed<TermItem[]>(() => {
+  const { idf } = globalTermStats.value
+  if (!idf.size) return []
+
+  const tf = new Map<string, number>()
+
+  for (const row of currentSelectionCases.value) {
+    const diag = row.diagnosis?.toLowerCase()
+    if (!diag) continue
+    const tokens = tokenizeDiagnosis(diag)
+    for (const t of tokens) {
+      // plain frequency in selection
+      tf.set(t, (tf.get(t) ?? 0) + 1)
+    }
+  }
+
+  if (!tf.size) return []
+
+  // Compute TF-IDF score
+  const scores: [string, number][] = []
+  for (const [term, tfCount] of tf.entries()) {
+    const idfVal = idf.get(term)
+    if (idfVal === undefined) continue
+    const score = tfCount * idfVal
+    scores.push([term, score])
+  }
+
+  if (!scores.length) return []
+
+  // Sort by score and take top K
+  scores.sort((a, b) => b[1] - a[1])
+  const top = scores.slice(0, 40)
+  
+  // Normalize to [0,1] for word cloud sizing
+  const maxScore = top.length > 0 ? top[0]![1] : 0
+  const minScore = top.length > 0 ? top[top.length - 1]![1] : 0
+  const range = maxScore - minScore || 1
+  
+  return top.map(([term, score]) => ({
+    term,
+    weight: (score - minScore) / range,
+  }))
 })
 
 /* =========================
@@ -650,6 +919,7 @@ onMounted(() => {
   console.log('🔵 [DEBUG] Analytics page mounted')
   loadData()
   loadClusterMapping()
+  loadDiagnosisUMAPMeta()
 })
 </script>
 
@@ -725,7 +995,7 @@ onMounted(() => {
               <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
             </div>
             <ClientOnly>
-              <DiagnosisUMAP 
+              <DiagnosisUMAP
                 :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
@@ -734,6 +1004,17 @@ onMounted(() => {
               />
             </ClientOnly>
           </div>
+
+          <!-- Cluster summary -->
+          <SelectionSummaryPanel
+            v-if="currentSelectionCases.length > 0"
+            :cases="currentSelectionCases"
+            :typical-cases="typicalCases"
+            :atypical-cases="atypicalCases"
+            :top-terms="topTerms"
+            :selected-cluster="selectedCluster"
+            :cluster-labels="clusterLabelLookup"
+          />
 
           <div class="charts-grid">
             <!-- Top row -->
