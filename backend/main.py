@@ -147,6 +147,61 @@ async def get_cases_summary_all():
 
     return summary_data
 
+@app.get("/api/cases/cluster-representatives")
+async def get_cluster_representatives():
+    """Get one representative case from each diagnosis cluster"""
+    try:
+        # Load cluster data
+        cluster_file = FEATURES_DIR / "diagnosis_biobert_clusters.json"
+        if not cluster_file.exists():
+            raise HTTPException(status_code=404, detail="Cluster data not found")
+        
+        with open(cluster_file, 'r') as f:
+            cluster_data = json.load(f)
+        
+        # Load cluster labels
+        labels_file = FEATURES_DIR / "cluster_labels.json"
+        cluster_labels = {}
+        cluster_descriptions = {}
+        if labels_file.exists():
+            with open(labels_file, 'r') as f:
+                labels_data = json.load(f)
+                cluster_labels = labels_data.get('cluster_labels', {})
+                cluster_descriptions = labels_data.get('cluster_descriptions', {})
+        
+        # Get diagnoses and their clusters
+        diagnoses = cluster_data.get('diagnoses', [])
+        clusters = cluster_data.get('clusters', [])
+        frequencies = cluster_data.get('frequencies', cluster_data.get('frequency', []))
+        
+        # Find the most frequent diagnosis for each cluster (0-24)
+        cluster_representatives = {}
+        for cluster_id in range(25):
+            best_diagnosis = None
+            best_frequency = 0
+            
+            for i, (diagnosis, cluster, freq) in enumerate(zip(diagnoses, clusters, frequencies)):
+                if cluster == cluster_id and freq > best_frequency:
+                    best_diagnosis = diagnosis
+                    best_frequency = freq
+            
+            if best_diagnosis:
+                # Find a case with this diagnosis
+                case = next((c for c in summary_data if c.get('diagnosis') == best_diagnosis), None)
+                if case:
+                    cluster_representatives[str(cluster_id)] = {
+                        "cluster_id": cluster_id,
+                        "cluster_label": cluster_labels.get(str(cluster_id), f"Cluster {cluster_id}"),
+                        "cluster_description": cluster_descriptions.get(str(cluster_id), ""),
+                        "case": case
+                    }
+        
+        return cluster_representatives
+    
+    except Exception as e:
+        print(f"Error loading cluster representatives: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/cases/{case_id}", response_model=CaseDetail)
 async def get_case_detail(case_id: str):
     """Get detailed information for a specific case"""

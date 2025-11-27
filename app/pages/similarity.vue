@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="page-header">
       <h1>🔍 Medical Case Similarity Search</h1>
-      <p class="subtitle">Search by text, images, or both using AI-powered similarity models</p>
+      <p class="subtitle">Find similar cases using BioBERT text embeddings and PubMedCLIP medical image embeddings</p>
     </div>
 
     <!-- Search Methods Toggle -->
@@ -34,37 +34,6 @@
       </div>
     </div>
 
-    <!-- Hybrid Weight Slider (only for hybrid mode) -->
-    <div v-if="selectedMethod === 'hybrid'" class="hybrid-controls">
-      <div class="weight-slider">
-        <label>
-          <span class="slider-label">
-            Text Weight: <strong>{{ (textWeight * 100).toFixed(0) }}%</strong>
-            <span class="slider-hint">Image: {{ ((1 - textWeight) * 100).toFixed(0) }}%</span>
-          </span>
-        </label>
-        <input 
-          v-model.number="textWeight" 
-          type="range" 
-          min="0" 
-          max="1" 
-          step="0.1"
-          class="weight-range"
-        >
-        <div class="weight-presets">
-          <button @click="textWeight = 0.3" :class="{ active: textWeight === 0.3 }">
-            🖼️ Visual Focus
-          </button>
-          <button @click="textWeight = 0.5" :class="{ active: textWeight === 0.5 }">
-            ⚖️ Balanced
-          </button>
-          <button @click="textWeight = 0.7" :class="{ active: textWeight === 0.7 }">
-            📝 Text Focus
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Search Input -->
     <div class="search-section">
       <div class="search-box">
@@ -77,7 +46,7 @@
         >
         <button 
           @click="handleTextSearch" 
-          :disabled="!searchQuery.trim() || isLoading || selectedMethod === 'image' || selectedMethod === 'hybrid'"
+          :disabled="!searchQuery || !searchQuery.trim() || isLoading || selectedMethod === 'image'"
         >
           {{ isLoading ? '⏳ Searching...' : '🔍 Search' }}
         </button>
@@ -85,26 +54,75 @@
       <p class="search-hint" v-if="selectedMethod === 'image'">
         ⚠️ Image search requires selecting a case below (cannot search from text)
       </p>
-      <p class="search-hint" v-else-if="selectedMethod === 'hybrid'">
-        ⚠️ Hybrid search requires selecting a case below (combines text + images from that case)
-      </p>
       <p class="search-hint" v-else>
         💡 Try: "pneumonia", "fracture humerus", "brain tumor", etc.
       </p>
     </div>
 
-    <!-- Quick Case Selection -->
-    <div class="quick-cases">
-      <h3>Or select a case to find similar:</h3>
-      <div class="case-buttons">
+    <!-- Diagnosis Cluster Representatives -->
+    <div class="cluster-section">
+      <div class="section-header">
+        <h3>🎯 Explore by Diagnosis Category</h3>
+        <p class="section-description">Select a representative case from any of the 25 diagnosis clusters below</p>
+      </div>
+      <div class="cluster-grid">
         <button 
-          v-for="(caseItem, idx) in sampleCases" 
-          :key="idx"
-          @click="handleCaseSearch(caseItem.id)"
+          v-for="(clusterData, clusterId) in clusterRepresentatives" 
+          :key="clusterId"
+          @click="handleCaseSearch(clusterData.case.id)"
           :disabled="isLoading"
+          class="cluster-card"
+          :title="clusterData.cluster_description"
         >
-          {{ caseItem.diagnosis.substring(0, 50) }}...
+          <div class="cluster-header">
+            <span class="cluster-badge">{{ clusterId }}</span>
+            <span class="cluster-title">{{ clusterData.cluster_label }}</span>
+          </div>
+          <div class="cluster-body">
+            <div class="diagnosis-preview">{{ clusterData.case.diagnosis }}</div>
+            <div class="case-meta">
+              <span class="meta-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                {{ clusterData.case.imageCount }}
+              </span>
+              <span class="meta-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                {{ clusterData.case.modalities?.slice(0, 2).join(', ') || 'N/A' }}
+              </span>
+            </div>
+          </div>
         </button>
+      </div>
+    </div>
+
+    <!-- UMAP Visualizations (Side by Side - Always Visible) -->
+    <div class="umap-section">
+      <h2>📊 Diagnosis Space Visualization</h2>
+      <p class="umap-description">
+        {{ results ? 'Highlighted points show the search results in UMAP space' : 'Explore diagnosis clusters - results will be highlighted when you search' }}
+      </p>
+      <div class="umap-grid">
+        <CompactDiagnosisUMAP
+          :data-source="'text'"
+          :highlighted-diagnoses="highlightedDiagnoses"
+          :title="'Text-based UMAP (BioBERT)'"
+          :width="600"
+          :height="500"
+        />
+        <CompactDiagnosisUMAP
+          :data-source="'image'"
+          :highlighted-diagnoses="highlightedDiagnoses"
+          :title="'Image-based UMAP (PubMedCLIP)'"
+          :width="600"
+          :height="500"
+        />
       </div>
     </div>
 
@@ -193,8 +211,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import DialogBox from '~/components/popup/DialogBox.vue'
+import CompactDiagnosisUMAP from '~/components/charts/CompactDiagnosisUMAP.vue'
 
 // State
 const selectedMethod = ref('bert')
@@ -205,14 +224,19 @@ const isLoading = ref(false)
 const results = ref(null)
 const totalCases = ref(7404)
 const sampleCases = ref([])
+const clusterRepresentatives = ref({})
 const {success, error: showError } = useDialog()
+
+// Computed: Extract diagnoses for highlighting in UMAP
+const highlightedDiagnoses = computed(() => {
+  if (!results.value || !results.value.results) return []
+  return results.value.results.map(r => r.diagnosis).filter(d => d)
+})
 
 // Methods config
 const methods = [
-  { label: '🔤 TF-IDF', value: 'tfidf', description: 'Keyword-based text matching' },
-  { label: '🧠 BERT', value: 'bert', description: 'Semantic text understanding' },
-  { label: '🖼️ Image', value: 'image', description: 'Visual similarity from medical images' },
-  { label: '🔬 Hybrid', value: 'hybrid', description: 'Combined text + image similarity' }
+  { label: '🧠 BioBERT', value: 'bert', description: 'Semantic text understanding with BioBERT embeddings' },
+  { label: '🖼️ PubMedCLIP', value: 'image', description: 'Visual similarity using medical image embeddings' }
 ]
 
 // Method selection handler
@@ -267,13 +291,8 @@ const handleCaseSearch = async (caseId) => {
   results.value = null
   
   try {
-    // Single method (including image and hybrid)
+    // Single method (including image)
     let url = `http://localhost:8000/api/similarity/similar/${caseId}?method=${selectedMethod.value}&top_k=${topK.value}`
-    
-    // Add text_weight for hybrid search
-    if (selectedMethod.value === 'hybrid') {
-      url += `&text_weight=${textWeight.value}`
-    }
     
     console.log('Fetching from URL:', url)
     const response = await $fetch(url)
@@ -295,21 +314,31 @@ const handleCaseSearch = async (caseId) => {
   }
 }
 
+const loadClusterRepresentatives = async () => {
+  try {
+    const response = await $fetch('http://localhost:8000/api/cases/cluster-representatives')
+    clusterRepresentatives.value = response
+  } catch (error) {
+    console.error('Failed to load cluster representatives:', error)
+    showError(
+      'Failed to Load Cluster Cases',
+      'Unable to load representative cases for clusters. The backend may be unavailable.'
+    )
+  }
+}
+
 const loadSampleCases = async () => {
   try {
-    const response = await $fetch('http://localhost:8000/api/cases/summary?limit=5')
+    const response = await $fetch('http://localhost:8000/api/cases/summary?limit=10')
     sampleCases.value = response
   } catch (error) {
     console.error('Failed to load sample cases:', error)
-    showError(
-      'Failed to Load Sample Cases',
-      'Unable to load sample cases. The backend may be unavailable.'
-    )
   }
 }
 
 // Lifecycle
 onMounted(() => {
+  loadClusterRepresentatives()
   loadSampleCases()
 })
 </script>
@@ -462,30 +491,124 @@ onMounted(() => {
   color: #2c3e50;
 }
 
-.case-buttons {
+.cluster-section {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.section-header h3 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.section-description {
+  color: #5a6c7d;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.cluster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.cluster-card {
+  padding: 0;
+  background: white;
+  border: 2px solid #e8ecef;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.cluster-card:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
+  border-color: #667eea;
+}
+
+.cluster-card:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cluster-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cluster-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-width: 2.5rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.cluster-title {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.cluster-body {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.75rem;
 }
 
-.case-buttons button {
-  padding:  0.6rem 0.75rem;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.3s;
+.diagnosis-preview {
+  color: #2c3e50;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8rem;
 }
 
-.case-buttons button:hover:not(:disabled) {
-  background: #ecf0f1;
-  border-color: #3498db;
+.case-meta {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e8ecef;
 }
 
-.case-buttons button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+}
+
+.meta-item svg {
+  color: #667eea;
+  flex-shrink: 0;
 }
 
 .loading {
@@ -506,6 +629,42 @@ onMounted(() => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* UMAP Section */
+.umap-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.umap-section h2 {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.umap-description {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.umap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 1400px) {
+  .umap-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .query-info {
@@ -679,110 +838,6 @@ onMounted(() => {
 
 .stat-box li:last-child {
   border-bottom: none;
-}
-
-/* Hybrid Controls */
-.hybrid-controls {
-  margin: 1.5rem 0;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.weight-slider {
-  color: white;
-}
-
-.slider-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
-}
-
-.slider-label strong {
-  font-size: 1.3rem;
-}
-
-.slider-hint {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  margin-left: 1rem;
-}
-
-.weight-range {
-  width: 100%;
-  height: 8px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.3);
-  outline: none;
-  margin: 0.5rem 0 1rem 0;
-  -webkit-appearance: none;
-}
-
-.weight-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s;
-}
-
-.weight-range::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-.weight-range::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: none;
-  transition: transform 0.2s;
-}
-
-.weight-range::-moz-range-thumb:hover {
-  transform: scale(1.2);
-}
-
-.weight-presets {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.weight-presets button {
-  flex: 1;
-  padding: 0.6rem 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.weight-presets button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-}
-
-.weight-presets button.active {
-  background: white;
-  color: #667eea;
-  border-color: white;
-  font-weight: bold;
 }
 
 /* Similarity Breakdown */
