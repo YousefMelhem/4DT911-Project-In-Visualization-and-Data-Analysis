@@ -460,7 +460,7 @@ const loadData = async () => {
       umap_y: umapData.umap_y[i],
     }))
 
-    console.log(`✅ Loaded ${data.value.length} ${source} diagnosis points`)
+    console.log(`Loaded ${data.value.length} ${source} diagnosis points`)
     await nextTick()
     renderUMAP()
   } catch (err) {
@@ -552,7 +552,7 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
           Showing: <strong>{{ clusterLabels[selectedCluster] }}</strong>
         </p>
         <p v-if="selectionMode === 'click'" class="selection-hint">
-          💡 Hold Ctrl/Cmd to select multiple points
+          Hold Ctrl/Cmd to select multiple points
         </p>
       </div>
     </div>

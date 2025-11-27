@@ -1,7 +1,7 @@
 <template>
   <div class="filters-panel">
     <div class="filters-header">
-      <h3>🔍 Filters</h3>
+      <h3>Filters</h3>
       <p class="filter-hint">Refine your search</p>
     </div>
     

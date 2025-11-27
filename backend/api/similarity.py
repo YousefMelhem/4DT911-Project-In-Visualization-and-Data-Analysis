@@ -48,11 +48,11 @@ try:
         print("Loading PubMedCLIP image embeddings...")
         image_embeddings = np.load(image_embeddings_path)
         image_available = True
-        print(f"✅ PubMedCLIP image embeddings loaded: {image_embeddings.shape}")
+        print(f"PubMedCLIP image embeddings loaded: {image_embeddings.shape}")
     else:
-        print("⚠️ PubMedCLIP image embeddings not found - image search disabled")
+        print("PubMedCLIP image embeddings not found - image search disabled")
 except Exception as e:
-    print(f"⚠️ Could not load image embeddings: {e}")
+    print(f"Could not load image embeddings: {e}")
 
 # Load UMAP coordinates for cases
 text_umap_coords = {}
@@ -69,7 +69,7 @@ try:
                     'y': umap_data['umap_y'][i],
                     'cluster': umap_data['clusters'][i]
                 }
-        print(f"✅ Loaded text UMAP coords for {len(text_umap_coords)} diagnoses")
+        print(f"Loaded text UMAP coords for {len(text_umap_coords)} diagnoses")
     
     # Load image UMAP coords
     image_umap_file = FEATURES_DIR / "diagnosis_umap_coords_image.json"
@@ -82,11 +82,11 @@ try:
                     'y': umap_data['umap_y'][i],
                     'cluster': umap_data['clusters'][i]
                 }
-        print(f"✅ Loaded image UMAP coords for {len(image_umap_coords)} diagnoses")
+        print(f"Loaded image UMAP coords for {len(image_umap_coords)} diagnoses")
 except Exception as e:
-    print(f"⚠️ Could not load UMAP coordinates: {e}")
+    print(f"Could not load UMAP coordinates: {e}")
 
-print("✅ All models loaded successfully!")
+print("All models loaded successfully!")
 
 # ============================================
 # Pydantic Models
@@ -432,6 +432,6 @@ async def get_model_stats():
                 "extraction_time_seconds": round(image_meta['extraction_time_seconds'], 2)
             }
         except Exception as e:
-            print(f"⚠️ Could not load image metadata: {e}")
+            print(f"Could not load image metadata: {e}")
     
     return stats

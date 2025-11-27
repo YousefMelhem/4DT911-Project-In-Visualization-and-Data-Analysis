@@ -2,7 +2,7 @@
   <div class="similarity-search-page">
     <!-- Header -->
     <div class="page-header">
-      <h1>🔍 Medical Case Similarity Search</h1>
+      <h1>Medical Case Similarity Search</h1>
       <p class="subtitle">Find similar cases using BioBERT text embeddings and PubMedCLIP medical image embeddings</p>
     </div>
 
@@ -48,21 +48,21 @@
           @click="handleTextSearch" 
           :disabled="!searchQuery || !searchQuery.trim() || isLoading || selectedMethod === 'image'"
         >
-          {{ isLoading ? '⏳ Searching...' : '🔍 Search' }}
+          {{ isLoading ? 'Searching...' : 'Search' }}
         </button>
       </div>
       <p class="search-hint" v-if="selectedMethod === 'image'">
-        ⚠️ Image search requires selecting a case below (cannot search from text)
+        Image search requires selecting a case below (cannot search from text)
       </p>
       <p class="search-hint" v-else>
-        💡 Try: "pneumonia", "fracture humerus", "brain tumor", etc.
+        Try: "pneumonia", "fracture humerus", "brain tumor", etc.
       </p>
     </div>
 
     <!-- Diagnosis Cluster Representatives -->
     <div class="cluster-section">
       <div class="section-header">
-        <h3>🎯 Explore by Diagnosis Category</h3>
+        <h3>Explore by Diagnosis Category</h3>
         <p class="section-description">Select a representative case from any of the 25 diagnosis clusters below</p>
       </div>
       <div class="cluster-grid">
@@ -104,7 +104,7 @@
 
     <!-- UMAP Visualizations (Side by Side - Always Visible) -->
     <div class="umap-section">
-      <h2>📊 Diagnosis Space Visualization</h2>
+      <h2>Diagnosis Space Visualization</h2>
       <p class="umap-description">
         {{ results ? 'Highlighted points show the search results in UMAP space' : 'Explore diagnosis clusters - results will be highlighted when you search' }}
       </p>
@@ -177,7 +177,7 @@
                   <span>📝 {{ (similarCase.text_similarity * 100).toFixed(0) }}%</span>
                 </div>
                 <div class="bar-segment image-segment" :style="{ width: (similarCase.image_similarity * 100) + '%' }">
-                  <span>🖼️ {{ (similarCase.image_similarity * 100).toFixed(0) }}%</span>
+                  <span>Image: {{ (similarCase.image_similarity * 100).toFixed(0) }}%</span>
                 </div>
               </div>
             </div>
@@ -196,7 +196,7 @@
               </div>
               
               <div class="case-footer">
-                <span class="image-count">🖼️ {{ similarCase.imageCount }} images</span>
+                <span class="image-count">{{ similarCase.imageCount }} images</span>
                 <NuxtLink :to="`/cases/${similarCase.id}`" class="view-btn">
                   View Details →
                 </NuxtLink>
@@ -235,8 +235,8 @@ const highlightedDiagnoses = computed(() => {
 
 // Methods config
 const methods = [
-  { label: '🧠 BioBERT', value: 'bert', description: 'Semantic text understanding with BioBERT embeddings' },
-  { label: '🖼️ PubMedCLIP', value: 'image', description: 'Visual similarity using medical image embeddings' }
+  { label: 'BioBERT', value: 'bert', description: 'Semantic text understanding with BioBERT embeddings' },
+  { label: 'PubMedCLIP', value: 'image', description: 'Visual similarity using medical image embeddings' }
 ]
 
 // Method selection handler
@@ -468,15 +468,6 @@ onMounted(() => {
   color: #7f8c8d;
   font-style: italic;
   margin: 0.15rem 0 0.25rem;
-}
-
-.search-hint:has(⚠️) {
-  color: #e67e22;
-  font-weight: 500;
-  background: #fff3cd;
-  padding: 0.75rem;
-  border-radius: 6px;
-  border-left: 4px solid #e67e22;
 }
 
 .quick-cases {

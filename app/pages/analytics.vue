@@ -339,7 +339,7 @@ const loadClusterMapping = async () => {
         mapping.set(diag.toLowerCase(), data.clusters[i])
       })
       clusterData.value = mapping
-      console.log(`✅ Loaded ${mapping.size} text diagnosis-cluster mappings`)
+      console.log(`Loaded ${mapping.size} text diagnosis-cluster mappings`)
     }
   } catch (e) {
     console.warn('Could not load text cluster mapping:', e)
@@ -356,7 +356,7 @@ const loadImageClusterMapping = async () => {
         mapping.set(diag.toLowerCase(), data.clusters[i])
       })
       imageClusterData.value = mapping
-      console.log(`✅ Loaded ${mapping.size} image diagnosis-cluster mappings`)
+      console.log(`Loaded ${mapping.size} image diagnosis-cluster mappings`)
     }
   } catch (e) {
     console.warn('Could not load image cluster mapping:', e)

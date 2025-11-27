@@ -58,17 +58,17 @@ def load_data():
     try:
         with open(CASES_FILE, 'r', encoding='utf-8') as f:
             cases_data = json.load(f)
-        print(f"✅ Loaded {len(cases_data)} cases")
+        print(f"Loaded {len(cases_data)} cases")
     except Exception as e:
-        print(f"⚠️ Error loading cases: {e}")
+        print(f"Error loading cases: {e}")
         cases_data = []
     
     try:
         with open(SUMMARY_FILE, 'r', encoding='utf-8') as f:
             summary_data = json.load(f)
-        print(f"✅ Loaded {len(summary_data)} case summaries")
+        print(f"Loaded {len(summary_data)} case summaries")
     except Exception as e:
-        print(f"⚠️ Error loading summaries: {e}")
+        print(f"Error loading summaries: {e}")
         summary_data = []
 
 # Pydantic models
