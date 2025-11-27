@@ -21,6 +21,8 @@ export type CaseSummary = {
   has_diagnosis: boolean
   has_treatment: boolean
   has_discussion: boolean
+  image_cluster_id?: number
+  image_cluster_label?: string
 }
 
 export type Filters = {

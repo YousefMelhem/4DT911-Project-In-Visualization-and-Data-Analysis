@@ -106,9 +106,7 @@
                 <span class="detail-label">Region:</span>
                 <span class="detail-value">
                   {{
-                    caseItem.regions
-                      ? Object.keys(caseItem.regions).join(', ')
-                      : 'Not specified'
+                    caseItem.image_cluster_label || 'Not specified'
                   }}
                 </span>
               </div>

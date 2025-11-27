@@ -92,6 +92,8 @@ class CaseSummary(BaseModel):
     has_diagnosis: bool
     has_treatment: bool
     has_discussion: bool
+    image_cluster_id: Optional[int] = None
+    image_cluster_label: Optional[str] = None
 
 class CaseDetail(BaseModel):
     id: str
@@ -116,6 +118,8 @@ class CaseDetail(BaseModel):
     imagePaths: List[str] = []
     caseFolder: Optional[str] = None
     thumbnail: Optional[str] = None
+    image_cluster_id: Optional[int] = None
+    image_cluster_label: Optional[str] = None
 
 # API Endpoints
 @app.get("/")
