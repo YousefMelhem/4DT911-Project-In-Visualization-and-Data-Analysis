@@ -36,11 +36,18 @@
 
         <!-- Cluster Visualization Filter -->
         <div class="cluster-filter-section">
+          <div v-if="selectedUMAPPoints.length > 0" class="selection-banner">
+            ✨ {{ selectedUMAPPoints.length }} diagnosis point(s) selected from {{ new Set(selectedUMAPPoints.map(p => p.cluster)).size }} cluster(s) - 
+            Showing {{ clusterFilteredData.length.toLocaleString() }} cases
+            <button @click="handleUMAPSelection([])" class="clear-selection-banner-btn">Clear Selection</button>
+          </div>
+          
           <ClientOnly>
             <DiagnosisUMAPCompact 
               :dataSource="umapMode"
               :selectedCluster="selectedCluster"
               @clusterClick="handleClusterClick"
+              @selectionChange="handleUMAPSelection"
             />
           </ClientOnly>
         </div>
@@ -206,19 +213,55 @@ const {
   resetFiltersLocal,
 } = useCaseFilters(rawData)
 
-// Apply cluster filter on top of existing filters
+// UMAP selection handling
+interface DiagnosisPoint {
+  diagnosis: string
+  cluster: number
+  frequency: number
+  umap_x: number
+  umap_y: number
+}
+
+const selectedUMAPPoints = ref<DiagnosisPoint[]>([])
+const selectedDiagnosisNames = ref<Set<string>>(new Set())
+
+const handleUMAPSelection = (points: DiagnosisPoint[]) => {
+  selectedUMAPPoints.value = points
+  selectedDiagnosisNames.value = new Set(points.map(p => p.diagnosis.toLowerCase()))
+  
+  // Show summary
+  const clusterSet = new Set(points.map(p => p.cluster))
+  const clusterCount = clusterSet.size
+  
+  if (points.length > 0) {
+    console.log(`📊 Selected ${points.length} diagnosis points from ${clusterCount} cluster(s)`)
+  }
+}
+
+// Apply cluster filter and selection filter on top of existing filters
 const clusterFilteredData = computed(() => {
-  if (selectedCluster.value === null) return filteredData.value
+  let data = filteredData.value
   
-  // Use active cluster data based on mode
-  const activeClusterData = umapMode.value === 'text' ? clusterData.value : imageClusterData.value
+  // First apply cluster filter
+  if (selectedCluster.value !== null) {
+    const activeClusterData = umapMode.value === 'text' ? clusterData.value : imageClusterData.value
+    data = data.filter(row => {
+      if (!row.diagnosis) return false
+      const diagLower = row.diagnosis.toLowerCase()
+      const cluster = activeClusterData.get(diagLower)
+      return cluster === selectedCluster.value
+    })
+  }
   
-  return filteredData.value.filter(row => {
-    if (!row.diagnosis) return false
-    const diagLower = row.diagnosis.toLowerCase()
-    const cluster = activeClusterData.get(diagLower)
-    return cluster === selectedCluster.value
-  })
+  // Then apply UMAP selection filter
+  if (selectedDiagnosisNames.value.size > 0) {
+    data = data.filter(row => {
+      if (!row.diagnosis) return false
+      return selectedDiagnosisNames.value.has(row.diagnosis.toLowerCase())
+    })
+  }
+  
+  return data
 })
 
 const handleClusterClick = (clusterId: number) => {
@@ -252,9 +295,9 @@ const loadMore = () => {
   visibleLimit.value += PAGE_SIZE
 }
 
-// When filters or cluster selection change, reset back to first "page"
+// When filters, cluster selection, or UMAP selection change, reset back to first "page"
 watch(
-  [filters, selectedCluster],
+  [filters, selectedCluster, selectedDiagnosisNames],
   () => {
     visibleLimit.value = PAGE_SIZE
   },
@@ -486,6 +529,36 @@ onBeforeUnmount(() => observer?.disconnect())
   margin-bottom: 1rem;
 }
 
+.selection-banner {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  font-size: 14px;
+}
+
+.clear-selection-banner-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #ff6b6b;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-selection-banner-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 .loading,
 .error,
 .no-results {
@@ -608,6 +681,7 @@ onBeforeUnmount(() => observer?.disconnect())
   color: #0f172a;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: calc(1.35em * 2);

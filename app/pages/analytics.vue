@@ -390,16 +390,57 @@ const handleDiagnosisClick = (diagnosis: string) => {
   navigateTo(`/cases?diagnosis=${encodeURIComponent(diagnosis)}`)
 }
 
-// Update charts based on cluster-filtered data
-const clusterGenderCounts = computed<Item[]>(() => {
+// Handle UMAP point selection
+interface DiagnosisPoint {
+  diagnosis: string
+  cluster: number
+  frequency: number
+  umap_x: number
+  umap_y: number
+}
+
+const selectedUMAPPoints = ref<DiagnosisPoint[]>([])
+const selectedDiagnosisNames = ref<Set<string>>(new Set())
+
+const handleUMAPSelection = (points: DiagnosisPoint[]) => {
+  selectedUMAPPoints.value = points
+  selectedDiagnosisNames.value = new Set(points.map(p => p.diagnosis.toLowerCase()))
+  
+  // Show summary of selected clusters
+  const clusterSet = new Set(points.map(p => p.cluster))
+  const clusterCount = clusterSet.size
+  
+  if (points.length > 0) {
+    console.log(`📊 Selected ${points.length} points from ${clusterCount} cluster(s)`)
+  }
+}
+
+// Filter data by UMAP selection (diagnosis-level)
+const selectionFilteredData = computed<CaseSummary[]>(() => {
+  // First apply cluster filter
+  let data = clusterFilteredData.value
+  
+  // Then apply UMAP selection filter if any points are selected
+  if (selectedDiagnosisNames.value.size > 0) {
+    data = data.filter(row => {
+      if (!row.diagnosis) return false
+      return selectedDiagnosisNames.value.has(row.diagnosis.toLowerCase())
+    })
+  }
+  
+  return data
+})
+
+// Update all charts to use selectionFilteredData
+const finalGenderCounts = computed<Item[]>(() => {
   const counts = { Female: 0, Male: 0, Unknown: 0 }
-  for (const row of clusterFilteredData.value) counts[normalizeGender(row.gender)]++
+  for (const row of selectionFilteredData.value) counts[normalizeGender(row.gender)]++
   return Object.entries(counts).map(([label, count]) => ({ label, count }))
 })
 
-const clusterModalityCounts = computed<Item[]>(() => {
+const finalModalityCounts = computed<Item[]>(() => {
   const map = new Map<string, number>()
-  for (const row of clusterFilteredData.value) {
+  for (const row of selectionFilteredData.value) {
     for (const mod of row.modalities || []) {
       if (mod) map.set(mod, (map.get(mod) ?? 0) + 1)
     }
@@ -409,9 +450,9 @@ const clusterModalityCounts = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const clusterRegionCountsMain = computed<Item[]>(() => {
+const finalRegionCountsMain = computed<Item[]>(() => {
   const map = new Map<string, number>()
-  for (const row of clusterFilteredData.value) {
+  for (const row of selectionFilteredData.value) {
     for (const main of getCaseMainRegions(row)) {
       if (main) map.set(main, (map.get(main) ?? 0) + 1)
     }
@@ -421,9 +462,9 @@ const clusterRegionCountsMain = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const clusterRegionCountsSub = computed<Item[]>(() => {
+const finalRegionCountsSub = computed<Item[]>(() => {
   const map = new Map<string, number>()
-  for (const row of clusterFilteredData.value) {
+  for (const row of selectionFilteredData.value) {
     for (const sub of getCaseSubregions(row)) {
       if (sub) map.set(sub, (map.get(sub) ?? 0) + 1)
     }
@@ -433,11 +474,18 @@ const clusterRegionCountsSub = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const clusterRegionCounts = computed<Item[]>(() =>
+const finalRegionCounts = computed<Item[]>(() =>
   regionChartMode.value === 'main'
-    ? clusterRegionCountsMain.value
-    : clusterRegionCountsSub.value
+    ? finalRegionCountsMain.value
+    : finalRegionCountsSub.value
 )
+
+// Keep old computed for backward compatibility, but redirect to final
+const clusterGenderCounts = finalGenderCounts
+const clusterModalityCounts = finalModalityCounts
+const clusterRegionCountsMain = finalRegionCountsMain
+const clusterRegionCountsSub = finalRegionCountsSub
+const clusterRegionCounts = finalRegionCounts
 
 const clusterAgeBins = computed(() => {
   const bins = [
@@ -452,7 +500,7 @@ const clusterAgeBins = computed(() => {
     { binStart: 80, binEnd: 89, count: 0 },
     { binStart: 90, binEnd: Infinity, count: 0 },
   ]
-  for (const row of clusterFilteredData.value) {
+  for (const row of selectionFilteredData.value) {
     const age = row.patient_age
     if (typeof age === 'number' && age >= 0) {
       const binIndex = Math.min(Math.floor(age / 10), 9)
@@ -463,17 +511,21 @@ const clusterAgeBins = computed(() => {
   return bins
 })
 
+const finalAgeBins = clusterAgeBins
+
 const clusterUnknownAgeCount = computed(() => {
-  return clusterFilteredData.value.filter(row =>
+  return selectionFilteredData.value.filter(row =>
     row.patient_age === null || row.patient_age === undefined
   ).length
 })
+
+const finalUnknownAgeCount = clusterUnknownAgeCount
 
 const clusterCasesOverTime = computed<Point[]>(() => {
   const monthCounts = new Map<string, number>()
   const re = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/
 
-  for (const row of clusterFilteredData.value) {
+  for (const row of selectionFilteredData.value) {
     const s = row.added_on
     if (!s) continue
     const m = re.exec(s.trim())
@@ -519,7 +571,7 @@ const clusterSectionCoverage = computed<Item[]>(() => {
     Discussion: 0,
   }
 
-  for (const row of clusterFilteredData.value) {
+  for (const row of selectionFilteredData.value) {
     if (row.has_history) counts.History++
     if (row.has_exam) counts.Exam++
     if (row.has_findings) counts.Findings++
@@ -531,20 +583,27 @@ const clusterSectionCoverage = computed<Item[]>(() => {
   return Object.entries(counts).map(([label, count]) => ({ label, count }))
 })
 
+const finalSectionCoverage = clusterSectionCoverage
+const finalCasesOverTime = clusterCasesOverTime
+
 // Modality co-occurrence for cluster-filtered data
 const clusterModalityCooc = computed<ModalityMatrix>(() =>
-  buildCoocMatrix(clusterFilteredData.value, allModalities.value, (row) => row.modalities ?? [])
+  buildCoocMatrix(selectionFilteredData.value, allModalities.value, (row) => row.modalities ?? [])
 )
+
+const finalModalityCooc = clusterModalityCooc
 
 // Region co-occurrence for cluster-filtered data (main regions)
 const clusterRegionCooc = computed<RegionMatrix>(() =>
-  buildCoocMatrix(clusterFilteredData.value, allMainRegions.value, getCaseMainRegions)
+  buildCoocMatrix(selectionFilteredData.value, allMainRegions.value, getCaseMainRegions)
 )
+
+const finalRegionCooc = clusterRegionCooc
 
 // Modality × Region for cluster-filtered data
 const clusterModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
   buildModalityRegionMatrix(
-    clusterFilteredData.value,
+    selectionFilteredData.value,
     allMainRegions.value,
     allModalities.value,
     getCaseMainRegions,
@@ -552,37 +611,59 @@ const clusterModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
   )
 )
 
-// Use cluster-filtered data for charts when cluster is selected
-const displayGenderCounts = computed(() =>
-  selectedCluster.value !== null ? clusterGenderCounts.value : genderCounts.value
-)
-const displayModalityCounts = computed(() =>
-  selectedCluster.value !== null ? clusterModalityCounts.value : modalityCounts.value
-)
-const displayRegionCounts = computed(() =>
-  selectedCluster.value !== null ? clusterRegionCounts.value : regionCounts.value
-)
-const displayAgeBins = computed(() =>
-  selectedCluster.value !== null ? clusterAgeBins.value : ageBins.value
-)
-const displayUnknownAgeCount = computed(() =>
-  selectedCluster.value !== null ? clusterUnknownAgeCount.value : unknownAgeCount.value
-)
-const displayCasesOverTime = computed(() =>
-  selectedCluster.value !== null ? clusterCasesOverTime.value : casesOverTime.value
-)
-const displaySectionCoverage = computed(() =>
-  selectedCluster.value !== null ? clusterSectionCoverage.value : sectionCoverage.value
-)
-const displayModalityCooc = computed<ModalityMatrix>(() =>
-  selectedCluster.value !== null ? clusterModalityCooc.value : modalityCooc.value
-)
-const displayRegionCooc = computed<RegionMatrix>(() =>
-  selectedCluster.value !== null ? clusterRegionCooc.value : regionCooc.value
-)
-const displayModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
-  selectedCluster.value !== null ? clusterModalityRegionMatrix.value : modalityRegionMatrix.value
-)
+const finalModalityRegionMatrix = clusterModalityRegionMatrix
+
+// Use selection-filtered data for charts (cluster + UMAP selection)
+const displayGenderCounts = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalGenderCounts.value
+  if (selectedCluster.value !== null) return clusterGenderCounts.value
+  return genderCounts.value
+})
+const displayModalityCounts = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalModalityCounts.value
+  if (selectedCluster.value !== null) return clusterModalityCounts.value
+  return modalityCounts.value
+})
+const displayRegionCounts = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalRegionCounts.value
+  if (selectedCluster.value !== null) return clusterRegionCounts.value
+  return regionCounts.value
+})
+const displayAgeBins = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalAgeBins.value
+  if (selectedCluster.value !== null) return clusterAgeBins.value
+  return ageBins.value
+})
+const displayUnknownAgeCount = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalUnknownAgeCount.value
+  if (selectedCluster.value !== null) return clusterUnknownAgeCount.value
+  return unknownAgeCount.value
+})
+const displayCasesOverTime = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalCasesOverTime.value
+  if (selectedCluster.value !== null) return clusterCasesOverTime.value
+  return casesOverTime.value
+})
+const displaySectionCoverage = computed(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalSectionCoverage.value
+  if (selectedCluster.value !== null) return clusterSectionCoverage.value
+  return sectionCoverage.value
+})
+const displayModalityCooc = computed<ModalityMatrix>(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalModalityCooc.value
+  if (selectedCluster.value !== null) return clusterModalityCooc.value
+  return modalityCooc.value
+})
+const displayRegionCooc = computed<RegionMatrix>(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalRegionCooc.value
+  if (selectedCluster.value !== null) return clusterRegionCooc.value
+  return regionCooc.value
+})
+const displayModalityRegionMatrix = computed<ModalityRegionMatrix>(() => {
+  if (selectedUMAPPoints.value.length > 0) return finalModalityRegionMatrix.value
+  if (selectedCluster.value !== null) return clusterModalityRegionMatrix.value
+  return modalityRegionMatrix.value
+})
 
 const casesOverTime = computed<Point[]>(() => {
   const monthCounts = new Map<string, number>()
@@ -1034,6 +1115,11 @@ onMounted(() => {
               🎯 {{ umapMode === 'text' ? 'Semantic' : 'Visual' }} cluster filter active - All charts below show only cases from the selected cluster
               <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
             </div>
+            <div v-if="selectedUMAPPoints.length > 0" class="selection-banner">
+              ✨ {{ selectedUMAPPoints.length }} diagnosis point(s) selected from {{ new Set(selectedUMAPPoints.map(p => p.cluster)).size }} cluster(s) - 
+              Showing {{ selectionFilteredData.length.toLocaleString() }} cases
+              <button @click="handleUMAPSelection([])" class="clear-selection-banner-btn">Clear Selection</button>
+            </div>
             <ClientOnly>
               <DiagnosisUMAP
                 v-if="umapMode === 'text'"
@@ -1043,6 +1129,7 @@ onMounted(() => {
                 dataSource="text"
                 @pointClick="handleDiagnosisClick"
                 @clusterClick="handleClusterClick"
+                @selectionChange="handleUMAPSelection"
               />
               <DiagnosisUMAP
                 v-else
@@ -1052,6 +1139,7 @@ onMounted(() => {
                 dataSource="image"
                 @pointClick="handleDiagnosisClick"
                 @clusterClick="handleClusterClick"
+                @selectionChange="handleUMAPSelection"
               />
             </ClientOnly>
           </div>
@@ -1433,7 +1521,22 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.clear-cluster-btn {
+.selection-banner {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  font-size: 14px;
+}
+
+.clear-cluster-btn,
+.clear-selection-banner-btn {
   padding: 0.5rem 1rem;
   background: white;
   color: #667eea;
@@ -1444,7 +1547,12 @@ onMounted(() => {
   transition: all 0.2s;
 }
 
-.clear-cluster-btn:hover {
+.clear-selection-banner-btn {
+  color: #ff6b6b;
+}
+
+.clear-cluster-btn:hover,
+.clear-selection-banner-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
