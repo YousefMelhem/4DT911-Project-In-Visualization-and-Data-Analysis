@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="region-chart">
     <div class="chart-header">
       <div class="title-wrap">
         <h3>Regions</h3>
@@ -31,10 +31,10 @@ const props = defineProps<{
   items: Item[]
 }>()
 
-const VIEW_W = 820
-const MARGIN = { top: 16, right: 24, bottom: 40, left: 180 } as const
-const ROW_H = 26
-const GAP = 6
+const VIEW_W = 660
+const MARGIN = { top: 8, right: 40, bottom: 26, left: 140 } as const
+const ROW_H = 45
+const GAP = 20
 const fmt = d3.format(',')
 
 const sorted = computed<Item[]>(() =>
@@ -130,13 +130,14 @@ watch([sorted, computedHeight], draw, { deep: true })
 
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 1rem 1rem 1.25rem;
+.region-chart{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem 1rem 0.5rem;
 }
 .chart-header {
+  margin: 1rem 0.75rem 0.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -150,7 +151,7 @@ watch([sorted, computedHeight], draw, { deep: true })
   font-weight: 700;
 }
 .sub { margin: 0.15rem 0 0; color: #718096; font-size: 0.9rem; }
-.chart-body { width: 100%; }
+.chart-body { width: 100%; flex: 1 1 auto; }
 .svg-chart { width: 100%; height: auto; display: block; }
 .empty-note { margin-top: 0.5rem; color: #718096; font-size: 0.9rem; }
 </style>

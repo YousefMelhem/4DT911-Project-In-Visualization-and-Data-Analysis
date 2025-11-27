@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-card">
+  <div class="modalitie-chart">
     <div class="chart-header">
       <h3>Modalities</h3>
       <p class="sub">Counts of cases per modality (cases counted in every modality they include)</p>
@@ -35,9 +35,9 @@ const props = defineProps<{
  * Constants & sizing
  * =======================*/
 const VIEW_W = 760
-const MARGIN = { top: 16, right: 24, bottom: 40, left: 140 } as const // extra left for long labels
-const ROW_H = 26  // band height per row
-const GAP = 6     // padding between bands
+const MARGIN = { top: 8, right: 40, bottom: 26, left: 120 } as const // extra left for long labels
+const ROW_H = 45  // band height per row
+const GAP = 20     // padding between bands
 const fmt = d3.format(',')
 
 /* Height grows with number of items: inner = rows*(ROW_H+GAP) - GAP */
@@ -140,20 +140,23 @@ watch(() => props.items, draw, { deep: true })
 </script>
 
 <style scoped>
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 1rem 1rem 1.25rem;
+.modalitie-chart{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem 1rem 0.5rem;
 }
 .chart-header h3 {
-  margin: 0;
+  margin: 1rem 0.75rem 0.25rem;
+  display: flex;
+  align-items: center;
   color: #2d3748;
-  font-size: 1.1rem;
-  font-weight: 700;
+  justify-content: space-between;
+  gap: .75rem;
+  flex-wrap: wrap;
 }
 .sub { margin: 0.15rem 0 0.5rem; color: #718096; font-size: 0.9rem; }
-.chart-body { width: 100%; }
+.chart-body { width: 100%;  flex: 1 1 auto; }
 .svg-chart { width: 100%; height: auto; display: block; }
 .empty-note { margin-top: 0.5rem; color: #718096; font-size: 0.9rem; }
 </style>
