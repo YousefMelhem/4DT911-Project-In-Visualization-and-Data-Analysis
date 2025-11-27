@@ -21,6 +21,7 @@ const props = defineProps<{
   width?: number
   height?: number
   selectedCluster?: number | null
+  dataSource?: 'text' | 'image'
 }>()
 
 const emit = defineEmits<{
@@ -239,14 +240,23 @@ const loadData = async () => {
   error.value = null
 
   try {
+    // Determine file names based on dataSource
+    const source = props.dataSource || 'text'
+    const umapFile = source === 'image' 
+      ? 'diagnosis_umap_coords_image.json' 
+      : 'diagnosis_umap_coords.json'
+    const labelsFile = source === 'image'
+      ? 'cluster_labels_image.json'
+      : 'cluster_labels.json'
+
     // Load UMAP coordinates
-    const umapResponse = await fetch(`${DATA_URL}/diagnosis_umap_coords.json`)
-    if (!umapResponse.ok) throw new Error('Failed to load UMAP coordinates')
+    const umapResponse = await fetch(`${DATA_URL}/${umapFile}`)
+    if (!umapResponse.ok) throw new Error(`Failed to load ${source} UMAP coordinates`)
     const umapData = await umapResponse.json()
 
     // Load cluster labels
-    const labelsResponse = await fetch(`${DATA_URL}/cluster_labels.json`)
-    if (!labelsResponse.ok) throw new Error('Failed to load cluster labels')
+    const labelsResponse = await fetch(`${DATA_URL}/${labelsFile}`)
+    if (!labelsResponse.ok) throw new Error(`Failed to load ${source} cluster labels`)
     const labelsData = await labelsResponse.json()
 
     clusterLabels.value = labelsData.cluster_labels
@@ -260,7 +270,7 @@ const loadData = async () => {
       umap_y: umapData.umap_y[i],
     }))
 
-    console.log(`✅ Loaded ${data.value.length} diagnosis points`)
+    console.log(`✅ Loaded ${data.value.length} ${source} diagnosis points`)
     await nextTick()
     renderUMAP()
   } catch (err) {
@@ -275,6 +285,11 @@ const loadData = async () => {
  * Lifecycle
  * =======================*/
 onMounted(() => {
+  loadData()
+})
+
+// Reload data when dataSource changes
+watch(() => props.dataSource, () => {
   loadData()
 })
 

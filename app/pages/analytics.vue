@@ -321,11 +321,13 @@ const modalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
 /* =========================
  * UMAP Cluster Interaction
  * =======================*/
+const umapMode = ref<'text' | 'image'>('text')
 const selectedCluster = ref<number | null>(null)
 const selectedDiagnoses = ref<Set<string>>(new Set())
 
 // Load diagnosis→cluster mapping for filtering
 const clusterData = ref<Map<string, number>>(new Map())
+const imageClusterData = ref<Map<string, number>>(new Map())
 
 const loadClusterMapping = async () => {
   try {
@@ -337,24 +339,43 @@ const loadClusterMapping = async () => {
         mapping.set(diag.toLowerCase(), data.clusters[i])
       })
       clusterData.value = mapping
-      console.log(`✅ Loaded ${mapping.size} diagnosis-cluster mappings`)
+      console.log(`✅ Loaded ${mapping.size} text diagnosis-cluster mappings`)
     }
   } catch (e) {
-    console.warn('Could not load cluster mapping:', e)
+    console.warn('Could not load text cluster mapping:', e)
+  }
+}
+
+const loadImageClusterMapping = async () => {
+  try {
+    const response = await fetch(`${API_URL}/data/features/diagnosis_image_clusters.json`)
+    if (response.ok) {
+      const data = await response.json()
+      const mapping = new Map<string, number>()
+      data.diagnoses.forEach((diag: string, i: number) => {
+        mapping.set(diag.toLowerCase(), data.clusters[i])
+      })
+      imageClusterData.value = mapping
+      console.log(`✅ Loaded ${mapping.size} image diagnosis-cluster mappings`)
+    }
+  } catch (e) {
+    console.warn('Could not load image cluster mapping:', e)
   }
 }
 
 // Filter data by selected cluster
 const clusterFilteredData = computed<CaseSummary[]>(() => {
   if (selectedCluster.value === null) return filteredData.value
-
+  
+  const activeClusterData = umapMode.value === 'text' ? clusterData.value : imageClusterData.value
+  
   return filteredData.value.filter(row => {
     if (!row.diagnosis) return false
     const diagLower = row.diagnosis.toLowerCase()
-    const cluster = clusterData.value.get(diagLower)
+    const cluster = activeClusterData.get(diagLower)
     return cluster === selectedCluster.value
   })
-})
+});
 
 const handleClusterClick = (clusterId: number) => {
   if (selectedCluster.value === clusterId) {
@@ -919,6 +940,7 @@ onMounted(() => {
   console.log('🔵 [DEBUG] Analytics page mounted')
   loadData()
   loadClusterMapping()
+  loadImageClusterMapping()
   loadDiagnosisUMAPMeta()
 })
 </script>
@@ -990,15 +1012,44 @@ onMounted(() => {
         <div v-else class="content">
           <!-- UMAP Diagnosis Clustering Visualization -->
           <div class="umap-section">
+            <!-- UMAP Mode Selector -->
+            <div class="umap-mode-selector">
+              <button 
+                :class="{ active: umapMode === 'text' }"
+                @click="umapMode = 'text'; selectedCluster = null"
+                class="mode-btn"
+              >
+                📝 Text Clustering (Semantic)
+              </button>
+              <button 
+                :class="{ active: umapMode === 'image' }"
+                @click="umapMode = 'image'; selectedCluster = null"
+                class="mode-btn"
+              >
+                🖼️ Image Clustering (Visual)
+              </button>
+            </div>
+
             <div v-if="selectedCluster !== null" class="cluster-banner">
-              🎯 Cluster filter active - All charts below show only cases from the selected cluster
+              🎯 {{ umapMode === 'text' ? 'Semantic' : 'Visual' }} cluster filter active - All charts below show only cases from the selected cluster
               <button @click="selectedCluster = null" class="clear-cluster-btn">Clear Filter</button>
             </div>
             <ClientOnly>
               <DiagnosisUMAP
+                v-if="umapMode === 'text'"
                 :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
+                dataSource="text"
+                @pointClick="handleDiagnosisClick"
+                @clusterClick="handleClusterClick"
+              />
+              <DiagnosisUMAP
+                v-else
+                :width="1000"
+                :height="700"
+                :selectedCluster="selectedCluster"
+                dataSource="image"
                 @pointClick="handleDiagnosisClick"
                 @clusterClick="handleClusterClick"
               />
@@ -1320,6 +1371,37 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 0.6rem 0.6rem 0.5rem;;
   margin-bottom: 0.4rem;
+}
+
+.umap-mode-selector {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.mode-btn {
+  padding: 0.65rem 1.25rem;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #4a5568;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  border-color: #667eea;
+  background: #f7fafc;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .section-title {
