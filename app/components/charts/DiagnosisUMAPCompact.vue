@@ -18,6 +18,7 @@ interface ClusterLabel {
 }
 
 const props = defineProps<{
+  dataSource?: 'text' | 'image'
   selectedCluster?: number | null
 }>()
 
@@ -179,13 +180,16 @@ const loadData = async () => {
   error.value = null
 
   try {
+    // Determine file suffix based on dataSource
+    const suffix = props.dataSource === 'image' ? '_image' : ''
+    
     // Load UMAP coordinates
-    const umapResponse = await fetch(`${DATA_URL}/diagnosis_umap_coords.json`)
+    const umapResponse = await fetch(`${DATA_URL}/diagnosis_umap_coords${suffix}.json`)
     if (!umapResponse.ok) throw new Error('Failed to load UMAP coordinates')
     const umapData = await umapResponse.json()
 
     // Load cluster labels
-    const labelsResponse = await fetch(`${DATA_URL}/cluster_labels.json`)
+    const labelsResponse = await fetch(`${DATA_URL}/cluster_labels${suffix}.json`)
     if (!labelsResponse.ok) throw new Error('Failed to load cluster labels')
     const labelsData = await labelsResponse.json()
 
@@ -217,6 +221,10 @@ const loadData = async () => {
  * Lifecycle
  * =======================*/
 onMounted(() => {
+  loadData()
+})
+
+watch(() => props.dataSource, () => {
   loadData()
 })
 
