@@ -1,0 +1,29 @@
+{
+  "cluster_labels": {
+    "0": "CT - Abdomen (Appendicitis/GI)",
+    "1": "MRI - Brain (Tumors/Masses)",
+    "2": "X-ray/CT - Chest (Pneumothorax/Lung)",
+    "3": "MRI - Spine/Joints (Cysts)",
+    "4": "Ultrasound - Pelvis/Abdomen (GYN/GB)",
+    "5": "CT/MRI - Head/Face (Mixed)",
+    "6": "X-ray - Hands/Extremities (Arthritis)",
+    "7": "CT/MRI - Vascular (Aortic Arch)",
+    "8": "CT - Abdomen (Kidney/Adrenal)",
+    "9": "X-ray/MRI - Hip/Pelvis (Fractures)",
+    "10": "MRI - Brain/Pituitary (Mixed)",
+    "11": "X-ray - Bone Lesions (Tumors)",
+    "12": "Ultrasound - Pediatric Abdomen/GU",
+    "13": "CT - Brain (Hemorrhage/Trauma)",
+    "14": "Nuclear Med/CT - Neck/Bone",
+    "15": "CT/MRI - Vascular/Abdomen",
+    "16": "MRI - Brain (White Matter/MS)",
+    "17": "Fluoroscopy/CT - GI Tract",
+    "18": "MRI/Angio - Brain Vascular",
+    "19": "X-ray - Pediatric Abdomen/Chest",
+    "20": "CT/X-ray - Bone/Skull (Dysplasia)",
+    "21": "MRI - Spine (Cord Lesions)",
+    "22": "MRI - Brain (Contrast Enhanced)",
+    "23": "MRI - Knee (Ligament/Meniscus)",
+    "24": "Mammography/MRI - Breast"
+  }
+}

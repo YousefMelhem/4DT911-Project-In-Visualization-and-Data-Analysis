@@ -20,7 +20,7 @@
           </NuxtLink>
           <NuxtLink to="/analytics" class="btn btn-secondary">
             <span>View Analytics</span>
-            <span>📊</span>
+            <span class="icon-chart"></span>
           </NuxtLink>
         </div>
       </div>
@@ -30,19 +30,19 @@
       <h2 class="section-title">Key Features</h2>
       <div class="features-grid">
         <NuxtLink to="/similarity" class="feature-card">
-          <div class="feature-icon">🔍</div>
+          <div class="feature-icon">Search</div>
           <h3>Smart Search</h3>
           <p>Find similar cases using multimodal AI combining images and clinical text</p>
           <div class="feature-arrow">→</div>
         </NuxtLink>
         <NuxtLink to="/analytics" class="feature-card">
-          <div class="feature-icon">📊</div>
+          <div class="feature-icon">Analytics</div>
           <h3>Analytics Dashboard</h3>
           <p>Explore patterns across diagnoses, demographics, and body regions</p>
           <div class="feature-arrow">→</div>
         </NuxtLink>
         <NuxtLink to="/analytics" class="feature-card">
-          <div class="feature-icon">🎯</div>
+          <div class="feature-icon">Explore</div>
           <h3>Pattern Discovery</h3>
           <p>Visualize case clusters and relationships in 2D embedding maps</p>
           <div class="feature-arrow">→</div>
