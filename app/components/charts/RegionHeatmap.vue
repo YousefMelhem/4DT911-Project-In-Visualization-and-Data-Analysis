@@ -28,6 +28,11 @@ type RegionMatrix = { labels: string[]; grid: number[][] }
 
 const props = defineProps<{
   matrix: RegionMatrix
+  selectedValue?: string | null
+}>()
+
+const emit = defineEmits<{
+  (e: 'item-select', payload: { type: 'region'; value: string } | null): void
 }>()
 
 const VIEW_W = 400
@@ -68,7 +73,7 @@ const draw = () => {
   }
 
   const innerSize = n * CELL_SIZE
-  const xStart = (W - innerSize) / 2
+  const xStart = MARGIN.left
   const xEnd = xStart + innerSize
 
   const x = d3.scaleBand<string>()
@@ -103,14 +108,14 @@ const draw = () => {
     .data(labels)
     .enter()
     .append('text')
-      .attr('class', 'col-label')
-      .attr('transform', d =>
-        `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
-      )
-      .attr('text-anchor', 'start')
-      .attr('fill', '#4a5568')
+    .attr('class', 'col-label')
+    .attr('transform', d =>
+      `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
+    )
+    .attr('text-anchor', 'start')
+    .attr('fill', '#4a5568')
       .style('font-size', '12px')
-      .text(d => d)
+    .text(d => d)
 
   // Row labels (left)
   svg.append('g')
@@ -118,14 +123,14 @@ const draw = () => {
     .data(labels)
     .enter()
     .append('text')
-      .attr('class', 'row-label')
+    .attr('class', 'row-label')
       .attr('x', xStart - 8)
-      .attr('y', d => (y(d)! + y.bandwidth() / 2))
-      .attr('text-anchor', 'end')
-      .attr('dominant-baseline', 'middle')
-      .attr('fill', '#4a5568')
+    .attr('y', d => (y(d)! + y.bandwidth() / 2))
+    .attr('text-anchor', 'end')
+    .attr('dominant-baseline', 'middle')
+    .attr('fill', '#4a5568')
       .style('font-size', '12px')
-      .text(d => d)
+    .text(d => d)
 
   const cells: { row: string; col: string; value: number }[] = []
   for (let i = 0; i < n; i++) {
@@ -141,35 +146,51 @@ const draw = () => {
     .data(cells)
     .enter()
     .append('rect')
-      .attr('class', 'cell')
-      .attr('x', d => x(d.col)!)
-      .attr('y', d => y(d.row)!)
-      .attr('width', x.bandwidth())
-      .attr('height', y.bandwidth())
-      .attr('stroke', '#e2e8f0')
-      .attr('stroke-width', 0.5)
-      .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
-      .append('title')
-        .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
+    .attr('class', 'cell')
+    .attr('x', d => x(d.col)!)
+    .attr('y', d => y(d.row)!)
+    .attr('width', x.bandwidth())
+    .attr('height', y.bandwidth())
+    .attr('stroke', d => {
+      if (!props.selectedValue) return '#e2e8f0'
+      const isSelected = d.row === props.selectedValue || d.col === props.selectedValue
+      return isSelected ? '#2b6cb0' : '#e2e8f0'
+    })
+    .attr('stroke-width', d => {
+      if (!props.selectedValue) return 0.5
+      const isSelected = d.row === props.selectedValue || d.col === props.selectedValue
+      return isSelected ? 2 : 0.5
+    })
+    .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
+    .style('cursor', 'pointer')
+    .on('click', (_event, d) => {
+      if (props.selectedValue === d.row) {
+        emit('item-select', null)
+      } else {
+        emit('item-select', { type: 'region', value: d.row })
+      }
+    })
+    .append('title')
+    .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
 
   g.selectAll('text.value')
     .data(cells)
     .enter()
     .append('text')
-      .attr('class', 'value')
-      .attr('x', d => x(d.col)! + x.bandwidth() / 2)
-      .attr('y', d => y(d.row)! + y.bandwidth() / 2)
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
-      .attr('fill', '#1a202c')
-      .style('font-size', '11px')
-      .style('font-weight', '500')
-      .text(d => fmt(d.value))
+    .attr('class', 'value')
+    .attr('x', d => x(d.col)! + x.bandwidth() / 2)
+    .attr('y', d => y(d.row)! + y.bandwidth() / 2)
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .attr('fill', '#1a202c')
+      .style('font-size', '10px')
+    .style('font-weight', '500')
+    .style('pointer-events', 'none')
+    .text(d => fmt(d.value))
 }
 
 onMounted(draw)
-watch(() => props.matrix, draw, { deep: true })
-watch(computedHeight, draw)
+watch(() => [props.matrix, props.selectedValue, computedHeight.value], draw, { deep: true })
 </script>
 
 <style scoped>
@@ -180,7 +201,7 @@ watch(computedHeight, draw)
   padding: 1rem 1rem 1.25rem;
 }
 .chart-header h3 {
-  margin: 0;
+  margin: 1rem 0.75rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;

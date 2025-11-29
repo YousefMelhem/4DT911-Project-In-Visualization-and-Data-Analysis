@@ -14,12 +14,20 @@
         aria-label="Bar chart of case counts by gender"
       />
     </div>
+    <ChartTooltip
+      :visible="tooltipVisible"
+      :x="tooltipX"
+      :y="tooltipY"
+      :data="tooltipData"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import * as d3 from 'd3'
+import { useChartTooltip } from '~/composables/useChartTooltip'
+import ChartTooltip from './ChartTooltip.vue'
 
 /* =========================
  * Types
@@ -28,6 +36,13 @@ type Item = { label: string; count: number }
 
 const props = defineProps<{
   items: Item[]
+  total?: number
+  clusterNote?: string
+  selectedValue?: string | null
+}>()
+
+const emit = defineEmits<{
+  itemSelect: [{ type: 'gender'; value: string }]
 }>()
 
 /* =========================
@@ -41,6 +56,7 @@ const INNER_H = H - MARGIN.top - MARGIN.bottom
 const fmt = d3.format(',')
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const { tooltipVisible, tooltipX, tooltipY, tooltipData, showTooltip, hideTooltip, updatePosition } = useChartTooltip()
 
 /* =========================
  * Render
@@ -91,18 +107,50 @@ const draw = () => {
 
   // Bars
   const g = svg.append('g')
-  g.selectAll('rect')
+  const totalCount = props.total ?? data.reduce((sum, d) => sum + d.count, 0)
+
+  const bars = g.selectAll('rect')
     .data(data)
     .enter()
     .append('rect')
     .attr('x', (d: Item) => x(d.label)!)
-    .attr('y', (d: Item) => y(d.count))
+    .attr('y', y(0))
     .attr('width', x.bandwidth())
-    .attr('height', (d: Item) => y(0) - y(d.count))
+    .attr('height', 0)
     .attr('rx', 6)
-    .attr('fill', '#667eea')
-    .append('title')
-    .text((d: Item) => `${d.label}: ${fmt(d.count)}`)
+    .attr('fill', (d: Item) => props.selectedValue === d.label ? '#4c51bf' : '#667eea')
+    .attr('opacity', (d: Item) => props.selectedValue === d.label ? 1 : 0.85)
+    .attr('stroke', (d: Item) => props.selectedValue === d.label ? '#2d3748' : 'none')
+    .attr('stroke-width', (d: Item) => props.selectedValue === d.label ? 2 : 0)
+    .style('cursor', 'pointer')
+    .on('mouseenter', function(event, d: Item) {
+      if (props.selectedValue !== d.label) {
+        d3.select(this).attr('opacity', 1)
+      }
+      showTooltip(event, {
+        label: d.label,
+        count: d.count,
+        total: totalCount,
+        clusterNote: props.clusterNote
+      })
+    })
+    .on('mousemove', (event) => {
+      updatePosition(event)
+    })
+    .on('mouseleave', function(_event, d: Item) {
+      if (props.selectedValue !== d.label) {
+        d3.select(this).attr('opacity', 0.85)
+      }
+      hideTooltip()
+    })
+    .on('click', (_event, d: Item) => {
+      emit('itemSelect', { type: 'gender', value: d.label })
+    })
+
+  bars.transition()
+    .duration(350)
+    .attr('y', (d: Item) => y(d.count))
+    .attr('height', (d: Item) => y(0) - y(d.count))
 
   // Value labels
   g.selectAll('text.value')
@@ -111,16 +159,23 @@ const draw = () => {
     .append('text')
     .attr('class', 'value')
     .attr('x', (d: Item) => (x(d.label)! + x.bandwidth() / 2))
-    .attr('y', (d: Item) => y(d.count) - 6)
+    .attr('y', y(0))
     .attr('text-anchor', 'middle')
     .attr('fill', '#2d3748')
+    .attr('opacity', 0)
     .style('font-size', '18px')
     .style('font-weight', '600')
     .text((d: Item) => fmt(d.count))
+    .transition()
+    .duration(350)
+    .delay(100)
+    .attr('y', (d: Item) => y(d.count) - 6)
+    .attr('opacity', 1)
 }
 
 onMounted(draw)
 watch(() => props.items, draw, { deep: true })
+watch(() => props.selectedValue, draw)
 </script>
 
 <style scoped>

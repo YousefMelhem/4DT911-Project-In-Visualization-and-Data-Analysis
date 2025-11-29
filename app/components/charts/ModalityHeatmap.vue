@@ -17,19 +17,41 @@
       />
       <div v-if="matrix.labels.length === 0" class="empty-note">No data</div>
     </div>
+    <ChartTooltip
+      :visible="tooltipVisible"
+      :x="tooltipX"
+      :y="tooltipY"
+      :data="tooltipData"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
 import * as d3 from 'd3'
+import { useChartTooltip } from '~/composables/useChartTooltip'
+import ChartTooltip from './ChartTooltip.vue'
 
+/* =========================
+ * Types
+ * =======================*/
 type ModalityMatrix = { labels: string[]; grid: number[][] }
+type Cell = { row: string; col: string; value: number }
 
 const props = defineProps<{
   matrix: ModalityMatrix
+  total?: number
+  clusterNote?: string
+  selectedValue?: string | null
 }>()
 
+const emit = defineEmits<{
+  (e: 'item-select', payload: { type: 'modality'; value: string } | null): void
+}>()
+
+/* =========================
+ * Constants & sizing
+ * =======================*/
 const VIEW_W = 450
 const MARGIN = { top: 70, right: 8, bottom: 0, left: 0 } as const
 const COL_LABEL_OFFSET = 5
@@ -42,6 +64,7 @@ const computedHeight = computed(() => {
 })
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const { tooltipVisible, tooltipX, tooltipY, tooltipData, showTooltip, hideTooltip, updatePosition } = useChartTooltip()
 
 const draw = () => {
   const el = svgRef.value
@@ -93,6 +116,7 @@ const draw = () => {
   .domain([0, Math.max(maxVal, 1)])  // avoid [0,0] domain
 
   const fmt = d3.format(',')
+  const totalCount = props.total ?? maxVal
 
   // Column labels (top, rotated)
 const colLabelGroup = svg.append('g')
@@ -128,7 +152,7 @@ const colLabelGroup = svg.append('g')
     .style('font-size', '12px')
     .text(d => d)
 
-  const cells: { row: string; col: string; value: number }[] = []
+  const cells: Cell[] = []
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
       const value = grid[i]?.[j] ?? 0
@@ -147,13 +171,56 @@ const colLabelGroup = svg.append('g')
     .attr('y', d => y(d.row)!)
     .attr('width', x.bandwidth())
     .attr('height', y.bandwidth())
-    .attr('stroke', '#e2e8f0')
-    .attr('stroke-width', 0.5)
-      .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
-    .append('title')
-        .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
+    .attr('stroke', d => {
+      if (!props.selectedValue) return '#e2e8f0'
+      const isSelected = d.row === props.selectedValue || d.col === props.selectedValue
+      return isSelected ? '#2b6cb0' : '#e2e8f0'
+    })
+    .attr('stroke-width', d => {
+      if (!props.selectedValue) return 0.5
+      const isSelected = d.row === props.selectedValue || d.col === props.selectedValue
+      return isSelected ? 2 : 0.5
+    })
+    .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
+    .attr('opacity', 0.85)
+    .style('cursor', 'pointer')
+    .on('click', (_event, d) => {
+      if (props.selectedValue === d.row) {
+        emit('item-select', null)
+      } else {
+        emit('item-select', { type: 'modality', value: d.row })
+      }
+    })
+    .on('mouseenter', function(event, d: Cell) {
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr('stroke', '#667eea')
+        .attr('stroke-width', 2)
+        .attr('opacity', 1)
 
-  g.selectAll('text.value')
+      showTooltip(event, {
+        label: `${d.row} × ${d.col}`,
+        count: d.value,
+        total: totalCount,
+        clusterNote: props.clusterNote
+      })
+    })
+    .on('mousemove', (event) => {
+      updatePosition(event)
+    })
+    .on('mouseleave', function(event, d) {
+      const isSelected = !props.selectedValue ? false : (d.row === props.selectedValue || d.col === props.selectedValue)
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr('stroke', isSelected ? '#2b6cb0' : '#e2e8f0')
+        .attr('stroke-width', isSelected ? 2 : 0.5)
+        .attr('opacity', 0.85)
+      hideTooltip()
+    })
+
+  const cellText = g.selectAll('text.value')
     .data(cells)
     .enter()
     .append('text')
@@ -163,9 +230,16 @@ const colLabelGroup = svg.append('g')
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('fill', '#1a202c')
+    .attr('opacity', 0)
     .style('font-size', '11px')
     .style('font-weight', '500')
+    .style('pointer-events', 'none')
     .text(d => fmt(d.value))
+
+  cellText.transition()
+    .duration(350)
+    .delay(100)
+    .attr('opacity', 1)
 }
 
 onMounted(draw)

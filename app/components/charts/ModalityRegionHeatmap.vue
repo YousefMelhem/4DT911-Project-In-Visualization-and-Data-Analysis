@@ -34,13 +34,18 @@ type ModalityRegionMatrix = {
 
 const props = defineProps<{
   matrix: ModalityRegionMatrix
+  selectedValue?: { modality: string; region: string } | null
+}>()
+
+const emit = defineEmits<{
+  (e: 'item-select', payload: { type: 'modality-region'; modality: string; region: string } | null): void
 }>()
 
 // Wider viewbox + big left margin to give row labels room
-const VIEW_W = 500
-const MARGIN = { top: 70, right: 0, bottom: 0, left: 120 } as const
+const VIEW_W = 450
+const MARGIN = { top: 70, right: 0, bottom: 0, left: 130 } as const
 const COL_LABEL_OFFSET = 5
-const CELL_SIZE = 28
+const CELL_SIZE = 30
 
 const computedHeight = computed(() => {
   const nRows = props.matrix.rowLabels?.length ?? 0
@@ -115,8 +120,8 @@ const draw = () => {
     .enter()
     .append('text')
     .attr('class', 'col-label')
-      .attr('transform', d =>
-        `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
+    .attr('transform', d =>
+      `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
     )
     .attr('text-anchor', 'start')
     .attr('fill', '#4a5568')
@@ -130,12 +135,12 @@ const draw = () => {
     .enter()
     .append('text')
     .attr('class', 'row-label')
-      .attr('x', xStart - 10)
-      .attr('y', d => (y(d)! + y.bandwidth() / 2))
+    .attr('x', xStart - 10)
+    .attr('y', d => (y(d)! + y.bandwidth() / 2))
     .attr('text-anchor', 'end')
     .attr('dominant-baseline', 'middle')
     .attr('fill', '#4a5568')
-    .style('font-size', '12px')
+    .style('font-size', '11px')
     .text(d => d)
 
   type Cell = { row: string; col: string; value: number }
@@ -159,11 +164,34 @@ const draw = () => {
     .attr('y', d => y(d.row)!)
     .attr('width', x.bandwidth())
     .attr('height', y.bandwidth())
-    .attr('stroke', '#e2e8f0')
-    .attr('stroke-width', 0.5)
-      .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
+    .attr('stroke', d => {
+      const sel = props.selectedValue
+      if (!sel) return '#e2e8f0'
+      const isSelected = sel.modality === d.col && sel.region === d.row
+      return isSelected ? '#2b6cb0' : '#e2e8f0'
+    })
+    .attr('stroke-width', d => {
+      const sel = props.selectedValue
+      if (!sel) return 0.5
+      const isSelected = sel.modality === d.col && sel.region === d.row
+      return isSelected ? 2 : 0.5
+    })
+    .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
+    .style('cursor', 'pointer')
+    .on('click', (_event, d) => {
+      const sel = props.selectedValue
+      if (sel && sel.modality === d.col && sel.region === d.row) {
+        emit('item-select', null)
+      } else {
+        emit('item-select', {
+          type: 'modality-region',
+          modality: d.col,
+          region: d.row,
+        })
+      }
+    })
     .append('title')
-        .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
+    .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
 
   g.selectAll('text.value')
     .data(cells)
@@ -175,14 +203,14 @@ const draw = () => {
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('fill', '#1a202c')
-    .style('font-size', '11px')
+    .style('font-size', '10px')
     .style('font-weight', '500')
+    .style('pointer-events', 'none')
     .text(d => fmt(d.value))
 }
 
 onMounted(draw)
-watch(() => props.matrix, draw, { deep: true })
-watch(computedHeight, draw)
+watch(() => [props.matrix, props.selectedValue, computedHeight.value], draw, { deep: true })
 </script>
 
 <style scoped>

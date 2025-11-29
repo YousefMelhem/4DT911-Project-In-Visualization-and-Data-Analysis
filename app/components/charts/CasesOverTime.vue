@@ -31,6 +31,10 @@ const props = defineProps<{
   series: Point[]
 }>()
 
+const emit = defineEmits<{
+  rangeChange: [{ start: Date; end: Date } | null]
+}>()
+
 /* =========================
  * Constants & helpers
  * =======================*/
@@ -116,7 +120,7 @@ const draw = () => {
     .attr('d', lineGen)
 
   // Points + simple tooltips
-  svg.append('g')
+  const circles = svg.append('g')
     .selectAll('circle')
     .data(data)
     .enter()
@@ -125,8 +129,53 @@ const draw = () => {
     .attr('cy', (d: Point) => y(d.count))
     .attr('r', 3)
     .attr('fill', '#667eea')
-    .append('title')
-    .text((d: Point) => `${fmtMonth(d.date)}: ${d.count.toLocaleString()}`)
+    .attr('opacity', 0.85)
+    .style('cursor', 'pointer')
+    .on('mouseenter', function() {
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr('r', 6)
+        .attr('opacity', 1)
+    })
+    .on('mouseleave', function() {
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr('r', 3)
+        .attr('opacity', 0.85)
+    })
+
+  circles.append('title')
+    .text((d: Point) => `${fmtMonth(d.date)}: ${d.count.toLocaleString()} cases`)
+
+  // Add brush
+  const brush = d3.brushX()
+    .extent([[MARGIN.left, MARGIN.top], [MARGIN.left + INNER_W, MARGIN.top + INNER_H]])
+    .on('end', (event) => {
+      const selection = event.selection as [number, number] | null
+      if (!selection) {
+        emit('rangeChange', null)
+        return
+      }
+      const [x0, x1] = selection
+      const start = x.invert(x0)
+      const end = x.invert(x1)
+      emit('rangeChange', { start, end })
+    })
+
+  svg.append('g')
+    .attr('class', 'brush')
+    .call(brush)
+    .selectAll('.overlay')
+    .style('cursor', 'crosshair')
+
+  // Style brush
+  svg.selectAll('.brush .selection')
+    .attr('fill', '#667eea')
+    .attr('fill-opacity', 0.2)
+    .attr('stroke', '#667eea')
+    .attr('stroke-width', 1.5)
 }
 
 onMounted(draw)
