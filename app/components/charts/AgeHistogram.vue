@@ -17,21 +17,37 @@
         Excluded Unknown ages: {{ (unknownCount ?? 0).toLocaleString() }}
       </div>
     </div>
+    <ChartTooltip
+      :visible="tooltipVisible"
+      :x="tooltipX"
+      :y="tooltipY"
+      :data="tooltipData"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import * as d3 from 'd3'
+import { useChartTooltip } from '~/composables/useChartTooltip'
+import ChartTooltip from './ChartTooltip.vue'
 
 /* =========================
  * Types
  * =======================*/
 type Bin = { binStart: number; binEnd: number; count: number }
+type SelectedBin = { binStart: number; binEnd: number } | null
 
 const props = defineProps<{
   bins: Bin[]        // e.g., [{binStart:0, binEnd:9, count:123}, …, {binStart:90, binEnd:Infinity, count:5}]
   unknownCount?: number
+  total?: number
+  clusterNote?: string
+  selectedBin?: SelectedBin
+}>()
+
+const emit = defineEmits<{
+  itemSelect: [{ type: 'ageBin'; binStart: number; binEnd: number }]
 }>()
 
 /* =========================
@@ -47,6 +63,12 @@ const fmt = d3.format(',')
 const labelFor = (b: Bin) => (Number.isFinite(b.binEnd) ? `${b.binStart}–${b.binEnd}` : `${b.binStart}+`)
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const { tooltipVisible, tooltipX, tooltipY, tooltipData, showTooltip, hideTooltip, updatePosition } = useChartTooltip()
+
+const isBinSelected = (bin: Bin) => {
+  if (!props.selectedBin) return false
+  return props.selectedBin.binStart === bin.binStart && props.selectedBin.binEnd === bin.binEnd
+}
 
 /* =========================
  * Render
@@ -72,6 +94,7 @@ const draw = () => {
   }
 
   const labels = data.map(labelFor)
+  const totalCount = props.total ?? data.reduce((sum, d) => sum + d.count, 0)
 
   const x = d3.scaleBand<string>()
     .domain(labels)
@@ -101,21 +124,52 @@ const draw = () => {
   // Bars
   const g = svg.append('g')
 
-  g.selectAll('rect')
+  const bars = g.selectAll('rect')
     .data(data)
     .enter()
     .append('rect')
       .attr('x', (_: Bin, i: number) => x(labels[i] ?? '') ?? 0)
-      .attr('y', (d: Bin) => y(d.count))
+      .attr('y', y(0))
       .attr('width', x.bandwidth())
-      .attr('height', (d: Bin) => y(0) - y(d.count))
+      .attr('height', 0)
       .attr('rx', 4)
-      .attr('fill', '#667eea')
-      .append('title')
-        .text((d: Bin, i: number) => `${labels[i]}: ${fmt(d.count)}`)
+      .attr('fill', (d: Bin) => isBinSelected(d) ? '#4c51bf' : '#667eea')
+      .attr('opacity', (d: Bin) => isBinSelected(d) ? 1 : 0.85)
+      .attr('stroke', (d: Bin) => isBinSelected(d) ? '#2d3748' : 'none')
+      .attr('stroke-width', (d: Bin) => isBinSelected(d) ? 2 : 0)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function(event, d: Bin) {
+        const i = data.indexOf(d)
+        if (!isBinSelected(d)) {
+          d3.select(this).attr('opacity', 1)
+        }
+        showTooltip(event, {
+          label: `Age ${labels[i]}`,
+          count: d.count,
+          total: totalCount,
+          clusterNote: props.clusterNote
+        })
+      })
+      .on('mousemove', (event) => {
+        updatePosition(event)
+      })
+      .on('mouseleave', function(_event, d: Bin) {
+        if (!isBinSelected(d)) {
+          d3.select(this).attr('opacity', 0.85)
+        }
+        hideTooltip()
+      })
+      .on('click', (_event, d: Bin) => {
+        emit('itemSelect', { type: 'ageBin', binStart: d.binStart, binEnd: d.binEnd })
+      })
+
+  bars.transition()
+    .duration(350)
+    .attr('y', (d: Bin) => y(d.count))
+    .attr('height', (d: Bin) => y(0) - y(d.count))
 
   // Value labels
-  g.selectAll('text.value')
+  const labels_text = g.selectAll('text.value')
     .data(data)
     .enter()
     .append('text')
@@ -124,17 +178,25 @@ const draw = () => {
         const xi = x(labels[i] ?? '')
         return ((xi !== undefined ? xi : 0) + x.bandwidth() / 2)
       })
-      .attr('y', (d: Bin) => y(d.count) - 6)
+      .attr('y', y(0))
       .attr('text-anchor', 'middle')
       .attr('fill', '#2d3748')
+      .attr('opacity', 0)
       .style('font-size', '16px')
       .style('font-weight', '600')
       .text((d: Bin) => fmt(d.count))
+
+  labels_text.transition()
+    .duration(350)
+    .delay(100)
+    .attr('y', (d: Bin) => y(d.count) - 6)
+    .attr('opacity', 1)
 }
 
 onMounted(draw)
 watch(() => props.bins, draw, { deep: true })
 watch(() => props.unknownCount, draw)
+watch(() => props.selectedBin, draw, { deep: true })
 </script>
 
 <style scoped>
@@ -155,7 +217,7 @@ watch(() => props.unknownCount, draw)
   color: #718096;
   font-size: 0.9rem;
 }
-.chart-body { 
+.chart-body {
   width: 100%;
   flex: 1 1 auto;
  }
