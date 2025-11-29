@@ -1,6 +1,6 @@
 """
 Medical Case Similarity Search API
-Integrates TF-IDF, BERT, and Image embeddings for comprehensive similarity search
+Uses BioBERT for text and PubMedCLIP for image embeddings
 """
 
 from fastapi import APIRouter, HTTPException, Query
@@ -8,8 +8,6 @@ from pydantic import BaseModel
 from typing import List, Optional, Literal
 import numpy as np
 import json
-import scipy.sparse as sp
-import joblib
 from pathlib import Path
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -32,36 +30,63 @@ with open(ML_READY_DIR / "cases_ml_ready.json", 'r') as f:
 with open(FEATURES_DIR / "case_ids.json", 'r') as f:
     case_ids = json.load(f)
 
-# Load TF-IDF model
-print("Loading TF-IDF model...")
-tfidf_matrix = sp.load_npz(FEATURES_DIR / "tfidf_features.npz")
-tfidf_vectorizer = joblib.load(FEATURES_DIR / "tfidf_vectorizer.pkl")
-
-# Load BERT embeddings
-print("Loading BERT embeddings...")
+# Load BioBERT embeddings
+print("Loading BioBERT embeddings...")
 bert_embeddings = np.load(FEATURES_DIR / "text_embeddings_bert.npy")
 
-# Load BERT model for new queries
+# Load BioBERT model for new queries
 from sentence_transformers import SentenceTransformer
-print("Loading BERT model...")
-bert_model = SentenceTransformer('all-MiniLM-L6-v2')
+print("Loading BioBERT model...")
+bert_model = SentenceTransformer('dmis-lab/biobert-base-cased-v1.1')
 
-# Load Image embeddings (if available)
+# Load PubMedCLIP Image embeddings
 image_embeddings = None
 image_available = False
 try:
-    image_embeddings_path = FEATURES_DIR / "image_embeddings_resnet50.npy"
+    image_embeddings_path = FEATURES_DIR / "image_embeddings_medclip.npy"
     if image_embeddings_path.exists():
-        print("Loading Image embeddings...")
+        print("Loading PubMedCLIP image embeddings...")
         image_embeddings = np.load(image_embeddings_path)
         image_available = True
-        print(f"✅ Image embeddings loaded: {image_embeddings.shape}")
+        print(f"PubMedCLIP image embeddings loaded: {image_embeddings.shape}")
     else:
-        print("⚠️ Image embeddings not found - image search disabled")
+        print("PubMedCLIP image embeddings not found - image search disabled")
 except Exception as e:
-    print(f"⚠️ Could not load image embeddings: {e}")
+    print(f"Could not load image embeddings: {e}")
 
-print("✅ All models loaded successfully!")
+# Load UMAP coordinates for cases
+text_umap_coords = {}
+image_umap_coords = {}
+try:
+    # Load text UMAP coords
+    text_umap_file = FEATURES_DIR / "diagnosis_umap_coords.json"
+    if text_umap_file.exists():
+        with open(text_umap_file, 'r') as f:
+            umap_data = json.load(f)
+            for i, diag in enumerate(umap_data['diagnoses']):
+                text_umap_coords[diag] = {
+                    'x': umap_data['umap_x'][i],
+                    'y': umap_data['umap_y'][i],
+                    'cluster': umap_data['clusters'][i]
+                }
+        print(f"Loaded text UMAP coords for {len(text_umap_coords)} diagnoses")
+    
+    # Load image UMAP coords
+    image_umap_file = FEATURES_DIR / "diagnosis_umap_coords_image.json"
+    if image_umap_file.exists():
+        with open(image_umap_file, 'r') as f:
+            umap_data = json.load(f)
+            for i, diag in enumerate(umap_data['diagnoses']):
+                image_umap_coords[diag] = {
+                    'x': umap_data['umap_x'][i],
+                    'y': umap_data['umap_y'][i],
+                    'cluster': umap_data['clusters'][i]
+                }
+        print(f"Loaded image UMAP coords for {len(image_umap_coords)} diagnoses")
+except Exception as e:
+    print(f"Could not load UMAP coordinates: {e}")
+
+print("All models loaded successfully!")
 
 # ============================================
 # Pydantic Models
@@ -78,6 +103,8 @@ class SimilarCase(BaseModel):
     rank: int
     text_similarity: Optional[float] = None
     image_similarity: Optional[float] = None
+    text_umap: Optional[dict] = None
+    image_umap: Optional[dict] = None
 
 class SimilarityResponse(BaseModel):
     query_case_id: Optional[str] = None
@@ -89,7 +116,7 @@ class SimilarityResponse(BaseModel):
 
 class TextSearchRequest(BaseModel):
     text: str
-    method: Literal["tfidf", "bert", "both", "image", "hybrid"] = "bert"
+    method: Literal["bert", "image", "hybrid"] = "bert"
     top_k: int = 10
 
 # ============================================
@@ -103,21 +130,15 @@ def get_case_by_id(case_id: str):
             return idx, c
     return None, None
 
-def find_similar_tfidf(query_vector, k=10):
-    """Find similar cases using TF-IDF"""
-    similarities = cosine_similarity(query_vector, tfidf_matrix).flatten()
-    top_indices = np.argsort(similarities)[::-1][:k]
-    return [(idx, float(similarities[idx])) for idx in top_indices]
-
 def find_similar_bert(query_embedding, k=10):
-    """Find similar cases using BERT"""
+    """Find similar cases using BioBERT"""
     query_embedding = query_embedding.reshape(1, -1)
     similarities = cosine_similarity(query_embedding, bert_embeddings).flatten()
     top_indices = np.argsort(similarities)[::-1][:k]
     return [(idx, float(similarities[idx])) for idx in top_indices]
 
 def find_similar_image(query_embedding, k=10):
-    """Find similar cases using Image embeddings"""
+    """Find similar cases using PubMedCLIP image embeddings"""
     if image_embeddings is None:
         raise HTTPException(status_code=503, detail="Image embeddings not available")
     
@@ -128,11 +149,11 @@ def find_similar_image(query_embedding, k=10):
 
 def find_similar_hybrid(text_embedding, img_embedding, k=10, text_weight=0.5):
     """
-    Find similar cases using hybrid text + image similarity
+    Find similar cases using hybrid BioBERT text + PubMedCLIP image similarity
     
     Args:
-        text_embedding: BERT text embedding
-        img_embedding: ResNet50 image embedding
+        text_embedding: BioBERT text embedding
+        img_embedding: PubMedCLIP image embedding
         k: Number of results
         text_weight: Weight for text similarity (0-1), image weight = 1 - text_weight
     
@@ -172,9 +193,10 @@ def format_results(similar_cases, method):
         # Hybrid results: (idx, combined_score, text_score, img_score)
         for rank, (idx, combined_score, text_score, img_score) in enumerate(similar_cases, 1):
             case = cases[idx]
+            diagnosis = case.get('diagnosis', '')
             results.append(SimilarCase(
                 id=case['id'],
-                diagnosis=case.get('diagnosis', ''),
+                diagnosis=diagnosis,
                 history=case.get('history'),
                 findings=case.get('findings'),
                 imageCount=case.get('imageCount', 0),
@@ -182,21 +204,26 @@ def format_results(similar_cases, method):
                 similarity=round(combined_score, 4),
                 text_similarity=round(text_score, 4),
                 image_similarity=round(img_score, 4),
-                rank=rank
+                rank=rank,
+                text_umap=text_umap_coords.get(diagnosis),
+                image_umap=image_umap_coords.get(diagnosis)
             ))
     else:
         # Standard results: (idx, score)
         for rank, (idx, score) in enumerate(similar_cases, 1):
             case = cases[idx]
+            diagnosis = case.get('diagnosis', '')
             results.append(SimilarCase(
                 id=case['id'],
-                diagnosis=case.get('diagnosis', ''),
+                diagnosis=diagnosis,
                 history=case.get('history'),
                 findings=case.get('findings'),
                 imageCount=case.get('imageCount', 0),
                 imagePaths=case.get('imagePaths', []),
                 similarity=round(score, 4),
-                rank=rank
+                rank=rank,
+                text_umap=text_umap_coords.get(diagnosis),
+                image_umap=image_umap_coords.get(diagnosis)
             ))
     
     return results
@@ -405,6 +432,6 @@ async def get_model_stats():
                 "extraction_time_seconds": round(image_meta['extraction_time_seconds'], 2)
             }
         except Exception as e:
-            print(f"⚠️ Could not load image metadata: {e}")
+            print(f"Could not load image metadata: {e}")
     
     return stats

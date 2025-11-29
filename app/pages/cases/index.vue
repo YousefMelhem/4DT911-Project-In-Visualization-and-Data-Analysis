@@ -18,12 +18,36 @@
 
       <!-- Main Content -->
       <main class="cases-main-content">
+        <!-- UMAP Mode Toggle -->
+        <div class="umap-mode-selector">
+          <button 
+            :class="['mode-btn', { active: umapMode === 'text' }]"
+            @click="umapMode = 'text'"
+          >
+            📝 Text Clustering
+          </button>
+          <button 
+            :class="['mode-btn', { active: umapMode === 'image' }]"
+            @click="umapMode = 'image'"
+          >
+            🖼️ Image Clustering
+          </button>
+        </div>
+
         <!-- Cluster Visualization Filter -->
         <div class="cluster-filter-section">
+          <div v-if="selectedUMAPPoints.length > 0" class="selection-banner">
+            ✨ {{ selectedUMAPPoints.length }} diagnosis point(s) selected from {{ new Set(selectedUMAPPoints.map(p => p.cluster)).size }} cluster(s) - 
+            Showing {{ clusterFilteredData.length.toLocaleString() }} cases
+            <button @click="handleUMAPSelection([])" class="clear-selection-banner-btn">Clear Selection</button>
+          </div>
+          
           <ClientOnly>
             <DiagnosisUMAPCompact 
+              :dataSource="umapMode"
               :selectedCluster="selectedCluster"
               @clusterClick="handleClusterClick"
+              @selectionChange="handleUMAPSelection"
             />
           </ClientOnly>
         </div>
@@ -82,9 +106,7 @@
                 <span class="detail-label">Region:</span>
                 <span class="detail-value">
                   {{
-                    caseItem.regions
-                      ? Object.keys(caseItem.regions).join(', ')
-                      : 'Not specified'
+                    caseItem.image_cluster_label || 'Not specified'
                   }}
                 </span>
               </div>
@@ -139,10 +161,12 @@ const API_URL = config.public.apiUrl
 const { success, error: showError } = useDialog()
 
 // Cluster filtering
+const umapMode = ref<'text' | 'image'>('text')
 const selectedCluster = ref<number | null>(null)
 const clusterData = ref<Map<string, number>>(new Map())
+const imageClusterData = ref<Map<string, number>>(new Map())
 
-// Load cluster mapping
+// Load text cluster mapping
 const loadClusterMapping = async () => {
   try {
     const response = await fetch(`${API_URL}/data/features/diagnosis_biobert_clusters.json`)
@@ -160,6 +184,24 @@ const loadClusterMapping = async () => {
   }
 }
 
+// Load image cluster mapping
+const loadImageClusterMapping = async () => {
+  try {
+    const response = await fetch(`${API_URL}/data/features/diagnosis_image_clusters.json`)
+    if (response.ok) {
+      const data = await response.json()
+      const mapping = new Map<string, number>()
+      data.diagnoses.forEach((diag: string, i: number) => {
+        mapping.set(diag.toLowerCase(), data.clusters[i])
+      })
+      imageClusterData.value = mapping
+      console.log(`✅ Loaded ${mapping.size} image cluster mappings for cases page`)
+    }
+  } catch (e) {
+    console.warn('Could not load image cluster mapping:', e)
+  }
+}
+
 // Shared filters + filtered data via composable
 const {
   filters,
@@ -169,16 +211,55 @@ const {
   resetFiltersLocal,
 } = useCaseFilters(rawData)
 
-// Apply cluster filter on top of existing filters
-const clusterFilteredData = computed(() => {
-  if (selectedCluster.value === null) return filteredData.value
+// UMAP selection handling
+interface DiagnosisPoint {
+  diagnosis: string
+  cluster: number
+  frequency: number
+  umap_x: number
+  umap_y: number
+}
+
+const selectedUMAPPoints = ref<DiagnosisPoint[]>([])
+const selectedDiagnosisNames = ref<Set<string>>(new Set())
+
+const handleUMAPSelection = (points: DiagnosisPoint[]) => {
+  selectedUMAPPoints.value = points
+  selectedDiagnosisNames.value = new Set(points.map(p => p.diagnosis.toLowerCase()))
   
-  return filteredData.value.filter(row => {
-    if (!row.diagnosis) return false
-    const diagLower = row.diagnosis.toLowerCase()
-    const cluster = clusterData.value.get(diagLower)
-    return cluster === selectedCluster.value
-  })
+  // Show summary
+  const clusterSet = new Set(points.map(p => p.cluster))
+  const clusterCount = clusterSet.size
+  
+  if (points.length > 0) {
+    console.log(`📊 Selected ${points.length} diagnosis points from ${clusterCount} cluster(s)`)
+  }
+}
+
+// Apply cluster filter and selection filter on top of existing filters
+const clusterFilteredData = computed(() => {
+  let data = filteredData.value
+  
+  // First apply cluster filter
+  if (selectedCluster.value !== null) {
+    const activeClusterData = umapMode.value === 'text' ? clusterData.value : imageClusterData.value
+    data = data.filter(row => {
+      if (!row.diagnosis) return false
+      const diagLower = row.diagnosis.toLowerCase()
+      const cluster = activeClusterData.get(diagLower)
+      return cluster === selectedCluster.value
+    })
+  }
+  
+  // Then apply UMAP selection filter
+  if (selectedDiagnosisNames.value.size > 0) {
+    data = data.filter(row => {
+      if (!row.diagnosis) return false
+      return selectedDiagnosisNames.value.has(row.diagnosis.toLowerCase())
+    })
+  }
+  
+  return data
 })
 
 const handleClusterClick = (clusterId: number) => {
@@ -212,9 +293,9 @@ const loadMore = () => {
   visibleLimit.value += PAGE_SIZE
 }
 
-// When filters or cluster selection change, reset back to first "page"
+// When filters, cluster selection, or UMAP selection change, reset back to first "page"
 watch(
-  [filters, selectedCluster],
+  [filters, selectedCluster, selectedDiagnosisNames],
   () => {
     visibleLimit.value = PAGE_SIZE
   },
@@ -318,6 +399,7 @@ const startObserver = () => {
 onMounted(async () => {
   await loadCases()
   await loadClusterMapping()
+  await loadImageClusterMapping()
   startObserver()
 })
 
@@ -409,8 +491,70 @@ onBeforeUnmount(() => observer?.disconnect())
   background: #f5f7fa;
 }
 
+.umap-mode-selector {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.mode-btn {
+  padding: 0.6rem 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
 .cluster-filter-section {
   margin-bottom: 1rem;
+}
+
+.selection-banner {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  font-size: 14px;
+}
+
+.clear-selection-banner-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #ff6b6b;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-selection-banner-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .loading,
@@ -535,6 +679,7 @@ onBeforeUnmount(() => observer?.disconnect())
   color: #0f172a;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: calc(1.35em * 2);
