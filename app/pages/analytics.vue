@@ -1152,7 +1152,7 @@ onMounted(() => {
               class="interaction-banner"
             >
               <span>
-                🔗 Brushing & linking active
+                 Brushing & linking active
                 <span v-if="interactionSelection">
                   • Selected:
                   <code>{{ interactionSelection }}</code>

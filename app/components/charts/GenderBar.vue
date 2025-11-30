@@ -14,20 +14,12 @@
         aria-label="Bar chart of case counts by gender"
       />
     </div>
-    <ChartTooltip
-      :visible="tooltipVisible"
-      :x="tooltipX"
-      :y="tooltipY"
-      :data="tooltipData"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import * as d3 from 'd3'
-import { useChartTooltip } from '~/composables/useChartTooltip'
-import ChartTooltip from './ChartTooltip.vue'
 
 /* =========================
  * Types
@@ -56,7 +48,26 @@ const INNER_H = H - MARGIN.top - MARGIN.bottom
 const fmt = d3.format(',')
 
 const svgRef = ref<SVGSVGElement | null>(null)
-const { tooltipVisible, tooltipX, tooltipY, tooltipData, showTooltip, hideTooltip, updatePosition } = useChartTooltip()
+
+const tooltipVisible = ref(false)
+const tooltipX = ref(0)
+const tooltipY = ref(0)
+const tooltipData = ref<any>(null)
+
+const showTooltip = (event: MouseEvent, data: any) => {
+  tooltipData.value = data
+  tooltipVisible.value = true
+  updatePosition(event)
+}
+
+const hideTooltip = () => {
+  tooltipVisible.value = false
+}
+
+const updatePosition = (event: MouseEvent) => {
+  tooltipX.value = event.clientX + 10
+  tooltipY.value = event.clientY - 10
+}
 
 /* =========================
  * Render
@@ -127,15 +138,23 @@ const draw = () => {
       if (props.selectedValue !== d.label) {
         d3.select(this).attr('opacity', 1)
       }
-      showTooltip(event, {
+      
+      const pct = totalCount > 0 ? ((d.count / totalCount) * 100).toFixed(1) : '0.0'
+      
+      const tooltipContent = {
         label: d.label,
         count: d.count,
         total: totalCount,
+        extra: `${pct}% of all cases`,
         clusterNote: props.clusterNote
+      }
+      
+      nextTick(() => {
+        showTooltip(event as MouseEvent, tooltipContent)
       })
     })
     .on('mousemove', (event) => {
-      updatePosition(event)
+      updatePosition(event as MouseEvent)
     })
     .on('mouseleave', function(_event, d: Item) {
       if (props.selectedValue !== d.label) {
@@ -146,7 +165,7 @@ const draw = () => {
     .on('click', (_event, d: Item) => {
       emit('itemSelect', { type: 'gender', value: d.label })
     })
-
+    
   bars.transition()
     .duration(350)
     .attr('y', (d: Item) => y(d.count))
@@ -184,18 +203,78 @@ watch(() => props.selectedValue, draw)
   flex-direction: column;
   height: 100%;
   padding: 0.5rem 0.75rem 0.5rem;
+  position: relative;
 }
+
 .chart-header h3 {
   margin: 0.5rem 0.5rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
 }
+
 .sub {
   margin: 0.15rem 0 0.5rem;
   color: #718096;
   font-size: 0.9rem;
 }
-.chart-body { width: 100%; flex: 1 1 auto; }
-.svg-chart { width: 100%; height: auto; display: block; }
+
+.chart-body {
+  width: 100%;
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.svg-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-width: 250px;
+  word-wrap: break-word;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-label {
+  font-weight: bold;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.tooltip-count {
+  font-size: 12px;
+}
+
+.tooltip-extra {
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.tooltip-note {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
 </style>

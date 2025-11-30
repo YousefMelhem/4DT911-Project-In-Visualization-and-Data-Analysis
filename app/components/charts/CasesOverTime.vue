@@ -15,11 +15,22 @@
       />
       <div v-if="(series?.length ?? 0) === 0" class="empty-note">No data</div>
     </div>
+    <div
+      v-if="tooltipVisible"
+      class="chart-tooltip"
+      :style="{ left: `${tooltipX}px`, top: `${tooltipY}px` }"
+    >
+      <div v-if="tooltipData" class="tooltip-content">
+        <div class="tooltip-label">{{ tooltipData.label }}</div>
+        <div class="tooltip-count">Count: {{ tooltipData.count.toLocaleString() }}</div>
+        <div v-if="tooltipData.extra" class="tooltip-extra">{{ tooltipData.extra }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, nextTick } from 'vue'
 import * as d3 from 'd3'
 
 /* =========================
@@ -48,11 +59,30 @@ const svgRef = ref<SVGSVGElement | null>(null)
 const computedWidth = computed(() => {
   const n = props.series?.length ?? 0
 
-  const min = 450      
-  const perPoint = 8   
+  const min = 450
+  const perPoint = 8
 
   return Math.max(min, n * perPoint)
 })
+const tooltipVisible = ref(false)
+const tooltipX = ref(0)
+const tooltipY = ref(0)
+const tooltipData = ref<any>(null)
+
+const showTooltip = (event: MouseEvent, data: any) => {
+  tooltipData.value = data
+  tooltipVisible.value = true
+  updatePosition(event)
+}
+
+const hideTooltip = () => {
+  tooltipVisible.value = false
+}
+
+const updatePosition = (event: MouseEvent) => {
+  tooltipX.value = event.clientX + 10
+  tooltipY.value = event.clientY - 10
+}
 
 /* =========================
  * Render
@@ -71,6 +101,8 @@ const draw = () => {
   const data = (props.series ?? []).slice().sort((a, b) => +a.date - +b.date)
   if (data.length === 0) return
 
+  const totalCount = data.reduce((sum, d) => sum + d.count, 0)
+
   // Scales
   const xDomain = d3.extent(data, (d: Point) => d.date) as [Date, Date]
   const x = d3.scaleTime().domain(xDomain).range([MARGIN.left, MARGIN.left + INNER_W])
@@ -79,7 +111,6 @@ const draw = () => {
   const y = d3.scaleLinear().domain([0, yMax]).nice().range([MARGIN.top + INNER_H, MARGIN.top])
 
   // Axes
-  // Aim for ~6 x-axis ticks across the whole range
   const approxTickCount = Math.ceil(data.length / 6) || 1
   svg.append('g')
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
@@ -119,7 +150,6 @@ const draw = () => {
     .attr('stroke-width', 2)
     .attr('d', lineGen)
 
-  // Points + simple tooltips
   const circles = svg.append('g')
     .selectAll('circle')
     .data(data)
@@ -131,12 +161,30 @@ const draw = () => {
     .attr('fill', '#667eea')
     .attr('opacity', 0.85)
     .style('cursor', 'pointer')
-    .on('mouseenter', function() {
+    .on('mouseenter', function (event, d: Point) {
       d3.select(this)
         .transition()
         .duration(150)
         .attr('r', 6)
         .attr('opacity', 1)
+
+      const pct = totalCount > 0
+        ? ((d.count / totalCount) * 100).toFixed(1)
+        : '0.0'
+
+      const tooltipContent = {
+        label: fmtMonth(d.date),
+        count: d.count,
+        total: totalCount,
+        extra: `${pct}% of all cases`,
+      }
+      
+      nextTick(() => {
+        showTooltip(event as MouseEvent, tooltipContent)
+      })
+    })
+    .on('mousemove', (event) => {
+      updatePosition(event as MouseEvent)
     })
     .on('mouseleave', function() {
       d3.select(this)
@@ -144,38 +192,56 @@ const draw = () => {
         .duration(150)
         .attr('r', 3)
         .attr('opacity', 0.85)
+
+      hideTooltip()
     })
 
-  circles.append('title')
-    .text((d: Point) => `${fmtMonth(d.date)}: ${d.count.toLocaleString()} cases`)
+  const brushBandHeight = 24
+  const bandBottom = MARGIN.top + INNER_H
+  const bandTop = bandBottom - brushBandHeight
 
-  // Add brush
   const brush = d3.brushX()
-    .extent([[MARGIN.left, MARGIN.top], [MARGIN.left + INNER_W, MARGIN.top + INNER_H]])
+    .extent([[MARGIN.left, bandTop], [MARGIN.left + INNER_W, bandBottom]])
+    .on('brush', (event) => {
+      const sel = event.selection as [number, number] | null
+      if (!sel) return
+
+      const [x0, x1] = sel
+      // Stretch the selection rect to full chart height
+      svg.select<SVGGElement>('.brush').select<SVGRectElement>('.selection')
+        .attr('x', x0)
+        .attr('width', x1 - x0)
+        .attr('y', MARGIN.top)
+        .attr('height', INNER_H)
+    })
     .on('end', (event) => {
-      const selection = event.selection as [number, number] | null
-      if (!selection) {
+      const sel = event.selection as [number, number] | null
+      if (!sel) {
         emit('rangeChange', null)
         return
       }
-      const [x0, x1] = selection
+      const [x0, x1] = sel
       const start = x.invert(x0)
       const end = x.invert(x1)
       emit('rangeChange', { start, end })
+
+      // Ensure final rect stays full height
+      svg.select<SVGGElement>('.brush').select<SVGRectElement>('.selection')
+        .attr('y', MARGIN.top)
+        .attr('height', INNER_H)
     })
 
-  svg.append('g')
+  const brushG = svg.append('g')
     .attr('class', 'brush')
     .call(brush)
-    .selectAll('.overlay')
-    .style('cursor', 'crosshair')
-
-  // Style brush
-  svg.selectAll('.brush .selection')
+  brushG.selectAll('.selection')
     .attr('fill', '#667eea')
     .attr('fill-opacity', 0.2)
     .attr('stroke', '#667eea')
     .attr('stroke-width', 1.5)
+
+  brushG.selectAll('.overlay')
+    .style('cursor', 'crosshair')
 }
 
 onMounted(draw)
@@ -189,10 +255,50 @@ watch(computedWidth, draw)
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   padding: 1rem 1rem 1.25rem;
+  position: relative;
 }
 .chart-header h3 { margin: 1rem 0.75rem 0.5rem; color: #2d3748; font-size: 1.1rem; font-weight: 700; }
 .sub { margin: 2rem 0 0.5rem; color: #718096; font-size: 0.9rem; }
-.chart-body { width: 100%; }
+.chart-body { width: 100%; position: relative; }
 .svg-chart { width: 100%; height: auto; display: block; }
 .empty-note { margin-top: 0.5rem; color: #718096; font-size: 0.9rem; }
+
+.chart-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-width: 250px;
+  word-wrap: break-word;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-label {
+  font-weight: bold;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.tooltip-count {
+  font-size: 12px;
+}
+
+.tooltip-extra {
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.9;
+}
 </style>

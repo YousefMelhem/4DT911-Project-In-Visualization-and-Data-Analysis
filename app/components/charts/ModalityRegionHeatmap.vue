@@ -6,24 +6,27 @@
         Which imaging modalities are used for which body regions
       </p>
     </div>
-    <div class="chart-body">
-      <svg
-        ref="svgRef"
-        class="svg-chart"
-        :viewBox="`0 0 ${VIEW_W} ${computedHeight}`"
-        preserveAspectRatio="xMidYMid meet"
-        role="img"
-        aria-label="Heatmap of modality by region"
-      />
+    <div class="chart-body" ref="chartBodyRef">
+      <svg ref="svgRef" class="svg-chart" :viewBox="`0 0 ${VIEW_W} ${computedHeight}`"
+        preserveAspectRatio="xMidYMid meet" role="img" aria-label="Heatmap of modality by region" />
       <div v-if="matrix.rowLabels.length === 0 || matrix.colLabels.length === 0" class="empty-note">
         No data
+      </div>
+    </div>
+
+    <div v-if="tooltipVisible" class="chart-tooltip" :style="{ left: `${tooltipX}px`, top: `${tooltipY}px` }">
+      <div v-if="tooltipData" class="tooltip-content">
+        <div class="tooltip-label">{{ tooltipData.label }}</div>
+        <div class="tooltip-count">Count: {{ tooltipData.count }}</div>
+        <div v-if="tooltipData.extra" class="tooltip-extra">{{ tooltipData.extra }}</div>
+        <div v-if="tooltipData.clusterNote" class="tooltip-note">{{ tooltipData.clusterNote }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, nextTick } from 'vue'
 import * as d3 from 'd3'
 
 type ModalityRegionMatrix = {
@@ -54,6 +57,27 @@ const computedHeight = computed(() => {
 })
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const chartBodyRef = ref<HTMLElement | null>(null)
+
+const tooltipVisible = ref(false)
+const tooltipX = ref(0)
+const tooltipY = ref(0)
+const tooltipData = ref<any>(null)
+
+const showTooltip = (event: MouseEvent, data: any) => {
+  tooltipData.value = data
+  tooltipVisible.value = true
+  updatePosition(event)
+}
+
+const hideTooltip = () => {
+  tooltipVisible.value = false
+}
+
+const updatePosition = (event: MouseEvent) => {
+  tooltipX.value = event.clientX + 10
+  tooltipY.value = event.clientY - 10
+}
 
 const draw = () => {
   const el = svgRef.value
@@ -97,11 +121,14 @@ const draw = () => {
     .range([MARGIN.top, MARGIN.top + innerH])
     .padding(0)
 
-  // Max value for color scaling
+  // Max value + total for color scaling / percentages
   let maxVal = 0
+  let totalCount = 0
   for (let r = 0; r < nRows; r++) {
     for (let c = 0; c < nCols; c++) {
-      maxVal = Math.max(maxVal, grid[r]?.[c] ?? 0)
+      const v = grid[r]?.[c] ?? 0
+      maxVal = Math.max(maxVal, v)
+      totalCount += v
     }
   }
 
@@ -178,6 +205,46 @@ const draw = () => {
     })
     .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
     .style('cursor', 'pointer')
+    .on('mouseenter', function (event, d) {
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr('stroke', '#667eea')
+        .attr('stroke-width', 2)
+
+      const pct = totalCount > 0
+        ? ((d.value / totalCount) * 100).toFixed(1)
+        : '0.0'
+
+      // Create tooltip data
+      const tooltipContent = {
+        label: `${d.col} • ${d.row}`,
+        count: d.value,
+        total: totalCount,
+        extra: `${pct}% of all modality–region counts`,
+      }
+
+      // Use Vue.nextTick to ensure the tooltip state is updated
+      nextTick(() => {
+        showTooltip(event as MouseEvent, tooltipContent)
+      })
+    })
+    .on('mousemove', (event) => {
+      updatePosition(event as MouseEvent)
+    })
+    .on('mouseleave', function () {
+      const d = d3.select<Cell, Cell>(this).datum()
+      const sel = props.selectedValue
+      const isSelected = sel && sel.modality === d.col && sel.region === d.row
+
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr('stroke', isSelected ? '#2b6cb0' : '#e2e8f0')
+        .attr('stroke-width', isSelected ? 2 : 0.5)
+
+      hideTooltip()
+    })
     .on('click', (_event, d) => {
       const sel = props.selectedValue
       if (sel && sel.modality === d.col && sel.region === d.row) {
@@ -190,8 +257,6 @@ const draw = () => {
         })
       }
     })
-    .append('title')
-    .text(d => `${d.row} × ${d.col}: ${fmt(d.value)} case${d.value === 1 ? '' : 's'}`)
 
   g.selectAll('text.value')
     .data(cells)
@@ -219,30 +284,84 @@ watch(() => [props.matrix, props.selectedValue, computedHeight.value], draw, { d
   flex-direction: column;
   height: 100%;
   padding: 1rem 1rem 1.25rem;
+  position: relative;
 }
+
 .chart-header h3 {
   margin: 1rem 0.75rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
 }
+
 .sub {
   margin: 0.15rem 0 0.5rem;
   color: #718096;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
+
 .chart-body {
   width: 100%;
   flex: 1 1 auto;
+  position: relative;
 }
+
 .svg-chart {
   width: 100%;
   height: auto;
   display: block;
 }
+
 .empty-note {
   margin-top: 0.5rem;
   color: #718096;
   font-size: 0.9rem;
+}
+
+.chart-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-width: 250px;
+  word-wrap: break-word;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-label {
+  font-weight: bold;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.tooltip-count {
+  font-size: 12px;
+}
+
+.tooltip-extra {
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.tooltip-note {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 </style>

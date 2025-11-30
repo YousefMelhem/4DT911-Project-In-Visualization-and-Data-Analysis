@@ -6,7 +6,7 @@
         How often imaging modalities are used together in the same case
       </p>
     </div>
-    <div class="chart-body">
+    <div class="chart-body" ref="chartBodyRef">
       <svg
         ref="svgRef"
         class="svg-chart"
@@ -17,20 +17,25 @@
       />
       <div v-if="matrix.labels.length === 0" class="empty-note">No data</div>
     </div>
-    <ChartTooltip
-      :visible="tooltipVisible"
-      :x="tooltipX"
-      :y="tooltipY"
-      :data="tooltipData"
-    />
+
+    <div
+      v-if="tooltipVisible"
+      class="chart-tooltip"
+      :style="{ left: `${tooltipX}px`, top: `${tooltipY}px` }"
+    >
+      <div v-if="tooltipData" class="tooltip-content">
+        <div class="tooltip-label">{{ tooltipData.label }}</div>
+        <div class="tooltip-count">Count: {{ tooltipData.count }}</div>
+        <div v-if="tooltipData.extra" class="tooltip-extra">{{ tooltipData.extra }}</div>
+        <div v-if="tooltipData.clusterNote" class="tooltip-note">{{ tooltipData.clusterNote }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, nextTick } from 'vue'
 import * as d3 from 'd3'
-import { useChartTooltip } from '~/composables/useChartTooltip'
-import ChartTooltip from './ChartTooltip.vue'
 
 /* =========================
  * Types
@@ -64,8 +69,31 @@ const computedHeight = computed(() => {
 })
 
 const svgRef = ref<SVGSVGElement | null>(null)
-const { tooltipVisible, tooltipX, tooltipY, tooltipData, showTooltip, hideTooltip, updatePosition } = useChartTooltip()
+const chartBodyRef = ref<HTMLElement | null>(null)
 
+const tooltipVisible = ref(false)
+const tooltipX = ref(0)
+const tooltipY = ref(0)
+const tooltipData = ref<any>(null)
+
+const showTooltip = (event: MouseEvent, data: any) => {
+  tooltipData.value = data
+  tooltipVisible.value = true
+  updatePosition(event)
+}
+
+const hideTooltip = () => {
+  tooltipVisible.value = false
+}
+
+const updatePosition = (event: MouseEvent) => {
+  tooltipX.value = event.clientX + 10
+  tooltipY.value = event.clientY - 10
+}
+
+/* =========================
+ * Render
+ * =======================*/
 const draw = () => {
   const el = svgRef.value
   if (!el) return
@@ -104,11 +132,14 @@ const draw = () => {
     .range([MARGIN.top, MARGIN.top + innerSize])
     .padding(0)
 
-  // Max value for color scaling
+  // Max value + total for color scaling / percentages
   let maxVal = 0
+  let sumFromGrid = 0
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      maxVal = Math.max(maxVal, grid[i]?.[j] ?? 0)
+      const v = grid[i]?.[j] ?? 0
+      maxVal = Math.max(maxVal, v)
+      sumFromGrid += v
     }
   }
 
@@ -119,7 +150,7 @@ const draw = () => {
   const totalCount = props.total ?? maxVal
 
   // Column labels (top, rotated)
-const colLabelGroup = svg.append('g')
+  const colLabelGroup = svg.append('g')
     .attr('transform', `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
 
   colLabelGroup
@@ -130,7 +161,7 @@ const colLabelGroup = svg.append('g')
     .attr('class', 'col-label')
     .attr('transform', d =>
       // move to the center of the column, then rotate
-        `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
+      `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
     )
     .attr('text-anchor', 'start') // or 'middle' if you prefer
     .attr('fill', '#4a5568')
@@ -145,7 +176,7 @@ const colLabelGroup = svg.append('g')
     .append('text')
     .attr('class', 'row-label')
     .attr('x', xStart - 8)
-      .attr('y', d => (y(d)! + y.bandwidth() / 2))
+    .attr('y', d => (y(d)! + y.bandwidth() / 2))
     .attr('text-anchor', 'end')
     .attr('dominant-baseline', 'middle')
     .attr('fill', '#4a5568')
@@ -162,7 +193,7 @@ const colLabelGroup = svg.append('g')
 
   const g = svg.append('g')
 
-  g.selectAll('rect.cell')
+  const rects = g.selectAll('rect.cell')
     .data(cells)
     .enter()
     .append('rect')
@@ -184,14 +215,7 @@ const colLabelGroup = svg.append('g')
     .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
     .attr('opacity', 0.85)
     .style('cursor', 'pointer')
-    .on('click', (_event, d) => {
-      if (props.selectedValue === d.row) {
-        emit('item-select', null)
-      } else {
-        emit('item-select', { type: 'modality', value: d.row })
-      }
-    })
-    .on('mouseenter', function(event, d: Cell) {
+    .on('mouseenter', function (event, d: Cell) {
       d3.select(this)
         .transition()
         .duration(150)
@@ -199,25 +223,44 @@ const colLabelGroup = svg.append('g')
         .attr('stroke-width', 2)
         .attr('opacity', 1)
 
-      showTooltip(event, {
+      const pct = totalCount > 0
+        ? ((d.value / totalCount) * 100).toFixed(1)
+        : '0.0'
+
+      const tooltipContent = {
         label: `${d.row} × ${d.col}`,
         count: d.value,
         total: totalCount,
-        clusterNote: props.clusterNote
+        clusterNote: props.clusterNote,
+        extra: `${pct}% of all modality co-occurrences`,
+      }
+
+      nextTick(() => {
+        showTooltip(event as MouseEvent, tooltipContent)
       })
     })
     .on('mousemove', (event) => {
-      updatePosition(event)
+      updatePosition(event as MouseEvent)
     })
-    .on('mouseleave', function(event, d) {
-      const isSelected = !props.selectedValue ? false : (d.row === props.selectedValue || d.col === props.selectedValue)
+    .on('mouseleave', function (_event, d: Cell) {
+      const isSelected = !!props.selectedValue &&
+        (d.row === props.selectedValue || d.col === props.selectedValue)
+
       d3.select(this)
         .transition()
         .duration(150)
         .attr('stroke', isSelected ? '#2b6cb0' : '#e2e8f0')
         .attr('stroke-width', isSelected ? 2 : 0.5)
         .attr('opacity', 0.85)
+
       hideTooltip()
+    })
+    .on('click', (_event, d) => {
+      if (props.selectedValue === d.row) {
+        emit('item-select', null)
+      } else {
+        emit('item-select', { type: 'modality', value: d.row })
+      }
     })
 
   const cellText = g.selectAll('text.value')
@@ -245,6 +288,7 @@ const colLabelGroup = svg.append('g')
 onMounted(draw)
 watch(() => props.matrix, draw, { deep: true })
 watch(computedHeight, draw)
+watch(() => props.selectedValue, draw)
 </script>
 
 <style scoped>
@@ -253,30 +297,84 @@ watch(computedHeight, draw)
   flex-direction: column;
   height: 100%;
   padding: 1rem 1rem 1.25rem;
+  position: relative;
 }
+
 .chart-header h3 {
   margin: 1rem 0.75rem 0.5rem;
   color: #2d3748;
   font-size: 1.1rem;
   font-weight: 700;
 }
+
 .sub {
   margin: 0.15rem 0 0.5rem;
   color: #718096;
   font-size: 0.9rem;
 }
+
 .chart-body {
   width: 100%;
   flex: 1 1 auto;
+  position: relative;
 }
+
 .svg-chart {
   width: 100%;
   height: auto;
   display: block;
 }
+
 .empty-note {
   margin-top: 0.5rem;
   color: #718096;
   font-size: 0.9rem;
+}
+
+.chart-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-width: 250px;
+  word-wrap: break-word;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-label {
+  font-weight: bold;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.tooltip-count {
+  font-size: 12px;
+}
+
+.tooltip-extra {
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.tooltip-note {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 </style>
