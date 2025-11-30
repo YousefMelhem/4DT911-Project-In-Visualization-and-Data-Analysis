@@ -223,7 +223,7 @@ const draw = () => {
         total: totalCount,
         extra: `${pct}% of all modality–region counts`,
       }
-
+      
       // Use Vue.nextTick to ensure the tooltip state is updated
       nextTick(() => {
         showTooltip(event as MouseEvent, tooltipContent)
@@ -233,16 +233,16 @@ const draw = () => {
       updatePosition(event as MouseEvent)
     })
     .on('mouseleave', function () {
-      const d = d3.select<Cell, Cell>(this).datum()
+      const d = d3.select(this).datum() as Cell
       const sel = props.selectedValue
       const isSelected = sel && sel.modality === d.col && sel.region === d.row
-
+      
       d3.select(this)
         .transition()
         .duration(150)
         .attr('stroke', isSelected ? '#2b6cb0' : '#e2e8f0')
         .attr('stroke-width', isSelected ? 2 : 0.5)
-
+        
       hideTooltip()
     })
     .on('click', (_event, d) => {
