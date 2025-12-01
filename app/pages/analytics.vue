@@ -377,9 +377,9 @@ const loadImageClusterMapping = async () => {
 // Filter data by selected cluster
 const clusterFilteredData = computed<CaseSummary[]>(() => {
   if (selectedCluster.value === null) return filteredData.value
-  
+
   const activeClusterData = umapMode.value === 'text' ? clusterData.value : imageClusterData.value
-  
+
   return filteredData.value.filter(row => {
     if (!row.diagnosis) return false
     const diagLower = row.diagnosis.toLowerCase()
@@ -416,11 +416,11 @@ const selectedDiagnosisNames = ref<Set<string>>(new Set())
 const handleUMAPSelection = (points: DiagnosisPoint[]) => {
   selectedUMAPPoints.value = points
   selectedDiagnosisNames.value = new Set(points.map(p => p.diagnosis.toLowerCase()))
-  
+
   // Show summary of selected clusters
   const clusterSet = new Set(points.map(p => p.cluster))
   const clusterCount = clusterSet.size
-  
+
   if (points.length > 0) {
     console.log(`📊 Selected ${points.length} points from ${clusterCount} cluster(s)`)
   }
@@ -430,7 +430,7 @@ const handleUMAPSelection = (points: DiagnosisPoint[]) => {
 const selectionFilteredData = computed<CaseSummary[]>(() => {
   // First apply cluster filter
   let data = clusterFilteredData.value
-  
+
   // Then apply UMAP selection filter if any points are selected
   if (selectedDiagnosisNames.value.size > 0) {
     data = data.filter(row => {
@@ -438,14 +438,11 @@ const selectionFilteredData = computed<CaseSummary[]>(() => {
       return selectedDiagnosisNames.value.has(row.diagnosis.toLowerCase())
     })
   }
-  
+
   return data
 })
 
-/* =========================
- * 🔗 Brushing & Linking State (charts)
- * =======================*/
-
+// Brushing & Linking State (charts)
 const interactionSelection = ref<InteractionSelection | null>(null)
 const timeBrush = ref<TimeBrushRange | null>(null)
 /** Used to force re-mount time chart on clear */
@@ -455,7 +452,6 @@ const chartResetKey = ref(0)
 const interactionFilteredData = computed<CaseSummary[]>(() => {
   let rows = selectionFilteredData.value
 
-  // Time brush
   if (timeBrush.value) {
     const { start, end } = timeBrush.value
     rows = rows.filter(row => {
@@ -520,6 +516,13 @@ const interactionFilteredData = computed<CaseSummary[]>(() => {
 
   return rows
 })
+const selectedAgeBin = computed<{ binStart: number; binEnd: number } | null>(() => {
+  const sel = interactionSelection.value
+  if (!sel || sel.type !== 'ageBin') return null
+
+  const end = sel.binEnd === 'Infinity' ? Infinity : sel.binEnd
+  return { binStart: sel.binStart, binEnd: end }
+})
 
 /** diagnoses present in the *currently* linked subset – usable by UMAP for dimming */
 const activeDiagnoses = computed(() => {
@@ -532,7 +535,6 @@ const activeDiagnoses = computed(() => {
   return Array.from(set)
 })
 
-/** handle chart click selection */
 const handleItemSelect = (payload: InteractionSelection | null) => {
   if (!payload) {
     interactionSelection.value = null
@@ -546,12 +548,10 @@ const handleItemSelect = (payload: InteractionSelection | null) => {
   }
 }
 
-/** handle time brush from CasesOverTime */
 const handleTimeBrushChange = (range: TimeBrushRange | null) => {
   timeBrush.value = range
 }
 
-/** clear ALL interactive chart selections (but keep sidebar filters/cluster/UMAP) */
 const handleClearInteractions = () => {
   interactionSelection.value = null
   timeBrush.value = null
@@ -725,7 +725,7 @@ const finalModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
   )
 )
 
-/** For convenience: what we actually feed to charts (always interaction-based) */
+/** what we actually feed to charts (always interaction-based) */
 const displayGenderCounts = finalGenderCounts
 const displayModalityCounts = finalModalityCounts
 const displayRegionCounts = finalRegionCounts
@@ -811,15 +811,17 @@ const selectionWithCoords = computed<CaseWithCoords[]>(() => {
 })
 
 // KNN-based "density" scoring within the current selection (cluster-only)
+// score = average distance to k nearest neighbours in UMAP space
 type ScoredCase = CaseWithCoords & { score: number }
 
 const scoredSelection = computed<ScoredCase[]>(() => {
   const pts = selectionWithCoords.value
   const n = pts.length
 
+  // Only meaningful when a cluster is active and we have multiple points
   if (selectedCluster.value === null || n <= 1) return []
 
-  const k = Math.min(10, n - 1)
+  const k = Math.min(10, n - 1) // up to 10 neighbours, but never >= n
 
   const scored: ScoredCase[] = []
 
@@ -846,7 +848,7 @@ const scoredSelection = computed<ScoredCase[]>(() => {
 
   return scored.sort((a, b) => a.score - b.score)
 })
-
+// Helper: normalize diagnosis string for uniqueness
 const normalizeDiagKey = (diag: string | null | undefined): string =>
   diag ? diag.trim().toLowerCase() : ''
 
@@ -870,6 +872,8 @@ const typicalCases = computed<CaseSummary[]>(() => {
   return out
 })
 
+// Atypical cases: largest score, max 1 case per diagnosis,
+// and avoid reusing diagnoses already chosen as "typical"
 const atypicalCases = computed<CaseSummary[]>(() => {
   const scored = scoredSelection.value
   if (!scored.length) return []
@@ -938,6 +942,7 @@ const topTerms = computed<TermItem[]>(() => {
 
   if (!tf.size) return []
 
+  // Compute TF-IDF score
   const scores: [string, number][] = []
   for (const [term, tfCount] of tf.entries()) {
     const idfVal = idf.get(term)
@@ -948,13 +953,15 @@ const topTerms = computed<TermItem[]>(() => {
 
   if (!scores.length) return []
 
+  // Sort by score and take top K
   scores.sort((a, b) => b[1] - a[1])
   const top = scores.slice(0, 40)
-  
+
+  // Normalize to [0,1] for word cloud sizing
   const maxScore = top.length > 0 ? top[0]![1] : 0
   const minScore = top.length > 0 ? top[top.length - 1]![1] : 0
   const range = maxScore - minScore || 1
-  
+
   return top.map(([term, score]) => ({
     term,
     weight: (score - minScore) / range,
@@ -965,7 +972,7 @@ const topTerms = computed<TermItem[]>(() => {
  * Table (computed & actions)
  * =======================*/
 const tableLimit = ref(50)
-/** 🔗 table uses the same interactionFilteredData, so it also responds to chart selections */
+// table uses the same interactionFilteredData, so it also responds to chart selections 
 const visibleRows = computed(() => interactionFilteredData.value.slice(0, tableLimit.value))
 const hasMoreRows = computed(() => interactionFilteredData.value.length > tableLimit.value)
 const showMoreRows = () => { tableLimit.value += 50 }
@@ -1152,7 +1159,7 @@ onMounted(() => {
               class="interaction-banner"
             >
               <span>
-                 Brushing & linking active
+                Brushing & linking active
                 <span v-if="interactionSelection">
                   • Selected:
                   <code>{{ interactionSelection }}</code>
@@ -1222,12 +1229,12 @@ onMounted(() => {
             </div>
             <div class="chart-card">
               <ClientOnly>
-                <AgeHistogram
-                  :bins="displayAgeBins"
-                  :unknown-count="displayUnknownAgeCount"
-                  :selected-bin="interactionSelection?.type === 'ageBin' ? interactionSelection : null"
-                  @item-select="handleItemSelect"
-                />
+                <AgeHistogram 
+                :bins="displayAgeBins" 
+                :unknown-count="displayUnknownAgeCount"
+                  :selected-bin="selectedAgeBin"
+                   @item-select="handleItemSelect"
+                    />
               </ClientOnly>
             </div>
 
@@ -1256,11 +1263,11 @@ onMounted(() => {
             <!-- Modality co-occurrence heatmap -->
             <div class="chart-card">
               <ClientOnly>
-                <ModalityHeatmap
-                  :matrix="displayModalityCooc"
-                  :selected-value="interactionSelection?.type === 'modality-region' ? interactionSelection : null"
+                <ModalityHeatmap 
+                :matrix="displayModalityCooc"
+                  :selected-value="interactionSelection?.type === 'modality' ? interactionSelection.value : null"
                   @item-select="handleItemSelect"
-                />
+                   />
               </ClientOnly>
             </div>
 
@@ -1310,22 +1317,22 @@ onMounted(() => {
             <!-- Text sections coverage -->
             <div class="chart-card">
               <ClientOnly>
-                <SectionsCoverageBar
-                  :items="displaySectionCoverage"
+                <SectionsCoverageBar 
+                :items="displaySectionCoverage"
                   :selected-value="interactionSelection?.type === 'section' ? interactionSelection.value : null"
-                  @item-select="handleItemSelect"
-                />
+                  @item-select="handleItemSelect" 
+                  />
               </ClientOnly>
             </div>
 
             <!-- Modality × Region heatmap -->
             <div class="chart-card">
               <ClientOnly>
-                <ModalityRegionHeatmap
-                  :matrix="displayModalityRegionMatrix"
+                <ModalityRegionHeatmap 
+                :matrix="displayModalityRegionMatrix"
                   :selected-value="interactionSelection?.type === 'modality-region' ? interactionSelection : null"
-                  @item-select="handleItemSelect"
-                />
+                  @item-select="handleItemSelect" 
+                  />
               </ClientOnly>
             </div>
           </div>
@@ -1672,12 +1679,13 @@ onMounted(() => {
 .chart-card.full {
   grid-column: 1 / -1;
 }
-.chart-card > * {
+
+.chart-card>* {
   flex: 1 1 auto;
   display: flex;
 }
 
-.chart-card > * > * {
+.chart-card>*>* {
   flex: 1 1 auto;
 }
 
