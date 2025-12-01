@@ -22,6 +22,7 @@ const props = defineProps<{
   height?: number
   selectedCluster?: number | null
   dataSource?: 'text' | 'image'
+  activeDiagnoses?: string[] | null
 }>()
 
 const emit = defineEmits<{
@@ -54,6 +55,15 @@ const h = computed(() => props.height || 800)
 const margin = { top: 40, right: 200, bottom: 60, left: 60 }
 const innerWidth = computed(() => w.value - margin.left - margin.right)
 const innerHeight = computed(() => h.value - margin.top - margin.bottom)
+
+const activeDiagnosisSet = computed(() => {
+  const set = new Set<string>()
+  const list = props.activeDiagnoses ?? []
+  for (const name of list) {
+    if (name) set.add(name.toLowerCase())
+  }
+  return set
+})
 
 /* =========================
  * Selection Helpers
@@ -90,6 +100,28 @@ const pointInPolygon = (point: [number, number], polygon: [number, number][]) =>
     if (intersect) inside = !inside
   }
   return inside
+}
+
+/** Central place for opacity logic (selection + cluster + external brushing) */
+const getPointOpacity = (d: DiagnosisPoint, index: number): number => {
+  // 1) Internal selection (click / lasso / rectangle) dominates
+  if (selectedPoints.value.size > 0) {
+    if (selectedPoints.value.has(index)) return 1
+    return 0.3
+  }
+
+  // 2) External filters (cluster + activeDiagnoses) for brushing & linking
+  const hasClusterFilter =
+    props.selectedCluster !== null && props.selectedCluster !== undefined
+  const hasActiveFilter = activeDiagnosisSet.value.size > 0
+
+  const inCluster = !hasClusterFilter || d.cluster === props.selectedCluster
+
+  const diagKey = d.diagnosis ? d.diagnosis.toLowerCase() : ''
+  const inActive = !hasActiveFilter || activeDiagnosisSet.value.has(diagKey)
+
+  // Highlight points that pass both filters, softly fade the rest
+  return inCluster && inActive ? 0.7 : 0.08
 }
 
 /* =========================
@@ -180,17 +212,14 @@ const renderUMAP = () => {
   const circles = g.selectAll('circle')
     .data(data.value)
     .join('circle')
-    .attr('class', (d, i) => `data-point point-${i}`)
+    .attr('class', (_, i) => `data-point point-${i}`)
     .attr('cx', d => xScale(d.umap_x))
     .attr('cy', d => yScale(d.umap_y))
     .attr('r', d => sizeScale(d.frequency))
     .attr('fill', (d, i) => selectedPoints.value.has(i) ? '#ff6b6b' : colorScale(d.cluster.toString()))
     .attr('stroke', (d, i) => selectedPoints.value.has(i) ? '#ff0000' : '#fff')
     .attr('stroke-width', (d, i) => selectedPoints.value.has(i) ? 3 : 1)
-    .attr('opacity', d => {
-      if (selectedPoints.value.size > 0) return 0.3
-      return props.selectedCluster === null || props.selectedCluster === undefined || props.selectedCluster === d.cluster ? 0.7 : 0.15
-    })
+    .attr('opacity', (d, i) => getPointOpacity(d, i))
     .style('cursor', 'pointer')
     .on('mouseover', function(event, d) {
       if (selectionMode.value === 'none' || selectionMode.value === 'click') {
@@ -199,7 +228,7 @@ const renderUMAP = () => {
           .attr('opacity', 1)
 
         const clusterName = clusterLabels.value[d.cluster] || `Cluster ${d.cluster}`
-        
+
         tooltip
           .style('display', 'block')
           .style('left', `${event.pageX + 10}px`)
@@ -217,18 +246,18 @@ const renderUMAP = () => {
           `)
       }
     })
-    .on('mouseout', function(event, d) {
+    .on('mouseout', function (_event, d) {
       const index = data.value.indexOf(d)
       if (!selectedPoints.value.has(index)) {
         d3.select(this)
           .attr('stroke-width', 1)
-          .attr('opacity', props.selectedCluster === null || props.selectedCluster === undefined || props.selectedCluster === d.cluster ? 0.7 : 0.15)
+          .attr('opacity', getPointOpacity(d, index))
       }
       tooltip.style('display', 'none')
     })
     .on('click', (event, d) => {
       const index = data.value.indexOf(d)
-      
+
       if (selectionMode.value === 'click') {
         // Click selection with Ctrl/Cmd for multi-select
         if (event.ctrlKey || event.metaKey) {
@@ -241,7 +270,7 @@ const renderUMAP = () => {
           selectedPoints.value.clear()
           selectedPoints.value.add(index)
         }
-        
+
         const selected = Array.from(selectedPoints.value).map(i => data.value[i]).filter(Boolean) as DiagnosisPoint[]
         emit('selectionChange', selected)
         renderUMAP()
@@ -255,11 +284,7 @@ const renderUMAP = () => {
     .attr('fill', (d, i) => selectedPoints.value.has(i) ? '#ff6b6b' : colorScale(d.cluster.toString()))
     .attr('stroke', (d, i) => selectedPoints.value.has(i) ? '#ff0000' : '#fff')
     .attr('stroke-width', (d, i) => selectedPoints.value.has(i) ? 3 : 1)
-    .attr('opacity', (d, i) => {
-      if (selectedPoints.value.has(i)) return 1
-      if (selectedPoints.value.size > 0) return 0.3
-      return props.selectedCluster === null || props.selectedCluster === undefined || props.selectedCluster === d.cluster ? 0.7 : 0.15
-    })
+    .attr('opacity', (d, i) => getPointOpacity(d, i))
 
   // Lasso Selection
   if (selectionMode.value === 'lasso') {
@@ -279,16 +304,16 @@ const renderUMAP = () => {
     const lassoDrag = (event: any) => {
       const [x, y] = d3.pointer(event, g.node())
       lassoPath.push([x, y])
-      
+
       const lineGenerator = d3.line()
-      lassoLine.attr('d', lineGenerator(lassoPath))
+      lassoLine.attr('d', lineGenerator(lassoPath) || '')
     }
 
     const lassoEnd = () => {
       if (lassoPath.length > 2) {
         // Close the path
         lassoPath.push(lassoPath[0]!)
-        
+
         // Check which points are inside the lasso
         data.value.forEach((point, i) => {
           const px = xScale(point.umap_x)
@@ -297,19 +322,19 @@ const renderUMAP = () => {
             selectedPoints.value.add(i)
           }
         })
-        
+
         const selected = Array.from(selectedPoints.value).map(i => data.value[i]).filter(Boolean) as DiagnosisPoint[]
         emit('selectionChange', selected)
         renderUMAP()
       }
-      
+
       lassoPath = []
       lassoLine.attr('d', '')
     }
 
     svg.call(d3.drag<any, any>()
-      .on('start', lassoStart)
-      .on('drag', lassoDrag)
+        .on('start', lassoStart)
+        .on('drag', lassoDrag)
       .on('end', lassoEnd))
   }
 
@@ -334,7 +359,7 @@ const renderUMAP = () => {
       const [x, y] = d3.pointer(event, g.node())
       const width = x - rectStart[0]
       const height = y - rectStart[1]
-      
+
       selectionRect
         .attr('x', width < 0 ? x : rectStart[0])
         .attr('y', height < 0 ? y : rectStart[1])
@@ -345,12 +370,12 @@ const renderUMAP = () => {
     const rectDragEnd = (event: any) => {
       if (!rectStart) return
       const [x, y] = d3.pointer(event, g.node())
-      
+
       const minX = Math.min(rectStart[0], x)
       const maxX = Math.max(rectStart[0], x)
       const minY = Math.min(rectStart[1], y)
       const maxY = Math.max(rectStart[1], y)
-      
+
       // Select points within rectangle
       data.value.forEach((point, i) => {
         const px = xScale(point.umap_x)
@@ -359,24 +384,24 @@ const renderUMAP = () => {
           selectedPoints.value.add(i)
         }
       })
-      
+
       const selected = Array.from(selectedPoints.value).map(i => data.value[i]).filter(Boolean) as DiagnosisPoint[]
       emit('selectionChange', selected)
-      
+
       selectionRect.attr('display', 'none')
       rectStart = null
       renderUMAP()
     }
 
     svg.call(d3.drag<any, any>()
-      .on('start', rectDragStart)
-      .on('drag', rectDragging)
+        .on('start', rectDragStart)
+        .on('drag', rectDragging)
       .on('end', rectDragEnd))
   }
 
   // Legend
   const uniqueClusters = Array.from(new Set(data.value.map(d => d.cluster))).sort((a, b) => a - b)
-  
+
   const legend = svg.append('g')
     .attr('transform', `translate(${w.value - margin.right + 20}, ${margin.top})`)
 
@@ -392,7 +417,7 @@ const renderUMAP = () => {
     .attr('class', 'legend-item')
     .attr('transform', (d, i) => `translate(0, ${i * 25})`)
     .style('cursor', 'pointer')
-    .on('click', (event, clusterId) => {
+    .on('click', (_event, clusterId) => {
       emit('clusterClick', clusterId)
     })
     .on('mouseover', function() {
@@ -433,11 +458,11 @@ const loadData = async () => {
     // Determine file names based on dataSource
     const source = props.dataSource || 'text'
     const umapFile = source === 'image' 
-      ? 'diagnosis_umap_coords_image.json' 
-      : 'diagnosis_umap_coords.json'
+        ? 'diagnosis_umap_coords_image.json'
+        : 'diagnosis_umap_coords.json'
     const labelsFile = source === 'image'
-      ? 'cluster_labels_image.json'
-      : 'cluster_labels.json'
+        ? 'cluster_labels_image.json'
+        : 'cluster_labels.json'
 
     // Load UMAP coordinates
     const umapResponse = await fetch(`${DATA_URL}/${umapFile}`)
@@ -480,15 +505,25 @@ onMounted(() => {
 
 // Reload data when dataSource changes
 watch(() => props.dataSource, () => {
-  loadData()
+    loadData()
 })
 
 watch([() => props.width, () => props.height, () => props.selectedCluster], async () => {
-  if (data.value.length > 0) {
-    await nextTick()
-    renderUMAP()
-  }
-})
+    if (data.value.length > 0) {
+      await nextTick()
+      renderUMAP()
+    }
+  })
+watch(
+  () => props.activeDiagnoses,
+  async () => {
+    if (data.value.length > 0) {
+      await nextTick()
+      renderUMAP()
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -510,25 +545,25 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
       <div class="selection-tools">
         <div class="tool-group">
           <label class="tool-label">Selection Mode:</label>
-          <button 
+          <button
             :class="['tool-btn', { active: selectionMode === 'none' }]"
             @click="toggleSelectionMode('none')"
           >
             <span class="icon">👆</span> None
           </button>
-          <button 
+          <button
             :class="['tool-btn', { active: selectionMode === 'click' }]"
             @click="toggleSelectionMode('click')"
           >
             <span class="icon">🖱️</span> Click
           </button>
-          <button 
+          <button
             :class="['tool-btn', { active: selectionMode === 'lasso' }]"
             @click="toggleSelectionMode('lasso')"
           >
             <span class="icon">✏️</span> Lasso
           </button>
-          <button 
+          <button
             :class="['tool-btn', { active: selectionMode === 'rectangle' }]"
             @click="toggleSelectionMode('rectangle')"
           >
@@ -540,10 +575,10 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
           <button class="clear-selection-btn" @click="clearSelection">Clear Selection</button>
         </div>
       </div>
-      
+
       <svg ref="svgRef"></svg>
       <div ref="tooltipRef" class="tooltip"></div>
-      
+
       <!-- Info Panel -->
       <div class="info-panel">
         <p><strong>{{ data.length }}</strong> unique diagnoses</p>
@@ -722,21 +757,6 @@ watch([() => props.width, () => props.height, () => props.selectedCluster], asyn
   background: #ff5252;
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(255, 107, 107, 0.3);
-}
-
-.clear-btn {
-  margin-left: 10px;
-  padding: 4px 12px;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.clear-btn:hover {
-  background: #c0392b;
 }
 
 svg {
