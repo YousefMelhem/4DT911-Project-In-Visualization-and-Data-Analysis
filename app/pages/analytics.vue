@@ -744,6 +744,9 @@ const displayModalityRegionMatrix = finalModalityRegionMatrix
 // Diagnosis → UMAP metadata
 const diagnosisUMAPMap = ref<Map<string, DiagnosisUMAPInfo>>(new Map())
 const clusterLabelLookup = ref<Record<number, string>>({})
+// Limit the number of points used for KNN density scoring (for performance)
+const MAX_KNN_POINTS_FOR_SCORING = 600
+
 
 // Load UMAP metadata for diagnoses (for typical/atypical + labels)
 const loadDiagnosisUMAPMeta = async () => {
@@ -784,10 +787,9 @@ const loadDiagnosisUMAPMeta = async () => {
   }
 }
 
-// Only compute "selection" for Task 1 when a cluster is active.
+// Use the full interaction-filtered subset (filters + cluster + UMAP + chart interactions)
 const currentSelectionCases = computed<CaseSummary[]>(() => {
-  if (selectedCluster.value === null) return []
-  return clusterFilteredData.value
+  return interactionFilteredData.value
 })
 
 // Cases in current selection that have UMAP coords (via diagnosis)
@@ -810,28 +812,43 @@ const selectionWithCoords = computed<CaseWithCoords[]>(() => {
   return out
 })
 
-// KNN-based "density" scoring within the current selection (cluster-only)
+// KNN-based "density" scoring within the current selection
 // score = average distance to k nearest neighbours in UMAP space
 type ScoredCase = CaseWithCoords & { score: number }
 
 const scoredSelection = computed<ScoredCase[]>(() => {
   const pts = selectionWithCoords.value
-  const n = pts.length
+  let n = pts.length
 
-  // Only meaningful when a cluster is active and we have multiple points
-  if (selectedCluster.value === null || n <= 1) return []
+  if (n <= 1) return []
+
+  // If too many points, take a deterministic subsample spread across the selection.
+  let workingPts: CaseWithCoords[] = pts
+
+  if (n > MAX_KNN_POINTS_FOR_SCORING) {
+    const step = n / MAX_KNN_POINTS_FOR_SCORING
+    const sampled: CaseWithCoords[] = []
+
+    for (let i = 0; i < MAX_KNN_POINTS_FOR_SCORING; i++) {
+      const idx = Math.floor(i * step)
+      const p = pts[idx]
+      if (p) sampled.push(p)
+    }
+
+    workingPts = sampled
+    n = workingPts.length
+  }
 
   const k = Math.min(10, n - 1) // up to 10 neighbours, but never >= n
-
   const scored: ScoredCase[] = []
 
   for (let i = 0; i < n; i++) {
-    const p = pts[i]!
+    const p = workingPts[i]!
     const dists: number[] = []
 
     for (let j = 0; j < n; j++) {
       if (i === j) continue
-      const q = pts[j]!
+      const q = workingPts[j]!
       const dx = p.x - q.x
       const dy = p.y - q.y
       dists.push(Math.sqrt(dx * dx + dy * dy))
@@ -848,6 +865,8 @@ const scoredSelection = computed<ScoredCase[]>(() => {
 
   return scored.sort((a, b) => a.score - b.score)
 })
+
+
 // Helper: normalize diagnosis string for uniqueness
 const normalizeDiagKey = (diag: string | null | undefined): string =>
   diag ? diag.trim().toLowerCase() : ''
