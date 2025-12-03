@@ -4,6 +4,7 @@
  * =======================*/
 import { ref, onMounted, computed, watch } from 'vue'
 import GenderBar from '~/components/charts/GenderBar.vue'
+import GenderBarComparison from '~/components/charts/GenderBarComparison.vue'
 import AgeHistogram from '~/components/charts/AgeHistogram.vue'
 import ModalityBar from '~/components/charts/ModalityBar.vue'
 import RegionBar from '~/components/charts/RegionBar.vue'
@@ -16,6 +17,7 @@ import ModalityRegionHeatmap from '~/components/charts/ModalityRegionHeatmap.vue
 import DialogBox from '~/components/popup/DialogBox.vue'
 import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
 import SelectionSummaryPanel from '~/components/analytics/SelectionSummaryPanel.vue'
+import CohortPanel from '~/components/analytics/CohortPanel.vue'
 import {
   useCaseFilters,
   type CaseSummary,
@@ -42,6 +44,23 @@ type CaseWithCoords = {
   x: number
   y: number
   dist?: number
+}
+
+type Cohort = {
+  id: string
+  name: string
+  caseIds: Array<CaseSummary['id']>
+  size: number
+  createdAt: string
+  color: string
+}
+
+type GenderComparisonSeries = {
+  cohortId: string
+  cohortName: string
+  color: string
+  items: Item[]
+  total: number
 }
 
 type TermItem = { term: string; weight: number }
@@ -187,6 +206,56 @@ const API_URL = config.public.apiUrl
 
 const { error: showError } = useDialog()
 
+
+/* =========================
+ * Cohorts (saved groups)
+ * =======================*/
+const cohorts = ref<Cohort[]>([])
+const activeCohortId = ref<string | null>(null)
+const comparisonMode = ref(false)
+
+/**
+ * Base dataset for all downstream filtering.
+ * If a cohort is active, we restrict the raw data to that cohort's case IDs.
+ * Otherwise we use the full rawData.
+ */
+const effectiveRawData = computed<CaseSummary[]>(() => {
+  const currentId = activeCohortId.value
+  if (!currentId) return rawData.value
+
+  const cohort = cohorts.value.find(c => c.id === currentId)
+  if (!cohort) return rawData.value
+
+  const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+  return rawData.value.filter(row => idSet.has(row.id))
+})
+
+/* Cohort Colors */
+const COHORT_COLORS = [
+  '#E53E3E', // red
+  '#3182CE', // blue
+  '#38A169', // green
+  '#D69E2E', // gold
+  '#805AD5', // purple
+  '#DD6B20', // orange
+  '#319795', // teal
+]
+
+const nextCohortColor = (): string => {
+  const paletteSize = COHORT_COLORS.length
+  if (paletteSize === 0) {
+    // Fallback color (should never really happen)
+    return '#667eea'
+  }
+
+  const index = cohorts.value.length % paletteSize
+  // `||` (or `??`) guarantees a string even with noUncheckedIndexedAccess
+  return COHORT_COLORS[index] || '#667eea'
+}
+
+
+
+
 // Shared filters + filtered data via composable
 const {
   filters,
@@ -200,7 +269,7 @@ const {
   normalizeGender,
   getCaseMainRegions,
   getCaseSubregions,
-} = useCaseFilters(rawData)
+} = useCaseFilters(effectiveRawData)
 
 /* =========================
  * Derived lists for axes
@@ -557,6 +626,125 @@ const handleClearInteractions = () => {
   timeBrush.value = null
   chartResetKey.value++
 }
+
+
+/* =========================
+ * Cohort actions
+ * =======================*/
+
+/**
+ * Save the current selection (interactionFilteredData) as a new static cohort.
+ * Cohort membership never changes after creation.
+ */
+const handleCreateCohortFromSelection = () => {
+  const cases = interactionFilteredData.value
+  if (!cases.length) return
+
+  const id = `cohort-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  const defaultName = `Group ${cohorts.value.length + 1}`
+  const caseIds = cases.map(c => c.id)
+
+  cohorts.value.push({
+    id,
+    name: defaultName,
+    caseIds,
+    size: caseIds.length,
+    createdAt: new Date().toISOString(),
+    color: nextCohortColor(),   // <-- NEW
+  })
+}
+
+
+/**
+ * Clicking a cohort focuses the whole page on that cohort's cases.
+ * Clicking it again clears the cohort filter.
+ */
+const handleToggleCohort = (id: string) => {
+  if (activeCohortId.value === id) {
+    activeCohortId.value = null
+  } else {
+    activeCohortId.value = id
+  }
+}
+
+/**
+ * Remove a saved cohort. If it was active, clear the cohort filter.
+ */
+const handleRemoveCohort = (id: string) => {
+  const idx = cohorts.value.findIndex(c => c.id === id)
+  if (idx !== -1) {
+    cohorts.value.splice(idx, 1)
+  }
+  if (activeCohortId.value === id) {
+    activeCohortId.value = null
+  }
+}
+
+
+/* =========================
+ * Comparison-mode series (static cohorts)
+ * =======================*/
+
+const genderComparisonSeries = computed<GenderComparisonSeries[]>(() => {
+  if (!comparisonMode.value) return []
+  if (!cohorts.value.length) return []
+
+  return cohorts.value.map((cohort) => {
+    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+
+    // IMPORTANT: use rawData (full dataset), not effectiveRawData,
+    // so cohorts are static and ignore current filters.
+    const cases = rawData.value.filter(row => idSet.has(row.id))
+
+    const counts = { Female: 0, Male: 0, Unknown: 0 }
+    for (const row of cases) {
+      counts[normalizeGender(row.gender)]++
+    }
+
+    const items: Item[] = [
+      { label: 'Female', count: counts.Female },
+      { label: 'Male', count: counts.Male },
+      { label: 'Unknown', count: counts.Unknown },
+    ]
+
+    const total = items.reduce((sum, d) => sum + d.count, 0)
+
+    return {
+      cohortId: cohort.id,
+      cohortName: cohort.name,
+      color: cohort.color,
+      items,
+      total,
+    }
+  })
+})
+
+
+/**
+ * Toggle comparison mode from the CohortPanel.
+ * Requires at least 2 cohorts.
+ */
+const handleToggleComparisonMode = () => {
+  if (cohorts.value.length < 2) {
+    comparisonMode.value = false
+    return
+  }
+  comparisonMode.value = !comparisonMode.value
+}
+
+// If cohorts drop below 2, automatically exit comparison mode
+watch(
+  cohorts,
+  (list) => {
+    if (list.length < 2 && comparisonMode.value) {
+      comparisonMode.value = false
+    }
+  },
+  { deep: true }
+)
+
+
+
 
 /* =========================
  * Chart metrics based on interactionFilteredData
@@ -1224,6 +1412,19 @@ onMounted(() => {
             </ClientOnly>
           </div>
 
+          <!-- Cohorts panel -->
+          <CohortPanel
+            :cohorts="cohorts"
+            :active-cohort-id="activeCohortId"
+            :current-selection-count="interactionFilteredData.length"
+            :comparison-enabled="comparisonMode"
+            @create-from-selection="handleCreateCohortFromSelection"
+            @toggle-cohort="handleToggleCohort"
+            @remove-cohort="handleRemoveCohort"
+            @toggle-comparison-mode="handleToggleComparisonMode"
+          />
+
+
           <!-- Cluster summary -->
           <SelectionSummaryPanel
             v-if="currentSelectionCases.length > 0"
@@ -1239,13 +1440,19 @@ onMounted(() => {
             <!-- Top row -->
             <div class="chart-card">
               <ClientOnly>
+                <GenderBarComparison
+                  v-if="comparisonMode && genderComparisonSeries.length >= 2"
+                  :series="genderComparisonSeries"
+                />
                 <GenderBar
+                  v-else
                   :items="displayGenderCounts"
                   :selected-value="interactionSelection?.type === 'gender' ? interactionSelection.value : null"
                   @item-select="handleItemSelect"
                 />
               </ClientOnly>
             </div>
+
             <div class="chart-card">
               <ClientOnly>
                 <AgeHistogram 
