@@ -3,21 +3,49 @@
     <div class="chart-header">
       <div class="title-wrap">
         <h3>Regions</h3>
-        <p class="sub">Cases per region (cases counted in every region they include)</p>
+        <p class="sub">
+          Cases per region (cases counted in every region they include)
+        </p>
       </div>
+
+      <!-- Top 10 / All toggle -->
+      <button
+        v-if="sorted.length > 10"
+        type="button"
+        class="toggle-btn"
+        @click="showAll = !showAll"
+      >
+        {{ showAll ? 'Show top 10' : 'Show all' }}
+      </button>
     </div>
 
     <div class="chart-body">
-      <svg ref="svgRef" class="svg-chart" :viewBox="`0 0 ${VIEW_W} ${computedHeight}`"
-        preserveAspectRatio="xMidYMid meet" role="img" aria-label="Horizontal bar chart of case counts by region" />
+      <svg
+        ref="svgRef"
+        class="svg-chart"
+        :viewBox="`0 0 ${VIEW_W} ${computedHeight}`"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="Horizontal bar chart of case counts by region"
+      />
     </div>
 
-    <div v-if="tooltipVisible" class="chart-tooltip" :style="{ left: `${tooltipX}px`, top: `${tooltipY}px` }">
+    <div
+      v-if="tooltipVisible"
+      class="chart-tooltip"
+      :style="{ left: `${tooltipX}px`, top: `${tooltipY}px` }"
+    >
       <div v-if="tooltipData" class="tooltip-content">
         <div class="tooltip-label">{{ tooltipData.label }}</div>
-        <div class="tooltip-count">Count: {{ tooltipData.count.toLocaleString() }}</div>
-        <div v-if="tooltipData.extra" class="tooltip-extra">{{ tooltipData.extra }}</div>
-        <div v-if="tooltipData.clusterNote" class="tooltip-note">{{ tooltipData.clusterNote }}</div>
+        <div class="tooltip-count">
+          Count: {{ tooltipData.count.toLocaleString() }}
+        </div>
+        <div v-if="tooltipData.extra" class="tooltip-extra">
+          {{ tooltipData.extra }}
+        </div>
+        <div v-if="tooltipData.clusterNote" class="tooltip-note">
+          {{ tooltipData.clusterNote }}
+        </div>
       </div>
     </div>
   </div>
@@ -41,17 +69,31 @@ const emit = defineEmits<{
 }>()
 
 const VIEW_W = 660
-const MARGIN = { top: 8, right: 40, bottom: 26, left: 140 } as const
+const MARGIN = { top: 8, right: 40, bottom: 26, left: 200 } as const
 const ROW_H = 45
 const GAP = 20
 const fmt = d3.format(',')
 
+/** Internal sort (always descending) */
 const sorted = computed<Item[]>(() =>
   (props.items ?? []).slice().sort((a, b) => b.count - a.count)
 )
 
+/** Whether to show all regions or just the top 10 */
+const showAll = ref(false)
+
+/** What we actually render */
+const visibleItems = computed<Item[]>(() => {
+  const data = sorted.value
+  if (!showAll.value && data.length > 10) {
+    return data.slice(0, 10)
+  }
+  return data
+})
+
 const computedHeight = computed(() => {
-  const inner = Math.max(0, sorted.value.length * (ROW_H + GAP) - GAP)
+  const n = visibleItems.value.length
+  const inner = Math.max(0, n * (ROW_H + GAP) - GAP)
   return MARGIN.top + inner + MARGIN.bottom
 })
 
@@ -84,7 +126,7 @@ const draw = () => {
   const svg = d3.select(el)
   svg.selectAll('*').remove()
 
-  const data = sorted.value
+  const data = visibleItems.value
   const W = VIEW_W
   const H = computedHeight.value
   const innerW = W - MARGIN.left - MARGIN.right
@@ -92,6 +134,7 @@ const draw = () => {
 
   const maxX = d3.max(data, (d: Item) => d.count) ?? 0
   const totalCount = props.total ?? data.reduce((sum, d) => sum + d.count, 0)
+
   if (data.length === 0 || maxX === 0) {
     svg.append('text')
       .attr('x', W / 2)
@@ -115,7 +158,7 @@ const draw = () => {
 
   svg.append('g')
     .attr('transform', `translate(0,${MARGIN.top + innerH})`)
-    .call(d3.axisBottom(x).ticks(5).tickFormat((d) => fmt(d as number)))
+    .call(d3.axisBottom(x).ticks(5).tickFormat(d => fmt(d as number)))
     .selectAll('text')
     .style('font-size', '18px')
 
@@ -123,7 +166,7 @@ const draw = () => {
     .attr('transform', `translate(${MARGIN.left},0)`)
     .call(d3.axisLeft(y))
     .selectAll('text')
-    .style('font-size', '18px')
+    .style('font-size', '10px')
     .style('cursor', 'default')
 
   const g = svg.append('g')
@@ -137,34 +180,39 @@ const draw = () => {
     .attr('width', 0)
     .attr('height', y.bandwidth())
     .attr('rx', 4)
-    .attr('fill', (d: Item) => props.selectedValue === d.label ? '#4c51bf' : '#667eea')
-    .attr('opacity', (d: Item) => props.selectedValue === d.label ? 1 : 0.85)
-    .attr('stroke', (d: Item) => props.selectedValue === d.label ? '#2d3748' : 'none')
-    .attr('stroke-width', (d: Item) => props.selectedValue === d.label ? 2 : 0)
+    .attr('fill', (d: Item) =>
+      props.selectedValue === d.label ? '#4c51bf' : '#667eea'
+    )
+    .attr('opacity', (d: Item) => (props.selectedValue === d.label ? 1 : 0.85))
+    .attr('stroke', (d: Item) =>
+      props.selectedValue === d.label ? '#2d3748' : 'none'
+    )
+    .attr('stroke-width', (d: Item) => (props.selectedValue === d.label ? 2 : 0))
     .style('cursor', 'pointer')
     .on('mouseenter', function (event, d: Item) {
       if (props.selectedValue !== d.label) {
         d3.select(this).attr('opacity', 1)
       }
 
-      const pct = totalCount > 0 ? ((d.count / totalCount) * 100).toFixed(1) : '0.0'
+      const pct =
+        totalCount > 0 ? ((d.count / totalCount) * 100).toFixed(1) : '0.0'
 
       const tooltipContent = {
         label: d.label,
         count: d.count,
         total: totalCount,
         extra: `${pct}% of all cases`,
-        clusterNote: props.clusterNote
+        clusterNote: props.clusterNote,
       }
 
       nextTick(() => {
         showTooltip(event as MouseEvent, tooltipContent)
       })
     })
-    .on('mousemove', (event) => {
+    .on('mousemove', event => {
       updatePosition(event as MouseEvent)
     })
-      .on('mouseleave', function(_event, d: Item) {
+    .on('mouseleave', function (_event, d: Item) {
       if (props.selectedValue !== d.label) {
         d3.select(this).attr('opacity', 0.85)
       }
@@ -174,11 +222,13 @@ const draw = () => {
       emit('itemSelect', { type: 'region', value: d.label })
     })
 
-  bars.transition()
+  bars
+    .transition()
     .duration(350)
     .attr('width', (d: Item) => x(d.count) - x(0))
 
-  const labels_text = g.selectAll('text.value')
+  const labelsText = g
+    .selectAll('text.value')
     .data(data)
     .enter()
     .append('text')
@@ -192,7 +242,8 @@ const draw = () => {
     .style('font-weight', '600')
     .text((d: Item) => fmt(d.count))
 
-  labels_text.transition()
+  labelsText
+    .transition()
     .duration(350)
     .delay(100)
     .attr('x', (d: Item) => x(d.count) + 6)
@@ -200,12 +251,12 @@ const draw = () => {
 }
 
 onMounted(draw)
-watch([sorted, computedHeight], draw, { deep: true })
+watch([visibleItems, computedHeight], draw, { deep: true })
 watch(() => props.selectedValue, draw)
 </script>
 
 <style scoped>
-.region-chart{
+.region-chart {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -218,7 +269,7 @@ watch(() => props.selectedValue, draw)
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: .75rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
@@ -228,10 +279,45 @@ watch(() => props.selectedValue, draw)
   font-size: 1.1rem;
   font-weight: 700;
 }
-.sub { margin: 0.15rem 0 0; color: #718096; font-size: 0.9rem; }
-.chart-body { width: 100%; flex: 1 1 auto; }
-.svg-chart { width: 100%; height: auto; display: block; }
-.empty-note { margin-top: 0.5rem; color: #718096; font-size: 0.9rem; }
+
+.sub {
+  margin: 0.15rem 0 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.toggle-btn {
+  margin-left: auto;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5e0;
+  background: #edf2f7;
+  color: #4a5568;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background: #e2e8f0;
+}
+
+.chart-body {
+  width: 100%;
+  flex: 1 1 auto;
+}
+
+.svg-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.empty-note {
+  margin-top: 0.5rem;
+  color: #718096;
+  font-size: 0.9rem;
+}
 
 .chart-tooltip {
   position: fixed;

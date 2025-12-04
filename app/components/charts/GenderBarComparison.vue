@@ -2,7 +2,7 @@
   <div class="gender-chart">
     <div class="chart-header">
       <h3>Gender comparison</h3>
-      <p class="sub">Case counts per gender for each group (static cohorts)</p>
+      <p class="sub">Relative gender distribution for each group (%)</p>
     </div>
     <div class="chart-body">
       <svg
@@ -82,10 +82,8 @@ const draw = () => {
     return
   }
 
-  const maxY =
-    d3.max(series, s => d3.max(s.items, d => d.count) ?? 0) ?? 0
-
-  if (maxY === 0) {
+  const maxTotal = d3.max(series, s => s.total) ?? 0
+  if (maxTotal === 0) {
     svg
       .append('text')
       .attr('x', W / 2)
@@ -111,10 +109,10 @@ const draw = () => {
     .range([0, x0.bandwidth()])
     .padding(0.1)
 
-  // Y scale
+  // Y scale: fixed 0–100% for relative comparison
   const y = d3
     .scaleLinear()
-    .domain([0, maxY])
+    .domain([0, 100])
     .nice()
     .range([MARGIN.top + INNER_H, MARGIN.top])
 
@@ -124,14 +122,19 @@ const draw = () => {
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
     .call(d3.axisBottom(x0))
     .selectAll('text')
-    .style('font-size', '14px')
+    .style('font-size', '12px')
 
   svg
     .append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
-    .call(d3.axisLeft(y).ticks(5).tickFormat(d => fmt(d as number)))
+    .call(
+      d3
+        .axisLeft(y)
+        .ticks(5)
+        .tickFormat(d => `${d as number}%`)
+    )
     .selectAll('text')
-    .style('font-size', '14px')
+    .style('font-size', '12px')
 
   const g = svg.append('g')
 
@@ -143,7 +146,9 @@ const draw = () => {
 
     const forLabel = series.map(s => {
       const item = s.items.find(it => it.label === label)
-      return { series: s, value: item ? item.count : 0 }
+      const raw = item ? item.count : 0
+      const value = s.total > 0 ? (raw / s.total) * 100 : 0
+      return { series: s, value, raw }
     })
 
     // Bars
@@ -166,20 +171,20 @@ const draw = () => {
       .attr('y', d => y(d.value))
       .attr('height', d => y(0) - y(d.value))
 
-    // Value labels
+    // Value labels (percentages)
     group
       .selectAll('text.value')
       .data(forLabel)
       .enter()
       .append('text')
       .attr('class', 'value')
-      .attr('x', d => (x1(d.series.cohortId)! + x1.bandwidth() / 2))
+      .attr('x', d => x1(d.series.cohortId)! + x1.bandwidth() / 2)
       .attr('y', y(0))
       .attr('text-anchor', 'middle')
       .attr('fill', '#2d3748')
       .style('font-size', '11px')
       .style('font-weight', '600')
-      .text(d => (d.value > 0 ? fmt(d.value) : ''))
+      .text(d => (d.value > 0 ? `${Math.round(d.value)}%` : ''))
       .transition()
       .duration(350)
       .delay(80)
@@ -197,7 +202,7 @@ const draw = () => {
     .enter()
     .append('g')
     .attr('class', 'legend-item')
-    .attr('transform', (_d, i) => `translate(${i * 160},0)`)
+    .attr('transform', (_d, i) => `translate(${i * 80},0)`)
 
   legendItem
     .append('rect')

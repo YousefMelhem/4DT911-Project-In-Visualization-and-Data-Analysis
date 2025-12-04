@@ -1,9 +1,9 @@
 <template>
-  <div class="modality-region-heatmap">
+  <div class="region-heatmap">
     <div class="chart-header">
-      <h3>Region by modality</h3>
+      <h3>Region by group</h3>
       <p class="sub">
-        Share of each modality&rsquo;s cases that include a given region
+        Share of each group&rsquo;s cases that include a given region
       </p>
     </div>
 
@@ -16,7 +16,7 @@
         role="img"
       />
       <div
-        v-if="matrix.rowLabels.length === 0 || matrix.colLabels.length === 0"
+        v-if="matrix.regions.length === 0 || matrix.groups.length === 0"
         class="empty-note"
       >
         No data
@@ -34,7 +34,7 @@
           {{ tooltipData.count.toLocaleString() }} cases
         </div>
         <div class="tooltip-extra">
-          {{ tooltipData.percent.toFixed(1) }}% of this modality
+          {{ tooltipData.percent.toFixed(1) }}% of this group
         </div>
       </div>
     </div>
@@ -42,26 +42,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from "vue"
+import { ref, watch, onMounted, computed, nextTick } from "vue"
 import * as d3 from "d3"
 
-type ModalityRegionMatrix = {
-  rowLabels: string[]   // regions
-  colLabels: string[]   // modalities
-  grid: number[][]      // grid[regionIdx][modalityIdx]
+/* =========================
+ * Types
+ * =======================*/
+type RegionGroupMatrix = {
+  regions: string[]
+  groups: {
+    id: string
+    name: string
+    color: string
+    total: number
+  }[]
+  counts: number[][] // counts[regionIdx][groupIdx]
+}
+
+type Cell = {
+  region: string
+  groupId: string
+  groupName: string
+  groupColor: string
+  value: number
+  totalInGroup: number
+  percent: number
 }
 
 const props = defineProps<{
-  matrix: ModalityRegionMatrix
-  selectedValue?: { modality: string; region: string } | null
+  matrix: RegionGroupMatrix
+  selectedValue?: string | null
 }>()
 
 const emit = defineEmits<{
-  (e: "item-select", payload: { type: "modality-region"; modality: string; region: string } | null): void
+  (e: "item-select", payload: { type: "region"; value: string } | null): void
 }>()
 
 /* =========================
- * Sizing (match RegionByGroupHeatmap)
+ * Scaled-down sizing
  * =======================*/
 const VIEW_W = 450
 const CELL_SIZE = 15
@@ -69,12 +87,12 @@ const MARGIN = { top: 40, right: 6, bottom: 0, left: 0 }
 const COL_LABEL_OFFSET = 3
 
 const computedHeight = computed(() => {
-  const nRows = props.matrix.colLabels?.length ?? 0  // modalities
-  return MARGIN.top + nRows * CELL_SIZE + MARGIN.bottom
+  const n = props.matrix.groups?.length ?? 0
+  return MARGIN.top + n * CELL_SIZE + MARGIN.bottom
 })
 
 /* =========================
- * SVG + tooltip
+ * SVG / Tooltip
  * =======================*/
 const svgRef = ref<SVGSVGElement | null>(null)
 
@@ -90,32 +108,21 @@ const showTooltip = (event: MouseEvent, data: any) => {
   tooltipY.value = event.clientY - 10
 }
 
-const hideTooltip = () => {
-  tooltipVisible.value = false
-}
+const hideTooltip = () => (tooltipVisible.value = false)
 
 /* =========================
  * Render
  * =======================*/
-type Cell = {
-  region: string
-  modality: string
-  value: number
-  totalForModality: number
-  percent: number
-}
-
 const draw = () => {
   const el = svgRef.value
   if (!el) return
 
-  // NOTE: in the matrix, rowLabels = regions, colLabels = modalities
-  const regions = props.matrix.rowLabels ?? []
-  const modalities = props.matrix.colLabels ?? []
-  const grid = props.matrix.grid ?? []
+  const regions = props.matrix.regions ?? []
+  const groups = props.matrix.groups ?? []
+  const counts = props.matrix.counts ?? []
 
+  const nRows = groups.length
   const nCols = regions.length
-  const nRows = modalities.length
 
   const W = VIEW_W
   const H = computedHeight.value
@@ -134,16 +141,7 @@ const draw = () => {
     return
   }
 
-  // Compute total per modality (row) so we can show percentages "of this modality"
-  const totalsByModality = new Array(nRows).fill(0)
-  for (let m = 0; m < nRows; m++) {
-    let sum = 0
-    for (let r = 0; r < nCols; r++) {
-      sum += grid[r]?.[m] ?? 0
-    }
-    totalsByModality[m] = sum
-  }
-
+  /* --- Grid scaling --- */
   const innerWidth = nCols * CELL_SIZE
   const xStart = (W - innerWidth) / 2
 
@@ -153,26 +151,29 @@ const draw = () => {
     .padding(0)
 
   const y = d3.scaleBand<string>()
-    .domain(modalities)
+    .domain(groups.map(g => g.id))
     .range([MARGIN.top, MARGIN.top + nRows * CELL_SIZE])
     .padding(0)
 
+  /* --- Flatten cell data --- */
   const cells: Cell[] = []
   let maxPct = 0
 
-  for (let m = 0; m < nRows; m++) {
-    const modality = modalities[m]!
-    const totalForModality = totalsByModality[m] || 0
-    for (let r = 0; r < nCols; r++) {
-      const region = regions[r]!
-      const value = grid[r]?.[m] ?? 0
-      const pct = totalForModality > 0 ? (value / totalForModality) * 100 : 0
+  for (let r = 0; r < nRows; r++) {
+    const group = groups[r]!
+    for (let c = 0; c < nCols; c++) {
+      const region = regions[c]!
+      const value = counts[c]?.[r] ?? 0
+      const total = group.total || 0
+      const pct = total > 0 ? (value / total) * 100 : 0
 
       cells.push({
         region,
-        modality,
+        groupId: group.id,
+        groupName: group.name,
+        groupColor: group.color,
         value,
-        totalForModality,
+        totalInGroup: total,
         percent: pct
       })
 
@@ -185,7 +186,7 @@ const draw = () => {
 
   const fmtPct = d3.format(".1f")
 
-  /* --- Column labels (regions) --- */
+  /* --- Column labels --- */
   svg.append("g")
     .attr("transform", `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
     .selectAll("text")
@@ -194,33 +195,25 @@ const draw = () => {
     .append("text")
     .attr("transform", r => `translate(${x(r)! + x.bandwidth()/2},0) rotate(-30)`)
     .attr("text-anchor", "start")
-    .attr("fill", r =>
-      props.selectedValue && props.selectedValue.region === r ? "#2b6cb0" : "#4a5568"
-    )
+    .attr("fill", r => props.selectedValue === r ? "#2b6cb0" : "#4a5568")
     .style("font-size", "3px")
-    .style("font-weight", r =>
-      props.selectedValue && props.selectedValue.region === r ? 700 : 500
-    )
+    .style("font-weight", r => props.selectedValue === r ? 700 : 500)
     .text(r => r)
 
-  /* --- Row labels (modalities) --- */
+  /* --- Row labels (groups) --- */
   svg.append("g")
     .selectAll("text")
-    .data(modalities)
+    .data(groups)
     .enter()
     .append("text")
     .attr("x", xStart - 6)
-    .attr("y", m => y(m)! + y.bandwidth()/2)
+    .attr("y", g => y(g.id)! + y.bandwidth()/2)
     .attr("text-anchor", "end")
     .attr("dominant-baseline", "middle")
-    .attr("fill", m =>
-      props.selectedValue && props.selectedValue.modality === m ? "#2b6cb0" : "#4a5568"
-    )
+    .attr("fill", g => g.color)
     .style("font-size", "5px")
-    .style("font-weight", m =>
-      props.selectedValue && props.selectedValue.modality === m ? "700" : "600"
-    )
-    .text(m => m)
+    .style("font-weight", "600")
+    .text(g => g.name)
 
   /* --- Cells --- */
   const gGrid = svg.append("g")
@@ -231,25 +224,19 @@ const draw = () => {
     .append("rect")
     .attr("class", "cell")
     .attr("x", d => x(d.region)!)
-    .attr("y", d => y(d.modality)!)
+    .attr("y", d => y(d.groupId)!)
     .attr("width", x.bandwidth())
     .attr("height", y.bandwidth())
-    .attr("stroke", d => {
-      const sel = props.selectedValue
-      if (!sel) return "#e2e8f0"
-      const isSel = sel.region === d.region && sel.modality === d.modality
-      return isSel ? "#2b6cb0" : "#e2e8f0"
-    })
-    .attr("stroke-width", d => {
-      const sel = props.selectedValue
-      if (!sel) return 0.5
-      const isSel = sel.region === d.region && sel.modality === d.modality
-      return isSel ? 2 : 0.5
-    })
+    .attr("stroke", d =>
+      props.selectedValue === d.region ? "#2b6cb0" : "#e2e8f0"
+    )
+    .attr("stroke-width", d =>
+      props.selectedValue === d.region ? 2 : 0.5
+    )
     .attr("fill", d => d.percent === 0 ? "#f7fafc" : color(d.percent)!)
     .attr("opacity", 0.85)
     .style("cursor", "pointer")
-    .on("mouseenter", function (event, d) {
+    .on("mouseenter", function(event, d) {
       d3.select(this)
         .transition().duration(120)
         .attr("stroke", "#667eea")
@@ -257,7 +244,7 @@ const draw = () => {
         .attr("opacity", 1)
 
       showTooltip(event as MouseEvent, {
-        label: `${d.region} in ${d.modality}`,
+        label: `${d.region} in ${d.groupName}`,
         count: d.value,
         percent: d.percent
       })
@@ -266,9 +253,8 @@ const draw = () => {
       tooltipX.value = evt.clientX + 10
       tooltipY.value = evt.clientY - 10
     })
-    .on("mouseleave", function (event, d) {
-      const sel = props.selectedValue
-      const isSel = !!sel && sel.region === d.region && sel.modality === d.modality
+    .on("mouseleave", function(event, d) {
+      const isSel = props.selectedValue === d.region
 
       d3.select(this)
         .transition().duration(120)
@@ -279,16 +265,10 @@ const draw = () => {
       hideTooltip()
     })
     .on("click", (_evt, d) => {
-      const sel = props.selectedValue
-      if (sel && sel.region === d.region && sel.modality === d.modality) {
+      if (props.selectedValue === d.region)
         emit("item-select", null)
-      } else {
-        emit("item-select", {
-          type: "modality-region",
-          modality: d.modality,
-          region: d.region
-        })
-      }
+      else
+        emit("item-select", { type: "region", value: d.region })
     })
 
   /* --- Percent labels --- */
@@ -297,7 +277,7 @@ const draw = () => {
     .enter()
     .append("text")
     .attr("x", d => x(d.region)! + x.bandwidth()/2)
-    .attr("y", d => y(d.modality)! + y.bandwidth()/2)
+    .attr("y", d => y(d.groupId)! + y.bandwidth()/2)
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
     .style("font-size", "4px")
@@ -317,24 +297,11 @@ watch(() => props.selectedValue, draw)
 </script>
 
 <style scoped>
-.modality-region-heatmap {
+.region-heatmap {
   padding: 1rem 1rem 1.25rem;
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.chart-header h3 {
-  margin: 0 0 0.1rem;
-  color: #2d3748;
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.sub {
-  margin: 0 0 0.5rem;
-  color: #718096;
-  font-size: 0.85rem;
 }
 
 .chart-body {
@@ -363,21 +330,5 @@ watch(() => props.selectedValue, draw)
   padding: 6px 10px;
   font-size: 11px;
   border-radius: 6px;
-}
-
-.tooltip-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tooltip-label {
-  font-weight: 700;
-  margin-bottom: 2px;
-}
-
-.tooltip-count,
-.tooltip-extra {
-  font-size: 11px;
 }
 </style>
