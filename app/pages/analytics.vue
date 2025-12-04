@@ -4,18 +4,26 @@
  * =======================*/
 import { ref, onMounted, computed, watch } from 'vue'
 import GenderBar from '~/components/charts/GenderBar.vue'
+import GenderBarComparison from '~/components/charts/GenderBarComparison.vue'
 import AgeHistogram from '~/components/charts/AgeHistogram.vue'
+import AgeComparisonKDE from '~/components/charts/AgeComparisonKDE.vue'
 import ModalityBar from '~/components/charts/ModalityBar.vue'
 import RegionBar from '~/components/charts/RegionBar.vue'
 import CasesOverTime from '~/components/charts/CasesOverTime.vue'
+import CasesOverTimeComparison from '~/components/charts/CasesOverTimeComparison.vue'
 import DiagnosisUMAP from '~/components/charts/DiagnosisUMAP.vue'
 import SectionsCoverageBar from '~/components/charts/SectionsCoverageBar.vue'
+import SectionByGroupHeatmap from '~/components/charts/SectionByGroupHeatmap.vue'
 import ModalityHeatmap from '~/components/charts/ModalityHeatmap.vue'
+import ModalityGroupHeatmap from '~/components/charts/ModalityGroupHeatmap.vue'
+import RegionGroupHeatmap from '~/components/charts/RegionGroupHeatmap.vue'
 import RegionHeatmap from '~/components/charts/RegionHeatmap.vue'
 import ModalityRegionHeatmap from '~/components/charts/ModalityRegionHeatmap.vue'
 import DialogBox from '~/components/popup/DialogBox.vue'
 import CaseFiltersPanel from '~/components/filters/CaseFiltersPanel.vue'
 import SelectionSummaryPanel from '~/components/analytics/SelectionSummaryPanel.vue'
+import SelectionSummaryComparisonPanel from '~/components/analytics/SelectionSummaryComparisonPanel.vue'
+import CohortPanel from '~/components/analytics/CohortPanel.vue'
 import {
   useCaseFilters,
   type CaseSummary,
@@ -30,6 +38,40 @@ type ModalityMatrix = { labels: string[]; grid: number[][] }
 type RegionMatrix = ModalityMatrix
 type ModalityRegionMatrix = { rowLabels: string[]; colLabels: string[]; grid: number[][] }
 
+type ModalityGroupMatrix = {
+  modalities: string[]
+  groups: {
+    id: string
+    name: string
+    color: string
+    total: number
+  }[]
+  counts: number[][]
+}
+
+type SectionGroupMatrix = {
+  sections: string[]
+  groups: {
+    id: string
+    name: string
+    color: string
+    total: number
+  }[]
+  counts: number[][]
+}
+
+type RegionGroupMatrix = {
+  regions: string[]
+  groups: {
+    id: string
+    name: string
+    color: string
+    total: number
+  }[]
+  counts: number[][]
+}
+
+
 type DiagnosisUMAPInfo = {
   x: number
   y: number
@@ -43,6 +85,42 @@ type CaseWithCoords = {
   y: number
   dist?: number
 }
+
+type Cohort = {
+  id: string
+  name: string
+  caseIds: Array<CaseSummary['id']>
+  size: number
+  createdAt: string
+  color: string
+}
+
+type ComparisonGroupSummary = {
+  id: string
+  name: string
+  color: string
+  size: number
+  topTerms: TermItem[]
+  typicalCases: CaseSummary[]
+  atypicalCases: CaseSummary[]
+}
+
+type GenderComparisonSeries = {
+  cohortId: string
+  cohortName: string
+  color: string
+  items: Item[]
+  total: number
+}
+
+type TimeComparisonSeries = {
+  id: string
+  name: string
+  color: string
+  size: number
+  series: Point[]
+}
+
 
 type TermItem = { term: string; weight: number }
 
@@ -187,6 +265,56 @@ const API_URL = config.public.apiUrl
 
 const { error: showError } = useDialog()
 
+
+/* =========================
+ * Cohorts (saved groups)
+ * =======================*/
+const cohorts = ref<Cohort[]>([])
+const activeCohortId = ref<string | null>(null)
+const comparisonMode = ref(false)
+
+/**
+ * Base dataset for all downstream filtering.
+ * If a cohort is active, we restrict the raw data to that cohort's case IDs.
+ * Otherwise we use the full rawData.
+ */
+const effectiveRawData = computed<CaseSummary[]>(() => {
+  const currentId = activeCohortId.value
+  if (!currentId) return rawData.value
+
+  const cohort = cohorts.value.find(c => c.id === currentId)
+  if (!cohort) return rawData.value
+
+  const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+  return rawData.value.filter(row => idSet.has(row.id))
+})
+
+/* Cohort Colors */
+const COHORT_COLORS = [
+  '#E53E3E', // red
+  '#3182CE', // blue
+  '#38A169', // green
+  '#D69E2E', // gold
+  '#805AD5', // purple
+  '#DD6B20', // orange
+  '#319795', // teal
+]
+
+const nextCohortColor = (): string => {
+  const paletteSize = COHORT_COLORS.length
+  if (paletteSize === 0) {
+    // Fallback color (should never really happen)
+    return '#667eea'
+  }
+
+  const index = cohorts.value.length % paletteSize
+  // `||` (or `??`) guarantees a string even with noUncheckedIndexedAccess
+  return COHORT_COLORS[index] || '#667eea'
+}
+
+
+
+
 // Shared filters + filtered data via composable
 const {
   filters,
@@ -200,7 +328,7 @@ const {
   normalizeGender,
   getCaseMainRegions,
   getCaseSubregions,
-} = useCaseFilters(rawData)
+} = useCaseFilters(effectiveRawData)
 
 /* =========================
  * Derived lists for axes
@@ -217,6 +345,18 @@ const allMainRegions = computed<string[]>(() => {
   }
   return Array.from(set).sort()
 })
+
+// All regions list for axes (based on subregions, new Imaging Category style)
+const allRegions = computed<string[]>(() => {
+  const set = new Set<string>()
+  for (const row of rawData.value) {
+    for (const r of getCaseSubregions(row)) {
+      if (r) set.add(r)
+    }
+  }
+  return Array.from(set).sort()
+})
+
 
 /* =========================
  * Filters actions
@@ -246,37 +386,7 @@ const modalityCounts = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const regionCountsMain = computed<Item[]>(() => {
-  const map = new Map<string, number>()
-  for (const row of filteredData.value) {
-    for (const main of getCaseMainRegions(row)) {
-      if (main) map.set(main, (map.get(main) ?? 0) + 1)
-    }
-  }
-  return Array.from(map.entries())
-    .map(([label, count]) => ({ label, count }))
-    .sort((a, b) => b.count - a.count)
-})
 
-const regionCountsSub = computed<Item[]>(() => {
-  const map = new Map<string, number>()
-  for (const row of filteredData.value) {
-    for (const sub of getCaseSubregions(row)) {
-      if (sub) map.set(sub, (map.get(sub) ?? 0) + 1)
-    }
-  }
-  return Array.from(map.entries())
-    .map(([label, count]) => ({ label, count }))
-    .sort((a, b) => b.count - a.count)
-})
-
-const regionChartMode = ref<'main' | 'sub'>('main')
-
-const regionCounts = computed<Item[]>(() =>
-  regionChartMode.value === 'main'
-    ? regionCountsMain.value
-    : regionCountsSub.value
-)
 
 // Text-section coverage (base, all filtered cases)
 const sectionCoverage = computed<Item[]>(() => {
@@ -328,6 +438,238 @@ const modalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
     (row) => row.modalities ?? []
   )
 )
+
+
+type AgeComparisonSeries = {
+  id: string
+  name: string
+  color: string
+  values: number[]
+  total: number
+  unknown: number
+}
+
+const ageComparisonSeries = computed<AgeComparisonSeries[]>(() => {
+  return cohorts.value
+    .map(cohort => {
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      const rows = rawData.value.filter(row => idSet.has(row.id))
+
+      const values: number[] = []
+      let unknown = 0
+
+      for (const row of rows) {
+        const age = row.patient_age
+        if (typeof age === 'number' && Number.isFinite(age)) {
+          values.push(age)
+        } else {
+          unknown++
+        }
+      }
+
+      return {
+        id: cohort.id,
+        name: cohort.name,
+        color: cohort.color,
+        values,
+        total: rows.length,
+        unknown,
+      }
+    })
+    // need at least a couple of ages to form a curve
+    .filter(s => s.values.length >= 2)
+})
+
+
+const modalityGroupMatrix = computed<ModalityGroupMatrix>(() => {
+  // Only meaningful in comparison mode with cohorts
+  if (!comparisonMode.value || cohorts.value.length === 0) {
+    return { modalities: [], groups: [], counts: [] }
+  }
+
+  const modalities = allModalities.value.slice()
+
+  // Build group metadata (static cohorts, using rawData)
+  const groups = cohorts.value
+    .map(cohort => {
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      const rows = rawData.value.filter(row => idSet.has(row.id))
+      return {
+        id: cohort.id,
+        name: cohort.name,
+        color: cohort.color,
+        total: rows.length,
+      }
+    })
+    .filter(g => g.total > 0)
+
+  if (!modalities.length || !groups.length) {
+    return { modalities: [], groups: [], counts: [] }
+  }
+
+  // counts[rowIdx][colIdx] = number of cases in group colIdx that have modality rowIdx
+  const counts: number[][] = modalities.map(() => Array(groups.length).fill(0))
+
+  for (let gIdx = 0; gIdx < groups.length; gIdx++) {
+    const groupMeta = groups[gIdx]!
+    const cohort = cohorts.value.find(c => c.id === groupMeta.id)
+    if (!cohort) continue
+
+    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+
+    for (const row of rawData.value) {
+      if (!idSet.has(row.id)) continue
+      const rowMods = row.modalities ?? []
+      if (!rowMods.length) continue
+
+      for (let mIdx = 0; mIdx < modalities.length; mIdx++) {
+        const mod = modalities[mIdx]!
+        if (rowMods.includes(mod)) {
+          counts[mIdx]![gIdx]!++
+        }
+      }
+    }
+  }
+
+  return { modalities, groups, counts }
+})
+
+
+const SECTION_LABELS = [
+  'History',
+  'Exam',
+  'Findings',
+  'Diagnosis',
+  'Treatment',
+  'Discussion',
+] as const
+
+const sectionGroupMatrix = computed<SectionGroupMatrix>(() => {
+  const sections = SECTION_LABELS.slice() as string[]
+
+  // Only meaningful in comparison mode with cohorts
+  if (!comparisonMode.value || cohorts.value.length === 0) {
+    return { sections, groups: [], counts: [] }
+  }
+
+  // Build group metadata (static cohorts, using rawData)
+  const groups = cohorts.value
+    .map(cohort => {
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      const rows = rawData.value.filter(row => idSet.has(row.id))
+      return {
+        id: cohort.id,
+        name: cohort.name,
+        color: cohort.color,
+        total: rows.length,
+      }
+    })
+    .filter(g => g.total > 0)
+
+  if (!sections.length || !groups.length) {
+    return { sections, groups: [], counts: [] }
+  }
+
+  // counts[sectionIdx][groupIdx] = number of cases in group g that have that section
+  const counts: number[][] = sections.map(
+    () => Array.from({ length: groups.length }, () => 0)
+  )
+
+  for (let gIdx = 0; gIdx < groups.length; gIdx++) {
+    const groupMeta = groups[gIdx]!
+    const cohort = cohorts.value.find(c => c.id === groupMeta.id)
+    if (!cohort) continue
+
+    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+
+    // helper so TS is happy with indexing
+    const inc = (sectionIndex: number) => {
+      const rowArr = counts[sectionIndex]
+      if (!rowArr) return
+      const current = rowArr[gIdx] ?? 0
+      rowArr[gIdx] = current + 1
+    }
+
+    for (const row of rawData.value) {
+      if (!idSet.has(row.id)) continue
+
+      if (row.has_history)   inc(0)
+      if (row.has_exam)      inc(1)
+      if (row.has_findings)  inc(2)
+      if (row.has_diagnosis) inc(3)
+      if (row.has_treatment) inc(4)
+      if (row.has_discussion)inc(5)
+    }
+  }
+
+  return { sections, groups, counts }
+})
+
+
+const regionGroupMatrix = computed<RegionGroupMatrix>(() => {
+  const regions = allRegions.value.slice()
+
+  // Only meaningful in comparison mode with cohorts
+  if (!comparisonMode.value || cohorts.value.length === 0) {
+    return { regions, groups: [], counts: [] }
+  }
+
+  // Build group metadata (static cohorts, using rawData)
+  const groups = cohorts.value
+    .map(cohort => {
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      const rows = rawData.value.filter(row => idSet.has(row.id))
+      return {
+        id: cohort.id,
+        name: cohort.name,
+        color: cohort.color,
+        total: rows.length,
+      }
+    })
+    .filter(g => g.total > 0)
+
+  if (!regions.length || !groups.length) {
+    return { regions, groups: [], counts: [] }
+  }
+
+  const regionIndex = new Map<string, number>()
+  regions.forEach((label, i) => regionIndex.set(label, i))
+
+  // counts[regionIdx][groupIdx] = #cases in group that have that region
+  const counts: number[][] = regions.map(
+    () => Array.from({ length: groups.length }, () => 0)
+  )
+
+  for (let gIdx = 0; gIdx < groups.length; gIdx++) {
+    const groupMeta = groups[gIdx]!
+    const cohort = cohorts.value.find(c => c.id === groupMeta.id)
+    if (!cohort) continue
+
+    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+
+    for (const row of rawData.value) {
+      if (!idSet.has(row.id)) continue
+
+      const rowRegions = getCaseSubregions(row)
+      if (!rowRegions.length) continue
+
+      // Unique regions per case (you currently have max 1, but this is safe)
+      const unique = Array.from(new Set(rowRegions.filter(Boolean)))
+
+      for (const reg of unique) {
+        const rIdx = regionIndex.get(reg)
+        if (rIdx === undefined) continue
+        const rowArr = counts[rIdx]
+        if (!rowArr) continue
+        rowArr[gIdx] = (rowArr[gIdx] ?? 0) + 1
+      }
+    }
+  }
+
+  return { regions, groups, counts }
+})
+
+
 
 /* =========================
  * UMAP Cluster Interaction
@@ -558,6 +900,153 @@ const handleClearInteractions = () => {
   chartResetKey.value++
 }
 
+
+/* =========================
+ * Cohort actions
+ * =======================*/
+
+/**
+ * Save the current selection (interactionFilteredData) as a new static cohort.
+ * Cohort membership never changes after creation.
+ */
+const handleCreateCohortFromSelection = () => {
+  const cases = interactionFilteredData.value
+  if (!cases.length) return
+
+  const id = `cohort-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  const defaultName = `Group ${cohorts.value.length + 1}`
+  const caseIds = cases.map(c => c.id)
+
+  cohorts.value.push({
+    id,
+    name: defaultName,
+    caseIds,
+    size: caseIds.length,
+    createdAt: new Date().toISOString(),
+    color: nextCohortColor(),   // <-- NEW
+  })
+}
+
+
+/**
+ * Clicking a cohort focuses the whole page on that cohort's cases.
+ * Clicking it again clears the cohort filter.
+ */
+const handleToggleCohort = (id: string) => {
+  if (activeCohortId.value === id) {
+    activeCohortId.value = null
+  } else {
+    activeCohortId.value = id
+  }
+}
+
+/**
+ * Remove a saved cohort. If it was active, clear the cohort filter.
+ */
+const handleRemoveCohort = (id: string) => {
+  const idx = cohorts.value.findIndex(c => c.id === id)
+  if (idx !== -1) {
+    cohorts.value.splice(idx, 1)
+  }
+  if (activeCohortId.value === id) {
+    activeCohortId.value = null
+  }
+}
+
+
+/* =========================
+ * Comparison-mode series (static cohorts)
+ * =======================*/
+
+const genderComparisonSeries = computed<GenderComparisonSeries[]>(() => {
+  if (!comparisonMode.value) return []
+  if (!cohorts.value.length) return []
+
+  return cohorts.value.map((cohort) => {
+    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+
+    // IMPORTANT: use rawData (full dataset), not effectiveRawData,
+    // so cohorts are static and ignore current filters.
+    const cases = rawData.value.filter(row => idSet.has(row.id))
+
+    const counts = { Female: 0, Male: 0, Unknown: 0 }
+    for (const row of cases) {
+      counts[normalizeGender(row.gender)]++
+    }
+
+    const items: Item[] = [
+      { label: 'Female', count: counts.Female },
+      { label: 'Male', count: counts.Male },
+      { label: 'Unknown', count: counts.Unknown },
+    ]
+
+    const total = items.reduce((sum, d) => sum + d.count, 0)
+
+    return {
+      cohortId: cohort.id,
+      cohortName: cohort.name,
+      color: cohort.color,
+      items,
+      total,
+    }
+  })
+})
+
+
+const comparisonGroupSummaries = computed<ComparisonGroupSummary[]>(() => {
+  if (!comparisonMode.value) return []
+  if (!cohorts.value.length) return []
+
+  return cohorts.value
+    .map((cohort) => {
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      const rows = rawData.value.filter(row => idSet.has(row.id))
+      if (!rows.length) return null
+
+      const { typicalCases, atypicalCases } = buildUMAPSummaryForRows(rows)
+      const topTerms = buildTopTermsForRows(rows)
+
+      return {
+        id: cohort.id,
+        name: cohort.name,
+        color: cohort.color,
+        size: rows.length,
+        typicalCases,
+        atypicalCases,
+        topTerms,
+      }
+    })
+    .filter((g): g is ComparisonGroupSummary => g !== null)
+})
+
+
+
+/**
+ * Toggle comparison mode from the CohortPanel.
+ * Requires at least 2 cohorts.
+ */
+const handleToggleComparisonMode = () => {
+  if (cohorts.value.length < 2) {
+    comparisonMode.value = false
+    return
+  }
+  comparisonMode.value = !comparisonMode.value
+}
+
+// If cohorts drop below 2, automatically exit comparison mode
+watch(
+  cohorts,
+  (list) => {
+    if (list.length < 2 && comparisonMode.value) {
+      comparisonMode.value = false
+    }
+  },
+  { deep: true }
+)
+
+
+
+
 /* =========================
  * Chart metrics based on interactionFilteredData
  * =======================*/
@@ -580,11 +1069,14 @@ const finalModalityCounts = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const finalRegionCountsMain = computed<Item[]>(() => {
+// Base region counts (filters applied, before UMAP / chart interactions)
+const regionCounts = computed<Item[]>(() => {
   const map = new Map<string, number>()
-  for (const row of interactionFilteredData.value) {
-    for (const main of getCaseMainRegions(row)) {
-      if (main) map.set(main, (map.get(main) ?? 0) + 1)
+  for (const row of filteredData.value) {
+    for (const sub of getCaseSubregions(row)) {
+      if (sub) {
+        map.set(sub, (map.get(sub) ?? 0) + 1)
+      }
     }
   }
   return Array.from(map.entries())
@@ -592,11 +1084,14 @@ const finalRegionCountsMain = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const finalRegionCountsSub = computed<Item[]>(() => {
+// Region counts for interaction-filtered data (what the chart uses)
+const finalRegionCounts = computed<Item[]>(() => {
   const map = new Map<string, number>()
   for (const row of interactionFilteredData.value) {
     for (const sub of getCaseSubregions(row)) {
-      if (sub) map.set(sub, (map.get(sub) ?? 0) + 1)
+      if (sub) {
+        map.set(sub, (map.get(sub) ?? 0) + 1)
+      }
     }
   }
   return Array.from(map.entries())
@@ -604,11 +1099,6 @@ const finalRegionCountsSub = computed<Item[]>(() => {
     .sort((a, b) => b.count - a.count)
 })
 
-const finalRegionCounts = computed<Item[]>(() =>
-  regionChartMode.value === 'main'
-    ? finalRegionCountsMain.value
-    : finalRegionCountsSub.value
-)
 
 const clusterAgeBins = computed(() => {
   const bins = [
@@ -725,6 +1215,79 @@ const finalModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
   )
 )
 
+const casesOverTimeComparisonSeries = computed<TimeComparisonSeries[] | null>(() => {
+  if (!comparisonMode.value) return null
+  if (!cohorts.value.length || !rawData.value.length) return null
+
+  const idToRow = new Map<CaseSummary['id'], CaseSummary>()
+  for (const row of rawData.value) {
+    idToRow.set(row.id, row)
+  }
+
+  // Helper: parse added_on into a canonical month key
+  const monthCountsPerCohort: {
+    cohortId: string
+    cohortName: string
+    color: string
+    size: number
+    counts: Map<string, number>
+  }[] = []
+
+  const monthKeyRegex = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/
+
+  for (const cohort of cohorts.value) {
+    const counts = new Map<string, number>()
+
+    for (const id of cohort.caseIds) {
+      const row = idToRow.get(id)
+      if (!row?.added_on) continue
+      const s = row.added_on.trim()
+      const m = monthKeyRegex.exec(s)
+      if (!m) continue
+
+      const y = Number(m[1])
+      const mon = Number(m[2])
+      if (!Number.isFinite(y) || !Number.isFinite(mon) || y < 1900 || y > 2100 || mon < 1 || mon > 12) {
+        continue
+      }
+      const key = `${y}-${String(mon).padStart(2, '0')}-01`
+      counts.set(key, (counts.get(key) ?? 0) + 1)
+    }
+
+    monthCountsPerCohort.push({
+      cohortId: cohort.id,
+      cohortName: cohort.name,
+      color: cohort.color,
+      size: cohort.size,
+      counts,
+    })
+  }
+
+  // Collect all month keys across cohorts to get global axis
+  const allMonthKeys = new Set<string>()
+  for (const c of monthCountsPerCohort) {
+    for (const key of c.counts.keys()) {
+      allMonthKeys.add(key)
+    }
+  }
+
+  if (!allMonthKeys.size) return null
+
+  const sortedKeys = Array.from(allMonthKeys).sort()
+
+  return monthCountsPerCohort.map(c => ({
+    id: c.cohortId,
+    name: c.cohortName,
+    color: c.color,
+    size: c.size,
+    series: sortedKeys.map(key => ({
+      date: new Date(key),
+      count: c.counts.get(key) ?? 0,
+    })),
+  }))
+})
+
+
 /** what we actually feed to charts (always interaction-based) */
 const displayGenderCounts = finalGenderCounts
 const displayModalityCounts = finalModalityCounts
@@ -744,6 +1307,9 @@ const displayModalityRegionMatrix = finalModalityRegionMatrix
 // Diagnosis → UMAP metadata
 const diagnosisUMAPMap = ref<Map<string, DiagnosisUMAPInfo>>(new Map())
 const clusterLabelLookup = ref<Record<number, string>>({})
+// Limit the number of points used for KNN density scoring (for performance)
+const MAX_KNN_POINTS_FOR_SCORING = 600
+
 
 // Load UMAP metadata for diagnoses (for typical/atypical + labels)
 const loadDiagnosisUMAPMeta = async () => {
@@ -784,11 +1350,134 @@ const loadDiagnosisUMAPMeta = async () => {
   }
 }
 
-// Only compute "selection" for Task 1 when a cluster is active.
+// Build UMAP points for an arbitrary set of rows
+const buildPointsForRows = (rows: CaseSummary[]): CaseWithCoords[] => {
+  const map = diagnosisUMAPMap.value
+  if (!map.size) return []
+
+  const out: CaseWithCoords[] = []
+  for (const row of rows) {
+    const diag = row.diagnosis?.trim().toLowerCase()
+    if (!diag) continue
+    const info = map.get(diag)
+    if (!info) continue
+    out.push({
+      caseData: row,
+      x: info.x,
+      y: info.y,
+    })
+  }
+  return out
+}
+
+// KNN-based density scoring for an arbitrary set of points
+const scoreCasesForPoints = (pts: CaseWithCoords[]): ScoredCase[] => {
+  let n = pts.length
+  if (n <= 1) return []
+
+  let workingPts: CaseWithCoords[] = pts
+
+  if (n > MAX_KNN_POINTS_FOR_SCORING) {
+    const step = n / MAX_KNN_POINTS_FOR_SCORING
+    const sampled: CaseWithCoords[] = []
+    for (let i = 0; i < MAX_KNN_POINTS_FOR_SCORING; i++) {
+      const idx = Math.floor(i * step)
+      const p = pts[idx]
+      if (p) sampled.push(p)
+    }
+    workingPts = sampled
+    n = workingPts.length
+  }
+
+  const k = Math.min(10, n - 1)
+  if (k <= 0) return []
+
+  const scored: ScoredCase[] = []
+
+  for (let i = 0; i < n; i++) {
+    const p = workingPts[i]!
+    const dists: number[] = []
+
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue
+      const q = workingPts[j]!
+      const dx = p.x - q.x
+      const dy = p.y - q.y
+      dists.push(Math.sqrt(dx * dx + dy * dy))
+    }
+
+    dists.sort((a, b) => a - b)
+    const neighbors = dists.slice(0, k)
+    const avg =
+      neighbors.reduce((sum, v) => sum + v, 0) /
+      (neighbors.length || 1)
+
+    scored.push({ ...p, score: avg })
+  }
+
+  return scored.sort((a, b) => a.score - b.score)
+}
+
+// normalize diagnosis for uniqueness
+const normalizeDiagKey = (diag: string | null | undefined): string =>
+  diag ? diag.trim().toLowerCase() : ''
+
+// Turn scored points into typical & atypical lists
+const buildTypicalAtypicalFromScored = (scored: ScoredCase[]): {
+  typicalCases: CaseSummary[]
+  atypicalCases: CaseSummary[]
+} => {
+  if (!scored.length) return { typicalCases: [], atypicalCases: [] }
+
+  const seenTypical = new Set<string>()
+  const typicalCases: CaseSummary[] = []
+
+  for (const p of scored) {
+    const key = normalizeDiagKey(p.caseData.diagnosis)
+    if (!key || seenTypical.has(key)) continue
+    seenTypical.add(key)
+    typicalCases.push(p.caseData)
+    if (typicalCases.length >= 4) break
+  }
+
+  const typicalDiagKeys = new Set(
+    typicalCases.map(c => normalizeDiagKey(c.diagnosis))
+  )
+
+  const seenAtypical = new Set<string>()
+  const atypicalCases: CaseSummary[] = []
+
+  for (let idx = scored.length - 1; idx >= 0; idx--) {
+    const p = scored[idx]!
+    const key = normalizeDiagKey(p.caseData.diagnosis)
+    if (!key) continue
+    if (typicalDiagKeys.has(key)) continue
+    if (seenAtypical.has(key)) continue
+
+    seenAtypical.add(key)
+    atypicalCases.push(p.caseData)
+    if (atypicalCases.length >= 4) break
+  }
+
+  return { typicalCases, atypicalCases }
+}
+
+// Convenience: full UMAP summary for a set of rows
+const buildUMAPSummaryForRows = (rows: CaseSummary[]) => {
+  const pts = buildPointsForRows(rows)
+  const scored = scoreCasesForPoints(pts)
+  return buildTypicalAtypicalFromScored(scored)
+}
+
+
+// Use the full interaction-filtered subset (filters + cluster + UMAP + chart interactions)
 const currentSelectionCases = computed<CaseSummary[]>(() => {
-  if (selectedCluster.value === null) return []
-  return clusterFilteredData.value
+  return interactionFilteredData.value
 })
+
+const selectionUMAPSummary = computed(() =>
+  buildUMAPSummaryForRows(currentSelectionCases.value)
+)
 
 // Cases in current selection that have UMAP coords (via diagnosis)
 const selectionWithCoords = computed<CaseWithCoords[]>(() => {
@@ -810,28 +1499,43 @@ const selectionWithCoords = computed<CaseWithCoords[]>(() => {
   return out
 })
 
-// KNN-based "density" scoring within the current selection (cluster-only)
+// KNN-based "density" scoring within the current selection
 // score = average distance to k nearest neighbours in UMAP space
 type ScoredCase = CaseWithCoords & { score: number }
 
 const scoredSelection = computed<ScoredCase[]>(() => {
   const pts = selectionWithCoords.value
-  const n = pts.length
+  let n = pts.length
 
-  // Only meaningful when a cluster is active and we have multiple points
-  if (selectedCluster.value === null || n <= 1) return []
+  if (n <= 1) return []
+
+  // If too many points, take a deterministic subsample spread across the selection.
+  let workingPts: CaseWithCoords[] = pts
+
+  if (n > MAX_KNN_POINTS_FOR_SCORING) {
+    const step = n / MAX_KNN_POINTS_FOR_SCORING
+    const sampled: CaseWithCoords[] = []
+
+    for (let i = 0; i < MAX_KNN_POINTS_FOR_SCORING; i++) {
+      const idx = Math.floor(i * step)
+      const p = pts[idx]
+      if (p) sampled.push(p)
+    }
+
+    workingPts = sampled
+    n = workingPts.length
+  }
 
   const k = Math.min(10, n - 1) // up to 10 neighbours, but never >= n
-
   const scored: ScoredCase[] = []
 
   for (let i = 0; i < n; i++) {
-    const p = pts[i]!
+    const p = workingPts[i]!
     const dists: number[] = []
 
     for (let j = 0; j < n; j++) {
       if (i === j) continue
-      const q = pts[j]!
+      const q = workingPts[j]!
       const dx = p.x - q.x
       const dy = p.y - q.y
       dists.push(Math.sqrt(dx * dx + dy * dy))
@@ -848,57 +1552,9 @@ const scoredSelection = computed<ScoredCase[]>(() => {
 
   return scored.sort((a, b) => a.score - b.score)
 })
-// Helper: normalize diagnosis string for uniqueness
-const normalizeDiagKey = (diag: string | null | undefined): string =>
-  diag ? diag.trim().toLowerCase() : ''
 
-const typicalCases = computed<CaseSummary[]>(() => {
-  const scored = scoredSelection.value
-  if (!scored.length) return []
-
-  const seenDiag = new Set<string>()
-  const out: CaseSummary[] = []
-
-  for (const p of scored) {
-    const key = normalizeDiagKey(p.caseData.diagnosis)
-    if (!key) continue
-    if (seenDiag.has(key)) continue
-
-    seenDiag.add(key)
-    out.push(p.caseData)
-    if (out.length >= 4) break
-  }
-
-  return out
-})
-
-// Atypical cases: largest score, max 1 case per diagnosis,
-// and avoid reusing diagnoses already chosen as "typical"
-const atypicalCases = computed<CaseSummary[]>(() => {
-  const scored = scoredSelection.value
-  if (!scored.length) return []
-
-  const typicalDiagKeys = new Set(
-    typicalCases.value.map(c => normalizeDiagKey(c.diagnosis))
-  )
-
-  const seenDiag = new Set<string>()
-  const out: CaseSummary[] = []
-
-  for (let idx = scored.length - 1; idx >= 0; idx--) {
-    const p = scored[idx]!
-    const key = normalizeDiagKey(p.caseData.diagnosis)
-    if (!key) continue
-    if (typicalDiagKeys.has(key)) continue
-    if (seenDiag.has(key)) continue
-
-    seenDiag.add(key)
-    out.push(p.caseData)
-    if (out.length >= 4) break
-  }
-
-  return out
-})
+const typicalCases = computed<CaseSummary[]>(() => selectionUMAPSummary.value.typicalCases)
+const atypicalCases = computed<CaseSummary[]>(() => selectionUMAPSummary.value.atypicalCases)
 
 /** Global DF + IDF over all cases' diagnoses */
 const globalTermStats = computed(() => {
@@ -924,14 +1580,13 @@ const globalTermStats = computed(() => {
   return { N, df, idf }
 })
 
-/** TF (in current selection) × global IDF → top terms for word cloud */
-const topTerms = computed<TermItem[]>(() => {
+const buildTopTermsForRows = (rows: CaseSummary[]): TermItem[] => {
   const { idf } = globalTermStats.value
   if (!idf.size) return []
 
   const tf = new Map<string, number>()
 
-  for (const row of currentSelectionCases.value) {
+  for (const row of rows) {
     const diag = row.diagnosis?.toLowerCase()
     if (!diag) continue
     const tokens = tokenizeDiagnosis(diag)
@@ -942,31 +1597,33 @@ const topTerms = computed<TermItem[]>(() => {
 
   if (!tf.size) return []
 
-  // Compute TF-IDF score
   const scores: [string, number][] = []
   for (const [term, tfCount] of tf.entries()) {
     const idfVal = idf.get(term)
     if (idfVal === undefined) continue
-    const score = tfCount * idfVal
-    scores.push([term, score])
+    scores.push([term, tfCount * idfVal])
   }
 
   if (!scores.length) return []
 
-  // Sort by score and take top K
   scores.sort((a, b) => b[1] - a[1])
   const top = scores.slice(0, 40)
 
-  // Normalize to [0,1] for word cloud sizing
-  const maxScore = top.length > 0 ? top[0]![1] : 0
-  const minScore = top.length > 0 ? top[top.length - 1]![1] : 0
+  const maxScore = top[0]![1]
+  const minScore = top[top.length - 1]![1]
   const range = maxScore - minScore || 1
 
   return top.map(([term, score]) => ({
     term,
     weight: (score - minScore) / range,
   }))
-})
+}
+
+
+const topTerms = computed<TermItem[]>(() =>
+  buildTopTermsForRows(currentSelectionCases.value)
+)
+
 
 /* =========================
  * Table (computed & actions)
@@ -980,17 +1637,12 @@ const showMoreRows = () => { tableLimit.value += 50 }
 const tableKey = ref(0)
 
 const formatRegionsCell = (row: CaseSummary): string => {
-  if (!row.regions) return '—'
-  const parts: string[] = []
-  for (const [main, subs] of Object.entries(row.regions)) {
-    if (!subs || subs.length === 0) {
-      parts.push(main)
-    } else {
-      parts.push(`${main} (${subs.join(', ')})`)
-    }
-  }
-  return parts.join('; ')
+  const arr = getCaseSubregions(row)
+  const first = arr[0]
+  return typeof first === 'string' && first.length > 0 ? first : '—'
 }
+
+
 
 // Reset paging and bump table key when filters change
 watch(
@@ -1205,9 +1857,22 @@ onMounted(() => {
             </ClientOnly>
           </div>
 
-          <!-- Cluster summary -->
+          <!-- Cohorts panel -->
+          <CohortPanel
+            :cohorts="cohorts"
+            :active-cohort-id="activeCohortId"
+            :current-selection-count="interactionFilteredData.length"
+            :comparison-enabled="comparisonMode"
+            @create-from-selection="handleCreateCohortFromSelection"
+            @toggle-cohort="handleToggleCohort"
+            @remove-cohort="handleRemoveCohort"
+            @toggle-comparison-mode="handleToggleComparisonMode"
+          />
+
+
+          <!-- Cluster / selection summary -->
           <SelectionSummaryPanel
-            v-if="currentSelectionCases.length > 0"
+            v-if="!comparisonMode && currentSelectionCases.length > 0"
             :cases="currentSelectionCases"
             :typical-cases="typicalCases"
             :atypical-cases="atypicalCases"
@@ -1216,32 +1881,59 @@ onMounted(() => {
             :cluster-labels="clusterLabelLookup"
           />
 
+          <!-- Comparison mode: one compact card per group -->
+          <SelectionSummaryComparisonPanel
+            v-else-if="comparisonMode && comparisonGroupSummaries.length > 0"
+            :groups="comparisonGroupSummaries"
+          />
+
+
           <div class="charts-grid">
             <!-- Top row -->
             <div class="chart-card">
               <ClientOnly>
+                <GenderBarComparison
+                  v-if="comparisonMode && genderComparisonSeries.length >= 2"
+                  :series="genderComparisonSeries"
+                />
                 <GenderBar
+                  v-else
                   :items="displayGenderCounts"
                   :selected-value="interactionSelection?.type === 'gender' ? interactionSelection.value : null"
                   @item-select="handleItemSelect"
                 />
               </ClientOnly>
             </div>
+
             <div class="chart-card">
               <ClientOnly>
-                <AgeHistogram 
-                :bins="displayAgeBins" 
-                :unknown-count="displayUnknownAgeCount"
+                <!-- Comparison mode: KDE -->
+                <AgeComparisonKDE
+                  v-if="comparisonMode && ageComparisonSeries.length >= 2"
+                  :series="ageComparisonSeries"
+                />
+
+                <!-- Normal mode: existing histogram -->
+                <AgeHistogram
+                  v-else
+                  :bins="displayAgeBins"
+                  :unknown-count="displayUnknownAgeCount"
                   :selected-bin="selectedAgeBin"
-                   @item-select="handleItemSelect"
-                    />
+                  @item-select="handleItemSelect"
+                />
               </ClientOnly>
             </div>
 
             <!-- Middle row (full width) -->
             <div class="chart-card full">
               <ClientOnly>
+                <CasesOverTimeComparison
+                  v-if="comparisonMode && casesOverTimeComparisonSeries && casesOverTimeComparisonSeries.length >= 2"
+                  :groups="casesOverTimeComparisonSeries"
+                  @range-change="handleTimeBrushChange"
+                />
                 <CasesOverTime
+                  v-else
                   :key="chartResetKey"
                   :series="displayCasesOverTime"
                   @range-change="handleTimeBrushChange"
@@ -1249,51 +1941,50 @@ onMounted(() => {
               </ClientOnly>
             </div>
 
-            <!-- Bottom rows -->
+
+            <!-- Row 3: Modality bar + (Modality×Group or Modality×Modality) -->
             <div class="chart-card">
               <ClientOnly>
                 <ModalityBar
+                  v-if="!comparisonMode"
                   :items="displayModalityCounts"
+                  :selected-value="interactionSelection?.type === 'modality' ? interactionSelection.value : null"
+                  @item-select="handleItemSelect"
+                />
+
+                <!-- Comparison mode: Modality × Group in left half -->
+                <ModalityGroupHeatmap
+                  v-else
+                  :matrix="modalityGroupMatrix"
                   :selected-value="interactionSelection?.type === 'modality' ? interactionSelection.value : null"
                   @item-select="handleItemSelect"
                 />
               </ClientOnly>
             </div>
 
-            <!-- Modality co-occurrence heatmap -->
             <div class="chart-card">
               <ClientOnly>
-                <ModalityHeatmap 
-                :matrix="displayModalityCooc"
+                <!-- Normal mode: Modality × Modality -->
+                <ModalityHeatmap
+                  v-if="!comparisonMode"
+                  :matrix="displayModalityCooc"
                   :selected-value="interactionSelection?.type === 'modality' ? interactionSelection.value : null"
                   @item-select="handleItemSelect"
-                   />
+                />
+
+                <!-- Comparison mode: Section × Group in right half -->
+                <SectionByGroupHeatmap
+                  v-else
+                  :matrix="sectionGroupMatrix"
+                  :selected-value="interactionSelection?.type === 'section' ? interactionSelection.value : null"
+                  @item-select="handleItemSelect"
+                />
               </ClientOnly>
             </div>
 
-            <div class="chart-card">
-              <div class="chart-card-mode-row">
-                <span class="mode-label">View:</span>
-                <div class="mode-pill-group">
-                  <button
-                    type="button"
-                    class="mode-pill"
-                    :class="{ active: regionChartMode === 'main' }"
-                    @click="regionChartMode = 'main'"
-                  >
-                    Main regions
-                  </button>
-                  <button
-                    type="button"
-                    class="mode-pill"
-                    :class="{ active: regionChartMode === 'sub' }"
-                    @click="regionChartMode = 'sub'"
-                  >
-                    Subregions
-                  </button>
-                </div>
-              </div>
-
+            <!-- Row 4 -->
+            <!-- Normal mode: Region bar + Section Coverage -->
+            <div v-if="!comparisonMode" class="chart-card">
               <ClientOnly>
                 <RegionBar
                   :items="displayRegionCounts"
@@ -1303,36 +1994,35 @@ onMounted(() => {
               </ClientOnly>
             </div>
 
-            <!-- Region co-occurrence heatmap (main regions only) -->
-            <div class="chart-card">
+            <div v-if="!comparisonMode" class="chart-card">
               <ClientOnly>
-                <RegionHeatmap
-                  :matrix="displayRegionCooc"
+                <SectionsCoverageBar
+                  :items="displaySectionCoverage"
+                  :selected-value="interactionSelection?.type === 'section' ? interactionSelection.value : null"
+                  @item-select="handleItemSelect"
+                />
+              </ClientOnly>
+            </div>
+
+            <!-- Row 4: Comparison mode full-width Region×Group -->
+            <div v-if="comparisonMode" class="chart-card full">
+              <ClientOnly>
+                <RegionGroupHeatmap
+                  :matrix="regionGroupMatrix"
                   :selected-value="interactionSelection?.type === 'region' ? interactionSelection.value : null"
                   @item-select="handleItemSelect"
                 />
               </ClientOnly>
             </div>
 
-            <!-- Text sections coverage -->
-            <div class="chart-card">
+            <!-- Row 5 (normal mode only): Modality × Region full width -->
+            <div v-if="!comparisonMode" class="chart-card full">
               <ClientOnly>
-                <SectionsCoverageBar 
-                :items="displaySectionCoverage"
-                  :selected-value="interactionSelection?.type === 'section' ? interactionSelection.value : null"
-                  @item-select="handleItemSelect" 
-                  />
-              </ClientOnly>
-            </div>
-
-            <!-- Modality × Region heatmap -->
-            <div class="chart-card">
-              <ClientOnly>
-                <ModalityRegionHeatmap 
-                :matrix="displayModalityRegionMatrix"
+                <ModalityRegionHeatmap
+                  :matrix="displayModalityRegionMatrix"
                   :selected-value="interactionSelection?.type === 'modality-region' ? interactionSelection : null"
-                  @item-select="handleItemSelect" 
-                  />
+                  @item-select="handleItemSelect"
+                />
               </ClientOnly>
             </div>
           </div>

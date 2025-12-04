@@ -95,7 +95,7 @@ const selectionLabel = computed(() => {
   <section class="selection-summary">
     <header class="summary-header">
       <div>
-        <h2>Cluster overview</h2>
+        <h2>Selection overview</h2>
         <p>{{ selectionLabel }}</p>
       </div>
     </header>
@@ -103,13 +103,13 @@ const selectionLabel = computed(() => {
     <div class="summary-content">
       <!-- Left: word cloud -->
       <div class="summary-block">
-        <h3>Key terms in this cluster</h3>
+        <h3>Key terms in this selection</h3>
         <WordCloud :terms="topTerms" />
       </div>
 
       <!-- Right: typical/atypical examples -->
       <div class="summary-block examples-block">
-        <h3>Typical & atypical cases</h3>
+        <h3>Representative cases</h3>
 
         <div v-if="!hasUMAPExamples" class="empty">
           Not enough UMAP information to identify typical or atypical cases for this selection.
@@ -118,7 +118,7 @@ const selectionLabel = computed(() => {
         <div v-else class="examples-grid">
           <!-- Typical -->
           <div class="examples-column">
-            <h4>Most typical</h4>
+            <h4>Typical examples</h4>
             <ul class="case-list">
               <li v-for="c in typicalCases" :key="'typical-' + c.id" class="case-card">
                 <NuxtLink :to="`/cases/${c.id}`" class="card-link">
@@ -155,7 +155,7 @@ const selectionLabel = computed(() => {
 
           <!-- Atypical -->
           <div class="examples-column">
-            <h4>Most atypical</h4>
+            <h4>Atypical examples</h4>
             <ul class="case-list">
               <li v-for="c in atypicalCases" :key="'atypical-' + c.id" class="case-card">
                 <NuxtLink :to="`/cases/${c.id}`" class="card-link">

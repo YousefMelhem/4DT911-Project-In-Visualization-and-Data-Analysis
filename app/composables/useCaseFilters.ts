@@ -68,11 +68,38 @@ const normalizeGender = (g: string | null): 'Female' | 'Male' | 'Unknown' => {
 const isFiniteNum = (v: unknown): v is number =>
   typeof v === 'number' && Number.isFinite(v)
 
-export const getCaseSubregions = (c: CaseSummary): string[] =>
-  c.regions ? Object.values(c.regions).flat().filter(Boolean) : []
+/**
+ * New region model (strict):
+ * Only use "Imaging Category" as the region source.
+ * Ignore all other keys completely.
+ *
+ * Example:
+ *  "regions": {
+ *      "Imaging Category": ["Ultrasound - Pelvis/Abdomen (GYN/GB)"]
+ *  }
+ */
+const getCaseRegionLabel = (c: CaseSummary): string | null => {
+  if (!c.regions) return null
 
-export const getCaseMainRegions = (c: CaseSummary): string[] =>
-  c.regions ? Object.keys(c.regions) : []
+  const arr = c.regions["Imaging Category"]
+  if (!arr || !Array.isArray(arr) || arr.length === 0) return null
+
+  const label = arr[0]
+  return label || null
+}
+
+// For compatibility with old API, both helpers now return the same single-label array.
+export const getCaseSubregions = (c: CaseSummary): string[] => {
+  const label = getCaseRegionLabel(c)
+  return label ? [label] : []
+}
+
+export const getCaseMainRegions = (c: CaseSummary): string[] => {
+  const label = getCaseRegionLabel(c)
+  return label ? [label] : []
+}
+
+
 
 const makeBins = () => {
   const bins: { binStart: number; binEnd: number; count: number }[] = []
@@ -112,26 +139,28 @@ export const useCaseFilters = (rawData: Ref<CaseSummary[]>) => {
   )
 
   const regionGroups = computed<RegionGroup[]>(() => {
-    const map = new Map<string, Set<string>>()
+  const set = new Set<string>()
 
-    for (const c of rawData.value) {
-      const regions = c.regions || {}
-      for (const [main, subs] of Object.entries(regions)) {
-        if (!map.has(main)) map.set(main, new Set())
-        const set = map.get(main)!
-        for (const s of subs || []) {
-          if (s) set.add(s)
-        }
-      }
-    }
+  for (const c of rawData.value) {
+    const label = getCaseRegionLabel(c)
+    if (label) set.add(label)
+  }
 
-    return Array.from(map.entries())
-      .map(([label, subs]) => ({
-        label,
-        options: Array.from(subs).sort(),
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label))
-  })
+  const options = Array.from(set).sort()
+
+  if (options.length === 0) {
+    return []
+  }
+
+  return [
+    {
+      label: "Imaging Category",
+      options,
+    },
+  ]
+})
+
+
 
   // Filtered data
   const filteredData = computed(() => {
