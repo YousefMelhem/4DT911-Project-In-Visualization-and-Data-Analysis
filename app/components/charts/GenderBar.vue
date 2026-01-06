@@ -100,7 +100,7 @@ const draw = () => {
     .padding(0.25)
 
   const y = d3.scaleLinear()
-    .domain([0, maxY]).nice()
+    .domain([0, maxY * 1.1]).nice()
     .range([MARGIN.top + INNER_H, MARGIN.top])
 
   // Axes

@@ -37,7 +37,7 @@ const props = defineProps<{
 
 const W = 700
 const H = 300
-const MARGIN = { top: 30, right: 16, bottom: 42, left: 90 }
+const MARGIN = { top: 40, right: 16, bottom: 42, left: 90 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 const fmt = d3.format(',')
@@ -194,7 +194,7 @@ const draw = () => {
   // Legend
   const legend = svg
     .append('g')
-    .attr('transform', `translate(${MARGIN.left},${MARGIN.top - 14})`)
+    .attr('transform', `translate(${MARGIN.left},${MARGIN.top - 30})`)
 
   const legendItem = legend
     .selectAll('g.legend-item')
