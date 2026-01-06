@@ -44,6 +44,58 @@ const MARGIN = { top: 10, right: 210, bottom: 40, left: 50 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 
+
+const buildLegendLabel = (s: { name: string; total: number; unknown: number }) =>
+  `${s.name} (n=${s.total}, unknown age: ${s.unknown})`
+
+const truncateToWidth = (
+  svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+  text: string,
+  maxWidthPx: number,
+  fontSizePx = 10,
+  fontWeight = '400'
+) => {
+
+  const measurer = svg
+    .append('text')
+    .attr('x', -9999)
+    .attr('y', -9999)
+    .style('font-size', `${fontSizePx}px`)
+    .style('font-weight', fontWeight)
+    .text(text)
+
+  const node = measurer.node()
+  if (!node) {
+    measurer.remove()
+    return text
+  }
+
+  if (node.getComputedTextLength() <= maxWidthPx) {
+    measurer.remove()
+    return text
+  }
+
+  const ell = '…'
+  let lo = 0
+  let hi = text.length
+
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2)
+    const candidate = text.slice(0, mid).trimEnd() + ell
+    measurer.text(candidate)
+
+    if (measurer.node()!.getComputedTextLength() <= maxWidthPx) {
+      lo = mid + 1
+    } else {
+      hi = mid
+    }
+  }
+
+  const out = text.slice(0, Math.max(0, lo - 1)).trimEnd() + ell
+  measurer.remove()
+  return out
+}
+
 // KDE helpers
 const kernelEpanechnikov = (k: number) => (v: number) => {
   v = v / k
@@ -199,14 +251,26 @@ const draw = () => {
       .attr('rx', 2)
       .attr('fill', s.color)
 
-    const label = `${s.name} (n=${s.total}, unknown age: ${s.unknown})`
+    const fullLabel = buildLegendLabel(s)
 
-    legend.append('text')
+    const legendTextMaxWidth = MARGIN.right - 10 - 18
+
+    const shortLabel = truncateToWidth(
+      svg,
+      fullLabel,
+      legendTextMaxWidth,
+      10,
+      '400'
+    )
+
+    const t = legend.append('text')
       .attr('x', 18)
       .attr('y', yOffset)
       .attr('fill', '#4a5568')
       .style('font-size', '10px')
-      .text(label)
+      .text(shortLabel)
+
+    t.append('title').text(fullLabel)
   })
 }
 

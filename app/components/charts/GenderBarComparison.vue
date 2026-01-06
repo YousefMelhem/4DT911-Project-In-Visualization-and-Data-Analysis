@@ -37,12 +37,15 @@ const props = defineProps<{
 
 const W = 700
 const H = 300
-const MARGIN = { top: 40, right: 16, bottom: 42, left: 90 }
+const MARGIN = { top: 56, right: 16, bottom: 42, left: 90 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
 const fmt = d3.format(',')
 
 const svgRef = ref<SVGSVGElement | null>(null)
+
+const truncate = (s: string, max = 12) =>
+  s.length > max ? `${s.slice(0, max - 1)}…` : s
 
 const draw = () => {
   const el = svgRef.value
@@ -191,35 +194,61 @@ const draw = () => {
       .attr('y', d => y(d.value) - 6)
   })
 
-  // Legend
-  const legend = svg
-    .append('g')
-    .attr('transform', `translate(${MARGIN.left},${MARGIN.top - 30})`)
+// Legend (wrap + truncate + hover title)
+const LEGEND_MAX_CHARS = 20
+const LEGEND_ITEM_GAP_X = 12
+const LEGEND_ITEM_GAP_Y = 18
 
-  const legendItem = legend
-    .selectAll('g.legend-item')
-    .data(series)
-    .enter()
-    .append('g')
-    .attr('class', 'legend-item')
-    .attr('transform', (_d, i) => `translate(${i * 80},0)`)
+const legend = svg
+  .append('g')
+  .attr('transform', `translate(${MARGIN.left},${MARGIN.top - 46})`)
 
-  legendItem
-    .append('rect')
-    .attr('x', 0)
-    .attr('y', -9)
-    .attr('width', 12)
-    .attr('height', 12)
-    .attr('rx', 3)
-    .attr('fill', d => d.color)
+let lx = 0
+let ly = 0
+const maxLegendWidth = INNER_W
 
-  legendItem
-    .append('text')
-    .attr('x', 18)
-    .attr('y', 0)
-    .attr('dominant-baseline', 'central')
-    .style('font-size', '12px')
-    .text(d => d.cohortName)
+const legendItem = legend
+  .selectAll('g.legend-item')
+  .data(series)
+  .enter()
+  .append('g')
+  .attr('class', 'legend-item')
+  .each(function (d) {
+    const gItem = d3.select(this)
+
+    gItem
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', -9)
+      .attr('width', 12)
+      .attr('height', 12)
+      .attr('rx', 3)
+      .attr('fill', d.color)
+
+    const label = truncate(d.cohortName, LEGEND_MAX_CHARS)
+
+    const t = gItem
+      .append('text')
+      .attr('x', 18)
+      .attr('y', 0)
+      .attr('dominant-baseline', 'central')
+      .style('font-size', '12px')
+      .text(label)
+
+    t.append('title').text(d.cohortName)
+
+    const node = gItem.node() as SVGGElement | null
+    if (!node) return
+    const w = node.getBBox().width
+
+    if (lx + w > maxLegendWidth && lx > 0) {
+      lx = 0
+      ly += LEGEND_ITEM_GAP_Y
+    }
+
+    gItem.attr('transform', `translate(${lx},${ly})`)
+    lx += w + LEGEND_ITEM_GAP_X
+  })
 }
 
 onMounted(draw)

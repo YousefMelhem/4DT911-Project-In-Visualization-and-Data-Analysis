@@ -91,6 +91,10 @@ const computedHeight = computed(() => {
   return MARGIN.top + n * CELL_SIZE + MARGIN.bottom
 })
 
+const truncate = (s: string, max = 16) =>
+  s.length > max ? `${s.slice(0, max - 1)}…` : s
+
+
 /* =========================
  * SVG / Tooltip
  * =======================*/
@@ -201,19 +205,22 @@ const draw = () => {
     .text(r => r)
 
   /* --- Row labels (groups) --- */
-  svg.append("g")
-    .selectAll("text")
+  const rowLabels = svg.append("g")
+    .selectAll("text.row-label")
     .data(groups)
     .enter()
     .append("text")
+    .attr("class", "row-label")
     .attr("x", xStart - 6)
-    .attr("y", g => y(g.id)! + y.bandwidth()/2)
+    .attr("y", g => y(g.id)! + y.bandwidth() / 2)
     .attr("text-anchor", "end")
     .attr("dominant-baseline", "middle")
-    .attr("fill", g => g.color)
-    .style("font-size", "5px")
-    .style("font-weight", "600")
-    .text(g => g.name)
+    .attr("fill", g => g.color || "#4a5568")
+    .style("font-size", "3px")
+    .style("font-weight", 600)
+    .text(g => truncate(g.name, 17))
+
+  rowLabels.append("title").text(g => g.name)
 
   /* --- Cells --- */
   const gGrid = svg.append("g")

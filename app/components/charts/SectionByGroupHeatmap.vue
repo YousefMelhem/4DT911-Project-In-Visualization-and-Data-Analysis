@@ -79,7 +79,7 @@ const props = defineProps<{
  * Constants & sizing
  * =======================*/
 const VIEW_W = 450
-const MARGIN = { top: 70, right: 8, bottom: 0, left: 0 } as const
+const MARGIN = { top: 40, right: 8, bottom: 0, left: 0 } as const
 const COL_LABEL_OFFSET = 5
 const CELL_SIZE = 30
 
@@ -89,6 +89,10 @@ const computedHeight = computed(() => {
   const innerH = n * CELL_SIZE
   return MARGIN.top + innerH + MARGIN.bottom
 })
+
+const truncate = (s: string, max = 16) =>
+  s.length > max ? `${s.slice(0, max - 1)}…` : s
+
 
 const svgRef = ref<SVGSVGElement | null>(null)
 
@@ -217,12 +221,12 @@ const draw = () => {
     )
     .attr('text-anchor', 'start')
     .attr('fill', '#4a5568')
-    .style('font-size', '12px')
+    .style('font-size', '8px')
     .style('font-weight', 500)
     .text(s => s)
 
   // Row labels = groups, left side, colored by group color
-  svg.append('g')
+  const rowLabels = svg.append('g')
     .selectAll('text.row-label')
     .data(groups)
     .enter()
@@ -233,9 +237,10 @@ const draw = () => {
     .attr('text-anchor', 'end')
     .attr('dominant-baseline', 'middle')
     .attr('fill', g => g.color || '#4a5568')
-    .style('font-size', '12px')
+    .style('font-size', '8px')
     .style('font-weight', 600)
-    .text(g => g.name)
+    .text(g => truncate(g.name, 26))
+  rowLabels.append('title').text(g => g.name)
 
   const gGrid = svg.append('g')
 

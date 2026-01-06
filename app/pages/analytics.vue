@@ -312,7 +312,11 @@ const nextCohortColor = (): string => {
   return COHORT_COLORS[index] || '#667eea'
 }
 
-
+const handleRenameCohort = (payload: { id: string; name: string }) => {
+  const c = cohorts.value.find(x => x.id === payload.id)
+  if (!c) return
+  c.name = payload.name
+}
 
 
 // Shared filters + filtered data via composable
@@ -1867,6 +1871,7 @@ onMounted(() => {
             @toggle-cohort="handleToggleCohort"
             @remove-cohort="handleRemoveCohort"
             @toggle-comparison-mode="handleToggleComparisonMode"
+            @rename-cohort="handleRenameCohort"
           />
 
 
