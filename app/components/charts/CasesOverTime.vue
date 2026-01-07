@@ -317,7 +317,12 @@ watch(computedWidth, draw)
 
 .chart-header {
   margin-bottom: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
 }
+
 
 .chart-header h3 {
   margin: 0.25rem 0 0.25rem;

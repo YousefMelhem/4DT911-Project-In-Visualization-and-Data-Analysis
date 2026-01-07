@@ -71,12 +71,13 @@ type Cell = {
 
 const props = defineProps<{
   matrix: RegionGroupMatrix
-  selectedValue?: string | null
+  selected?: { type: 'region'; value: string; cohortId?: string } | null
 }>()
 
 const emit = defineEmits<{
-  (e: "item-select", payload: { type: "region"; value: string } | null): void
+  (e: "item-select", payload: { type: "region"; value: string; cohortId?: string } | null): void
 }>()
+
 
 /* =========================
  * Scaled-down sizing
@@ -199,9 +200,9 @@ const draw = () => {
     .append("text")
     .attr("transform", r => `translate(${x(r)! + x.bandwidth()/2},0) rotate(-30)`)
     .attr("text-anchor", "start")
-    .attr("fill", r => props.selectedValue === r ? "#2b6cb0" : "#4a5568")
+    .attr("fill", r => props.selected?.value === r ? "#2b6cb0" : "#4a5568")
     .style("font-size", "3px")
-    .style("font-weight", r => props.selectedValue === r ? 700 : 500)
+    .style("font-weight", r => props.selected?.value === r ? 700 : 500)
     .text(r => r)
 
   /* --- Row labels (groups) --- */
@@ -234,12 +235,24 @@ const draw = () => {
     .attr("y", d => y(d.groupId)!)
     .attr("width", x.bandwidth())
     .attr("height", y.bandwidth())
-    .attr("stroke", d =>
-      props.selectedValue === d.region ? "#2b6cb0" : "#e2e8f0"
-    )
-    .attr("stroke-width", d =>
-      props.selectedValue === d.region ? 2 : 0.5
-    )
+    .attr("stroke", d => {
+      const isSel =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === d.region &&
+        props.selected.cohortId === d.groupId
+
+      return isSel ? "#2b6cb0" : "#e2e8f0"
+    })
+    .attr("stroke-width", d => {
+      const isSel =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === d.region &&
+        props.selected.cohortId === d.groupId
+
+      return isSel ? 2 : 0.5
+    })
     .attr("fill", d => d.percent === 0 ? "#f7fafc" : color(d.percent)!)
     .attr("opacity", 0.85)
     .style("cursor", "pointer")
@@ -261,7 +274,11 @@ const draw = () => {
       tooltipY.value = evt.clientY - 10
     })
     .on("mouseleave", function(event, d) {
-      const isSel = props.selectedValue === d.region
+      const isSel =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === d.region &&
+        props.selected.cohortId === d.groupId
 
       d3.select(this)
         .transition().duration(120)
@@ -272,11 +289,17 @@ const draw = () => {
       hideTooltip()
     })
     .on("click", (_evt, d) => {
-      if (props.selectedValue === d.region)
-        emit("item-select", null)
-      else
-        emit("item-select", { type: "region", value: d.region })
+      const next = { type: "region" as const, value: d.region, cohortId: d.groupId }
+
+      const isSame =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === next.value &&
+        props.selected.cohortId === next.cohortId
+
+      emit("item-select", isSame ? null : next)
     })
+
 
   /* --- Percent labels --- */
   gGrid.selectAll("text")
@@ -300,7 +323,8 @@ const draw = () => {
 onMounted(draw)
 watch(() => props.matrix, draw, { deep: true })
 watch(computedHeight, draw)
-watch(() => props.selectedValue, draw)
+watch(() => props.selected, draw)
+
 </script>
 
 <style scoped>

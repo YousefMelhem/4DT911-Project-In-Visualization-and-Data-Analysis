@@ -73,7 +73,13 @@ type Cell = {
 
 const props = defineProps<{
   matrix: SectionGroupMatrix
+  selected?: { type: 'section'; value: string; cohortId?: string } | null
 }>()
+
+const emit = defineEmits<{
+  (e: 'item-select', payload: { type: 'section'; value: string; cohortId?: string } | null): void
+}>()
+
 
 /* =========================
  * Constants & sizing
@@ -220,9 +226,10 @@ const draw = () => {
       `translate(${x(s)! + x.bandwidth() / 2}, 0) rotate(-45)`
     )
     .attr('text-anchor', 'start')
-    .attr('fill', '#4a5568')
+    .attr('fill', s => props.selected?.value === s ? '#2b6cb0' : '#4a5568')
     .style('font-size', '8px')
-    .style('font-weight', 500)
+    .style('font-weight', s => props.selected?.value === s ? 700 : 500)
+
     .text(s => s)
 
   // Row labels = groups, left side, colored by group color
@@ -254,11 +261,27 @@ const draw = () => {
     .attr('y', d => y(d.groupId)!)
     .attr('width', x.bandwidth())
     .attr('height', y.bandwidth())
-    .attr('stroke', '#e2e8f0')
-    .attr('stroke-width', 0.5)
+    .attr('stroke', d => {
+      const isSelected =
+        !!props.selected &&
+        props.selected.type === 'section' &&
+        props.selected.value === d.section &&
+        props.selected.cohortId === d.groupId
+
+      return isSelected ? '#2b6cb0' : '#e2e8f0'
+    })
+    .attr('stroke-width', d => {
+      const isSelected =
+        !!props.selected &&
+        props.selected.type === 'section' &&
+        props.selected.value === d.section &&
+        props.selected.cohortId === d.groupId
+
+      return isSelected ? 2 : 0.5
+    })
     .attr('fill', d => d.percent === 0 ? '#f7fafc' : color(d.percent)!)
     .attr('opacity', 0.85)
-    .style('cursor', 'default')
+    .style('cursor', 'pointer')
     .on('mouseenter', function (event, d: Cell) {
       d3.select(this)
         .transition()
@@ -280,16 +303,34 @@ const draw = () => {
     .on('mousemove', (event) => {
       updatePosition(event as MouseEvent)
     })
-    .on('mouseleave', function () {
+    .on('mouseleave', function (_event, d: Cell) {
+      const isSelected =
+        !!props.selected &&
+        props.selected.type === 'section' &&
+        props.selected.value === d.section &&
+        props.selected.cohortId === d.groupId
+
       d3.select(this)
         .transition()
         .duration(150)
-        .attr('stroke', '#e2e8f0')
-        .attr('stroke-width', 0.5)
+        .attr('stroke', isSelected ? '#2b6cb0' : '#e2e8f0')
+        .attr('stroke-width', isSelected ? 2 : 0.5)
         .attr('opacity', 0.85)
 
       hideTooltip()
     })
+    .on('click', (_event, d: Cell) => {
+      const next = { type: 'section' as const, value: d.section, cohortId: d.groupId }
+
+      const isSame =
+        !!props.selected &&
+        props.selected.type === 'section' &&
+        props.selected.value === next.value &&
+        props.selected.cohortId === next.cohortId
+
+      emit('item-select', isSame ? null : next)
+    })
+
 
   // Percent text inside cells
   gGrid.selectAll('text.value')
@@ -316,6 +357,7 @@ const draw = () => {
 onMounted(draw)
 watch(() => props.matrix, draw, { deep: true })
 watch(computedHeight, draw)
+watch(() => props.selected, draw)
 </script>
 
 <style scoped>
