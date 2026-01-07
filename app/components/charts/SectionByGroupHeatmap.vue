@@ -80,7 +80,6 @@ const emit = defineEmits<{
   (e: 'item-select', payload: { type: 'section'; value: string; cohortId?: string } | null): void
 }>()
 
-
 /* =========================
  * Constants & sizing
  * =======================*/
@@ -89,7 +88,6 @@ const MARGIN = { top: 40, right: 8, bottom: 0, left: 0 } as const
 const COL_LABEL_OFFSET = 5
 const CELL_SIZE = 30
 
-// Height depends on number of GROUPS (rows)
 const computedHeight = computed(() => {
   const n = props.matrix.groups?.length ?? 0
   const innerH = n * CELL_SIZE
@@ -98,7 +96,6 @@ const computedHeight = computed(() => {
 
 const truncate = (s: string, max = 16) =>
   s.length > max ? `${s.slice(0, max - 1)}…` : s
-
 
 const svgRef = ref<SVGSVGElement | null>(null)
 
@@ -122,6 +119,14 @@ const updatePosition = (event: MouseEvent) => {
   tooltipY.value = event.clientY - 10
 }
 
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
+}
+
 /* =========================
  * Render
  * =======================*/
@@ -133,8 +138,8 @@ const draw = () => {
   const groups = props.matrix.groups ?? []
   const counts = props.matrix.counts ?? []
 
-  const nRows = groups.length      // groups (vertical)
-  const nCols = sections.length    // sections (horizontal)
+  const nRows = groups.length
+  const nCols = sections.length
 
   const W = VIEW_W
   const H = computedHeight.value
@@ -152,24 +157,20 @@ const draw = () => {
     return
   }
 
-  // Inner grid width = nCols * CELL_SIZE, centered
   const innerWidth = nCols * CELL_SIZE
   const xStart = (W - innerWidth) / 2
   const xEnd = xStart + innerWidth
 
-  // Columns = sections (horizontal)
   const x = d3.scaleBand<string>()
     .domain(sections)
     .range([xStart, xEnd])
     .padding(0)
 
-  // Rows = groups (vertical)
   const y = d3.scaleBand<string>()
     .domain(groups.map(g => g.id))
     .range([MARGIN.top, MARGIN.top + nRows * CELL_SIZE])
     .padding(0)
 
-  // Flatten to cells, compute percent within each group
   const cells: Cell[] = []
   let maxPercent = 0
 
@@ -177,8 +178,6 @@ const draw = () => {
     const group = groups[r]!
     for (let c = 0; c < nCols; c++) {
       const section = sections[c]!
-
-      // counts[sectionIdx][groupIdx]
       const value = counts[c]?.[r] ?? 0
       const total = group.total || 0
       const percent = total > 0 ? (value / total) * 100 : 0
@@ -212,7 +211,6 @@ const draw = () => {
 
   const fmtPct = d3.format('.1f')
 
-  // Column labels = sections, on top, rotated
   const colLabelGroup = svg.append('g')
     .attr('transform', `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
 
@@ -229,10 +227,8 @@ const draw = () => {
     .attr('fill', s => props.selected?.value === s ? '#2b6cb0' : '#4a5568')
     .style('font-size', '8px')
     .style('font-weight', s => props.selected?.value === s ? 700 : 500)
-
     .text(s => s)
 
-  // Row labels = groups, left side, colored by group color
   const rowLabels = svg.append('g')
     .selectAll('text.row-label')
     .data(groups)
@@ -251,7 +247,6 @@ const draw = () => {
 
   const gGrid = svg.append('g')
 
-  // Cells
   gGrid.selectAll('rect.cell')
     .data(cells)
     .enter()
@@ -331,8 +326,6 @@ const draw = () => {
       emit('item-select', isSame ? null : next)
     })
 
-
-  // Percent text inside cells
   gGrid.selectAll('text.value')
     .data(cells)
     .enter()
@@ -342,7 +335,10 @@ const draw = () => {
     .attr('y', d => y(d.groupId)! + y.bandwidth() / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('fill', '#1a202c')
+    .attr('fill', d => {
+      const fill = d.percent === 0 ? '#f7fafc' : color(d.percent)!
+      return textColorForFill(fill)
+    })
     .attr('opacity', 0)
     .style('font-size', '9px')
     .style('font-weight', '500')

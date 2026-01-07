@@ -58,7 +58,6 @@ const emit = defineEmits<{
   (e: 'item-select', payload: SelectedPair): void
 }>()
 
-
 /* =========================
  * Constants & sizing
  * =======================*/
@@ -106,6 +105,13 @@ const isSamePair = (sel: SelectedPair, a: string, b: string) => {
   return sel.type === 'modality-pair' && sel.a === p.a && sel.b === p.b
 }
 
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
+}
 
 /* =========================
  * Render
@@ -148,7 +154,6 @@ const draw = () => {
     .range([MARGIN.top, MARGIN.top + innerSize])
     .padding(0)
 
-  // Max value + total for color scaling / percentages
   let maxVal = 0
   let sumFromGrid = 0
   for (let i = 0; i < n; i++) {
@@ -160,12 +165,11 @@ const draw = () => {
   }
 
   const color = d3.scaleSequential(d3.interpolateBlues)
-  .domain([0, Math.max(maxVal, 1)])  // avoid [0,0] domain
+    .domain([0, Math.max(maxVal, 1)])
 
   const fmt = d3.format(',')
   const totalCount = props.total ?? sumFromGrid
 
-  // Column labels (top, rotated)
   const colLabelGroup = svg.append('g')
     .attr('transform', `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
 
@@ -176,15 +180,13 @@ const draw = () => {
     .append('text')
     .attr('class', 'col-label')
     .attr('transform', d =>
-      // move to the center of the column, then rotate
       `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
     )
-    .attr('text-anchor', 'start') // or 'middle' if you prefer
+    .attr('text-anchor', 'start')
     .attr('fill', '#4a5568')
     .style('font-size', '12px')
     .text(d => d)
 
-  // Row labels (left)
   svg.append('g')
     .selectAll('text.row-label')
     .data(labels)
@@ -209,7 +211,7 @@ const draw = () => {
 
   const g = svg.append('g')
 
-  const rects = g.selectAll('rect.cell')
+  g.selectAll('rect.cell')
     .data(cells)
     .enter()
     .append('rect')
@@ -271,7 +273,6 @@ const draw = () => {
       }
     })
 
-
   const cellText = g.selectAll('text.value')
     .data(cells)
     .enter()
@@ -281,7 +282,10 @@ const draw = () => {
     .attr('y', d => y(d.row)! + y.bandwidth() / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('fill', '#1a202c')
+    .attr('fill', d => {
+      const fill = d.value === 0 ? '#f7fafc' : color(d.value)!
+      return textColorForFill(fill)
+    })
     .attr('opacity', 0)
     .style('font-size', '11px')
     .style('font-weight', '500')

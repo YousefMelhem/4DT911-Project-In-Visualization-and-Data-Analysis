@@ -94,6 +94,14 @@ const hideTooltip = () => {
   tooltipVisible.value = false
 }
 
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
+}
+
 /* =========================
  * Render
  * =======================*/
@@ -109,7 +117,6 @@ const draw = () => {
   const el = svgRef.value
   if (!el) return
 
-  // NOTE: in the matrix, rowLabels = regions, colLabels = modalities
   const regions = props.matrix.rowLabels ?? []
   const modalities = props.matrix.colLabels ?? []
   const grid = props.matrix.grid ?? []
@@ -134,7 +141,6 @@ const draw = () => {
     return
   }
 
-  // Compute total per modality (row) so we can show percentages "of this modality"
   const totalsByModality = new Array(nRows).fill(0)
   for (let m = 0; m < nRows; m++) {
     let sum = 0
@@ -185,7 +191,6 @@ const draw = () => {
 
   const fmtPct = d3.format(".1f")
 
-  /* --- Column labels (regions) --- */
   svg.append("g")
     .attr("transform", `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
     .selectAll("text")
@@ -203,7 +208,6 @@ const draw = () => {
     )
     .text(r => r)
 
-  /* --- Row labels (modalities) --- */
   svg.append("g")
     .selectAll("text")
     .data(modalities)
@@ -222,7 +226,6 @@ const draw = () => {
     )
     .text(m => m)
 
-  /* --- Cells --- */
   const gGrid = svg.append("g")
 
   gGrid.selectAll("rect")
@@ -291,7 +294,6 @@ const draw = () => {
       }
     })
 
-  /* --- Percent labels --- */
   gGrid.selectAll("text")
     .data(cells)
     .enter()
@@ -300,6 +302,10 @@ const draw = () => {
     .attr("y", d => y(d.modality)! + y.bandwidth()/2)
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
+    .attr("fill", d => {
+      const fill = d.percent === 0 ? '#f7fafc' : color(d.percent)!
+      return textColorForFill(fill)
+    })
     .style("font-size", "4px")
     .style("pointer-events", "none")
     .attr("opacity", 0)

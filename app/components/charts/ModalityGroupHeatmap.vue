@@ -80,7 +80,6 @@ const emit = defineEmits<{
   (e: 'item-select', payload: { type: 'modality'; value: string; cohortId?: string } | null): void
 }>()
 
-
 /* =========================
  * Constants & sizing
  * =======================*/
@@ -119,6 +118,14 @@ const hideTooltip = () => {
 const updatePosition = (event: MouseEvent) => {
   tooltipX.value = event.clientX + 10
   tooltipY.value = event.clientY - 10
+}
+
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
 }
 
 /* =========================
@@ -335,7 +342,6 @@ const draw = () => {
       emit('item-select', isSame ? null : next)
     })
 
-
   // Percent text inside cells
   gGrid.selectAll('text.value')
     .data(cells)
@@ -346,7 +352,10 @@ const draw = () => {
     .attr('y', d => y(d.groupId)! + y.bandwidth() / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('fill', '#1a202c')
+    .attr('fill', d => {
+      const fill = d.percent === 0 ? '#f7fafc' : color(d.percent)!
+      return textColorForFill(fill)
+    })
     .attr('opacity', 0)
     .style('font-size', '9px')
     .style('font-weight', '500')
