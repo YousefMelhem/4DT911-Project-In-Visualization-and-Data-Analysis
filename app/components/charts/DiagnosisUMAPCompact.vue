@@ -50,6 +50,14 @@ const margin = { top: 30, right: 10, bottom: 40, left: 40 }
 const innerWidth = w - margin.left - margin.right
 const innerHeight = h - margin.top - margin.bottom
 
+const getLegendColor = (clusterId: number): string => {
+  // Use the same color scheme as the D3 visualization
+  const colorScheme = d3.schemeTableau10.concat(d3.schemePaired)
+  const colorScale = d3.scaleOrdinal(colorScheme)
+    .domain(Array.from({ length: 25 }, (_, i) => i.toString()))
+  return colorScale(clusterId.toString())
+}
+
 /* =========================
  * Selection Helpers
  * =======================*/
@@ -515,10 +523,10 @@ watch(() => data.value.length, async (newLength) => {
               @click="emit('clusterClick', clusterId)"
               :title="clusterLabels[clusterId] || `Cluster ${clusterId}`"
             >
-              <div 
-                class="legend-color" 
-                :style="{ 
-                  backgroundColor: `hsl(${clusterId * 15}, 70%, 60%)` 
+              <div
+                class="legend-color"
+                :style="{
+                  backgroundColor: getLegendColor(clusterId)
                 }"
               ></div>
               <span class="legend-label">
