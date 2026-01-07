@@ -65,13 +65,13 @@
         <h3>Explore by Diagnosis Category</h3>
         <p class="section-description">Select a representative case from any of the 25 diagnosis clusters below</p>
       </div>
-      <div class="cluster-grid">
+      <div class="cluster-slider-wrapper">
         <button 
           v-for="(clusterData, clusterId) in clusterRepresentatives" 
           :key="clusterId"
           @click="handleCaseSearch(clusterData.case.id)"
           :disabled="isLoading"
-          class="cluster-card"
+          class="cluster-card slider-item"
           :title="clusterData.cluster_description"
         >
           <div class="cluster-header">
@@ -508,10 +508,20 @@ onMounted(() => {
   margin: 0;
 }
 
-.cluster-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+.cluster-slider-wrapper {
+  display: flex;
+  overflow-x: auto;
   gap: 1rem;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #667eea #e8ecef;
+}
+
+.slider-item {
+  min-width: 320px;
+  max-width: 340px;
+  flex: 0 0 auto;
 }
 
 .cluster-card {
