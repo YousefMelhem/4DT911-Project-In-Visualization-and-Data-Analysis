@@ -73,18 +73,18 @@ type Cell = {
 
 const props = defineProps<{
   matrix: ModalityGroupMatrix
-  selectedValue?: string | null   // selected modality (column highlight)
+  selected?: { type: 'modality'; value: string; cohortId?: string } | null
 }>()
 
 const emit = defineEmits<{
-  (e: 'item-select', payload: { type: 'modality'; value: string } | null): void
+  (e: 'item-select', payload: { type: 'modality'; value: string; cohortId?: string } | null): void
 }>()
 
 /* =========================
  * Constants & sizing
  * =======================*/
 const VIEW_W = 450
-const MARGIN = { top: 70, right: 8, bottom: 0, left: 0 } as const
+const MARGIN = { top: 45, right: 8, bottom: 0, left: 0 } as const
 const COL_LABEL_OFFSET = 5
 const CELL_SIZE = 30
 
@@ -94,6 +94,9 @@ const computedHeight = computed(() => {
   const innerH = n * CELL_SIZE
   return MARGIN.top + innerH + MARGIN.bottom
 })
+
+const truncate = (s: string, max = 14) =>
+  s.length > max ? `${s.slice(0, max - 1)}…` : s
 
 const svgRef = ref<SVGSVGElement | null>(null)
 
@@ -115,6 +118,14 @@ const hideTooltip = () => {
 const updatePosition = (event: MouseEvent) => {
   tooltipX.value = event.clientX + 10
   tooltipY.value = event.clientY - 10
+}
+
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
 }
 
 /* =========================
@@ -224,16 +235,16 @@ const draw = () => {
     )
     .attr('text-anchor', 'start')
     .attr('fill', m =>
-      props.selectedValue && m === props.selectedValue ? '#2b6cb0' : '#4a5568'
+      props.selected?.value && m === props.selected.value ? '#2b6cb0' : '#4a5568'
     )
-    .style('font-size', '12px')
+    .style('font-size', '8px')
     .style('font-weight', m =>
-      props.selectedValue && m === props.selectedValue ? 700 : 500
+      props.selected?.value && m === props.selected.value ? 700 : 500
     )
     .text(m => m)
 
   // Row labels = groups, left side, colored by group color
-  svg.append('g')
+  const rowLabels = svg.append('g')
     .selectAll('text.row-label')
     .data(groups)
     .enter()
@@ -244,9 +255,10 @@ const draw = () => {
     .attr('text-anchor', 'end')
     .attr('dominant-baseline', 'middle')
     .attr('fill', g => g.color || '#4a5568')
-    .style('font-size', '12px')
+    .style('font-size', '8px')
     .style('font-weight', 600)
-    .text(g => g.name)
+    .text(g => truncate(g.name, 16))
+  rowLabels.append('title').text(g => g.name)
 
   const gGrid = svg.append('g')
 
@@ -261,13 +273,21 @@ const draw = () => {
     .attr('width', x.bandwidth())
     .attr('height', y.bandwidth())
     .attr('stroke', d => {
-      if (!props.selectedValue) return '#e2e8f0'
-      const isSelected = d.modality === props.selectedValue
+      const isSelected =
+        !!props.selected &&
+        props.selected.type === 'modality' &&
+        props.selected.value === d.modality &&
+        props.selected.cohortId === d.groupId
+
       return isSelected ? '#2b6cb0' : '#e2e8f0'
     })
     .attr('stroke-width', d => {
-      if (!props.selectedValue) return 0.5
-      const isSelected = d.modality === props.selectedValue
+      const isSelected =
+        !!props.selected &&
+        props.selected.type === 'modality' &&
+        props.selected.value === d.modality &&
+        props.selected.cohortId === d.groupId
+
       return isSelected ? 2 : 0.5
     })
     .attr('fill', d => d.percent === 0 ? '#f7fafc' : color(d.percent)!)
@@ -296,7 +316,10 @@ const draw = () => {
     })
     .on('mouseleave', function (_event, d: Cell) {
       const isSelected =
-        !!props.selectedValue && d.modality === props.selectedValue
+        !!props.selected &&
+        props.selected.type === 'modality' &&
+        props.selected.value === d.modality &&
+        props.selected.cohortId === d.groupId
 
       d3.select(this)
         .transition()
@@ -307,12 +330,16 @@ const draw = () => {
 
       hideTooltip()
     })
-    .on('click', (_event, d) => {
-      if (props.selectedValue === d.modality) {
-        emit('item-select', null)
-      } else {
-        emit('item-select', { type: 'modality', value: d.modality })
-      }
+    .on('click', (_event, d: Cell) => {
+      const next = { type: 'modality' as const, value: d.modality, cohortId: d.groupId }
+
+      const isSame =
+        !!props.selected &&
+        props.selected.type === 'modality' &&
+        props.selected.value === next.value &&
+        props.selected.cohortId === next.cohortId
+
+      emit('item-select', isSame ? null : next)
     })
 
   // Percent text inside cells
@@ -325,7 +352,10 @@ const draw = () => {
     .attr('y', d => y(d.groupId)! + y.bandwidth() / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('fill', '#1a202c')
+    .attr('fill', d => {
+      const fill = d.percent === 0 ? '#f7fafc' : color(d.percent)!
+      return textColorForFill(fill)
+    })
     .attr('opacity', 0)
     .style('font-size', '9px')
     .style('font-weight', '500')
@@ -340,7 +370,7 @@ const draw = () => {
 onMounted(draw)
 watch(() => props.matrix, draw, { deep: true })
 watch(computedHeight, draw)
-watch(() => props.selectedValue, draw)
+watch(() => props.selected, draw)
 </script>
 
 <style scoped>

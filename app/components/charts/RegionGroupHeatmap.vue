@@ -71,11 +71,11 @@ type Cell = {
 
 const props = defineProps<{
   matrix: RegionGroupMatrix
-  selectedValue?: string | null
+  selected?: { type: 'region'; value: string; cohortId?: string } | null
 }>()
 
 const emit = defineEmits<{
-  (e: "item-select", payload: { type: "region"; value: string } | null): void
+  (e: "item-select", payload: { type: "region"; value: string; cohortId?: string } | null): void
 }>()
 
 /* =========================
@@ -91,9 +91,9 @@ const computedHeight = computed(() => {
   return MARGIN.top + n * CELL_SIZE + MARGIN.bottom
 })
 
-/* =========================
- * SVG / Tooltip
- * =======================*/
+const truncate = (s: string, max = 16) =>
+  s.length > max ? `${s.slice(0, max - 1)}…` : s
+
 const svgRef = ref<SVGSVGElement | null>(null)
 
 const tooltipVisible = ref(false)
@@ -109,6 +109,14 @@ const showTooltip = (event: MouseEvent, data: any) => {
 }
 
 const hideTooltip = () => (tooltipVisible.value = false)
+
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
+}
 
 /* =========================
  * Render
@@ -141,7 +149,6 @@ const draw = () => {
     return
   }
 
-  /* --- Grid scaling --- */
   const innerWidth = nCols * CELL_SIZE
   const xStart = (W - innerWidth) / 2
 
@@ -155,7 +162,6 @@ const draw = () => {
     .range([MARGIN.top, MARGIN.top + nRows * CELL_SIZE])
     .padding(0)
 
-  /* --- Flatten cell data --- */
   const cells: Cell[] = []
   let maxPct = 0
 
@@ -186,7 +192,6 @@ const draw = () => {
 
   const fmtPct = d3.format(".1f")
 
-  /* --- Column labels --- */
   svg.append("g")
     .attr("transform", `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
     .selectAll("text")
@@ -195,27 +200,28 @@ const draw = () => {
     .append("text")
     .attr("transform", r => `translate(${x(r)! + x.bandwidth()/2},0) rotate(-30)`)
     .attr("text-anchor", "start")
-    .attr("fill", r => props.selectedValue === r ? "#2b6cb0" : "#4a5568")
+    .attr("fill", r => props.selected?.value === r ? "#2b6cb0" : "#4a5568")
     .style("font-size", "3px")
-    .style("font-weight", r => props.selectedValue === r ? 700 : 500)
+    .style("font-weight", r => props.selected?.value === r ? 700 : 500)
     .text(r => r)
 
-  /* --- Row labels (groups) --- */
-  svg.append("g")
-    .selectAll("text")
+  const rowLabels = svg.append("g")
+    .selectAll("text.row-label")
     .data(groups)
     .enter()
     .append("text")
+    .attr("class", "row-label")
     .attr("x", xStart - 6)
-    .attr("y", g => y(g.id)! + y.bandwidth()/2)
+    .attr("y", g => y(g.id)! + y.bandwidth() / 2)
     .attr("text-anchor", "end")
     .attr("dominant-baseline", "middle")
-    .attr("fill", g => g.color)
-    .style("font-size", "5px")
-    .style("font-weight", "600")
-    .text(g => g.name)
+    .attr("fill", g => g.color || "#4a5568")
+    .style("font-size", "3px")
+    .style("font-weight", 600)
+    .text(g => truncate(g.name, 17))
 
-  /* --- Cells --- */
+  rowLabels.append("title").text(g => g.name)
+
   const gGrid = svg.append("g")
 
   gGrid.selectAll("rect")
@@ -227,12 +233,24 @@ const draw = () => {
     .attr("y", d => y(d.groupId)!)
     .attr("width", x.bandwidth())
     .attr("height", y.bandwidth())
-    .attr("stroke", d =>
-      props.selectedValue === d.region ? "#2b6cb0" : "#e2e8f0"
-    )
-    .attr("stroke-width", d =>
-      props.selectedValue === d.region ? 2 : 0.5
-    )
+    .attr("stroke", d => {
+      const isSel =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === d.region &&
+        props.selected.cohortId === d.groupId
+
+      return isSel ? "#2b6cb0" : "#e2e8f0"
+    })
+    .attr("stroke-width", d => {
+      const isSel =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === d.region &&
+        props.selected.cohortId === d.groupId
+
+      return isSel ? 2 : 0.5
+    })
     .attr("fill", d => d.percent === 0 ? "#f7fafc" : color(d.percent)!)
     .attr("opacity", 0.85)
     .style("cursor", "pointer")
@@ -254,7 +272,11 @@ const draw = () => {
       tooltipY.value = evt.clientY - 10
     })
     .on("mouseleave", function(event, d) {
-      const isSel = props.selectedValue === d.region
+      const isSel =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === d.region &&
+        props.selected.cohortId === d.groupId
 
       d3.select(this)
         .transition().duration(120)
@@ -265,13 +287,17 @@ const draw = () => {
       hideTooltip()
     })
     .on("click", (_evt, d) => {
-      if (props.selectedValue === d.region)
-        emit("item-select", null)
-      else
-        emit("item-select", { type: "region", value: d.region })
+      const next = { type: "region" as const, value: d.region, cohortId: d.groupId }
+
+      const isSame =
+        !!props.selected &&
+        props.selected.type === "region" &&
+        props.selected.value === next.value &&
+        props.selected.cohortId === next.cohortId
+
+      emit("item-select", isSame ? null : next)
     })
 
-  /* --- Percent labels --- */
   gGrid.selectAll("text")
     .data(cells)
     .enter()
@@ -280,6 +306,10 @@ const draw = () => {
     .attr("y", d => y(d.groupId)! + y.bandwidth()/2)
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", "middle")
+    .attr("fill", d => {
+      const fill = d.percent === 0 ? '#f7fafc' : color(d.percent)!
+      return textColorForFill(fill)
+    })
     .style("font-size", "4px")
     .style("pointer-events", "none")
     .attr("opacity", 0)
@@ -293,7 +323,7 @@ const draw = () => {
 onMounted(draw)
 watch(() => props.matrix, draw, { deep: true })
 watch(computedHeight, draw)
-watch(() => props.selectedValue, draw)
+watch(() => props.selected, draw)
 </script>
 
 <style scoped>

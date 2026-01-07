@@ -43,15 +43,19 @@ import * as d3 from 'd3'
 type ModalityMatrix = { labels: string[]; grid: number[][] }
 type Cell = { row: string; col: string; value: number }
 
+type SelectedPair =
+  | { type: 'modality-pair'; a: string; b: string }
+  | null
+
 const props = defineProps<{
   matrix: ModalityMatrix
   total?: number
   clusterNote?: string
-  selectedValue?: string | null
+  selectedPair?: SelectedPair
 }>()
 
 const emit = defineEmits<{
-  (e: 'item-select', payload: { type: 'modality'; value: string } | null): void
+  (e: 'item-select', payload: SelectedPair): void
 }>()
 
 /* =========================
@@ -89,6 +93,24 @@ const hideTooltip = () => {
 const updatePosition = (event: MouseEvent) => {
   tooltipX.value = event.clientX + 10
   tooltipY.value = event.clientY - 10
+}
+
+const normalizePair = (a: string, b: string) => {
+  return a <= b ? { a, b } : { a: b, b: a }
+}
+
+const isSamePair = (sel: SelectedPair, a: string, b: string) => {
+  if (!sel) return false
+  const p = normalizePair(a, b)
+  return sel.type === 'modality-pair' && sel.a === p.a && sel.b === p.b
+}
+
+const textColorForFill = (fill: string) => {
+  const c = d3.color(fill)
+  if (!c) return '#1a202c'
+  const rgb = c.rgb()
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255
+  return lum < 0.55 ? '#ffffff' : '#1a202c'
 }
 
 /* =========================
@@ -132,7 +154,6 @@ const draw = () => {
     .range([MARGIN.top, MARGIN.top + innerSize])
     .padding(0)
 
-  // Max value + total for color scaling / percentages
   let maxVal = 0
   let sumFromGrid = 0
   for (let i = 0; i < n; i++) {
@@ -144,12 +165,11 @@ const draw = () => {
   }
 
   const color = d3.scaleSequential(d3.interpolateBlues)
-  .domain([0, Math.max(maxVal, 1)])  // avoid [0,0] domain
+    .domain([0, Math.max(maxVal, 1)])
 
   const fmt = d3.format(',')
-  const totalCount = props.total ?? maxVal
+  const totalCount = props.total ?? sumFromGrid
 
-  // Column labels (top, rotated)
   const colLabelGroup = svg.append('g')
     .attr('transform', `translate(0, ${MARGIN.top - COL_LABEL_OFFSET})`)
 
@@ -160,15 +180,13 @@ const draw = () => {
     .append('text')
     .attr('class', 'col-label')
     .attr('transform', d =>
-      // move to the center of the column, then rotate
       `translate(${x(d)! + x.bandwidth() / 2}, 0) rotate(-45)`
     )
-    .attr('text-anchor', 'start') // or 'middle' if you prefer
+    .attr('text-anchor', 'start')
     .attr('fill', '#4a5568')
     .style('font-size', '12px')
     .text(d => d)
 
-  // Row labels (left)
   svg.append('g')
     .selectAll('text.row-label')
     .data(labels)
@@ -193,7 +211,7 @@ const draw = () => {
 
   const g = svg.append('g')
 
-  const rects = g.selectAll('rect.cell')
+  g.selectAll('rect.cell')
     .data(cells)
     .enter()
     .append('rect')
@@ -202,16 +220,8 @@ const draw = () => {
     .attr('y', d => y(d.row)!)
     .attr('width', x.bandwidth())
     .attr('height', y.bandwidth())
-    .attr('stroke', d => {
-      if (!props.selectedValue) return '#e2e8f0'
-      const isSelected = d.row === props.selectedValue || d.col === props.selectedValue
-      return isSelected ? '#2b6cb0' : '#e2e8f0'
-    })
-    .attr('stroke-width', d => {
-      if (!props.selectedValue) return 0.5
-      const isSelected = d.row === props.selectedValue || d.col === props.selectedValue
-      return isSelected ? 2 : 0.5
-    })
+    .attr('stroke', d => (isSamePair(props.selectedPair ?? null, d.row, d.col) ? '#2b6cb0' : '#e2e8f0'))
+    .attr('stroke-width', d => (isSamePair(props.selectedPair ?? null, d.row, d.col) ? 2 : 0.5))
     .attr('fill', d => d.value === 0 ? '#f7fafc' : color(d.value)!)
     .attr('opacity', 0.85)
     .style('cursor', 'pointer')
@@ -243,8 +253,7 @@ const draw = () => {
       updatePosition(event as MouseEvent)
     })
     .on('mouseleave', function (_event, d: Cell) {
-      const isSelected = !!props.selectedValue &&
-        (d.row === props.selectedValue || d.col === props.selectedValue)
+      const isSelected = isSamePair(props.selectedPair ?? null, d.row, d.col)
 
       d3.select(this)
         .transition()
@@ -256,10 +265,11 @@ const draw = () => {
       hideTooltip()
     })
     .on('click', (_event, d) => {
-      if (props.selectedValue === d.row) {
+      const p = normalizePair(d.row, d.col)
+      if (isSamePair(props.selectedPair ?? null, p.a, p.b)) {
         emit('item-select', null)
       } else {
-        emit('item-select', { type: 'modality', value: d.row })
+        emit('item-select', { type: 'modality-pair', a: p.a, b: p.b })
       }
     })
 
@@ -272,7 +282,10 @@ const draw = () => {
     .attr('y', d => y(d.row)! + y.bandwidth() / 2)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('fill', '#1a202c')
+    .attr('fill', d => {
+      const fill = d.value === 0 ? '#f7fafc' : color(d.value)!
+      return textColorForFill(fill)
+    })
     .attr('opacity', 0)
     .style('font-size', '11px')
     .style('font-weight', '500')
@@ -288,7 +301,7 @@ const draw = () => {
 onMounted(draw)
 watch(() => props.matrix, draw, { deep: true })
 watch(computedHeight, draw)
-watch(() => props.selectedValue, draw)
+watch(() => props.selectedPair, draw)
 </script>
 
 <style scoped>

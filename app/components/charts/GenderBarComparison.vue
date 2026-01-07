@@ -33,16 +33,23 @@ type Series = {
 
 const props = defineProps<{
   series: Series[]
+  selectedValue?: { type: 'gender'; value: string; cohortId?: string } | null
+}>()
+
+const emit = defineEmits<{
+  itemSelect: [{ type: 'gender'; value: string; cohortId: string }]
 }>()
 
 const W = 700
 const H = 300
-const MARGIN = { top: 30, right: 16, bottom: 42, left: 90 }
+const MARGIN = { top: 56, right: 16, bottom: 42, left: 90 }
 const INNER_W = W - MARGIN.left - MARGIN.right
 const INNER_H = H - MARGIN.top - MARGIN.bottom
-const fmt = d3.format(',')
 
 const svgRef = ref<SVGSVGElement | null>(null)
+
+const truncate = (s: string, max = 12) =>
+  s.length > max ? `${s.slice(0, max - 1)}…` : s
 
 const draw = () => {
   const el = svgRef.value
@@ -63,12 +70,9 @@ const draw = () => {
     return
   }
 
-  // Collect all labels (Female / Male / Unknown)
   const labelSet = new Set<string>()
   for (const s of series) {
-    for (const it of s.items) {
-      labelSet.add(it.label)
-    }
+    for (const it of s.items) labelSet.add(it.label)
   }
   const labels = Array.from(labelSet)
   if (!labels.length) {
@@ -94,7 +98,6 @@ const draw = () => {
     return
   }
 
-  // X for categories (Female / Male / Unknown)
   const x0 = d3
     .scaleBand<string>()
     .domain(labels)
@@ -102,21 +105,18 @@ const draw = () => {
     .paddingInner(0.3)
     .paddingOuter(0.1)
 
-  // X for cohorts within each category
   const x1 = d3
     .scaleBand<string>()
     .domain(series.map(s => s.cohortId))
     .range([0, x0.bandwidth()])
     .padding(0.1)
 
-  // Y scale: fixed 0–100% for relative comparison
   const y = d3
     .scaleLinear()
     .domain([0, 100])
     .nice()
     .range([MARGIN.top + INNER_H, MARGIN.top])
 
-  // Axes
   svg
     .append('g')
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
@@ -127,31 +127,22 @@ const draw = () => {
   svg
     .append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
-    .call(
-      d3
-        .axisLeft(y)
-        .ticks(5)
-        .tickFormat(d => `${d as number}%`)
-    )
+    .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d as number}%`))
     .selectAll('text')
     .style('font-size', '12px')
 
   const g = svg.append('g')
 
-  // Bars by label and series
   labels.forEach(label => {
-    const group = g
-      .append('g')
-      .attr('transform', `translate(${x0(label)},0)`)
+    const group = g.append('g').attr('transform', `translate(${x0(label)},0)`)
 
     const forLabel = series.map(s => {
       const item = s.items.find(it => it.label === label)
       const raw = item ? item.count : 0
       const value = s.total > 0 ? (raw / s.total) * 100 : 0
-      return { series: s, value, raw }
+      return { series: s, value, raw, label }
     })
 
-    // Bars
     const barSelection = group
       .selectAll('rect')
       .data(forLabel)
@@ -163,7 +154,28 @@ const draw = () => {
       .attr('height', 0)
       .attr('rx', 4)
       .attr('fill', d => d.series.color)
-      .attr('opacity', 0.9)
+      .attr('opacity', d => {
+        const sel = props.selectedValue
+        if (!sel || sel.type !== 'gender') return 0.9
+        const isSelected = sel.value === d.label && sel.cohortId === d.series.cohortId
+        return isSelected ? 1 : 0.55
+      })
+      .attr('stroke', d => {
+        const sel = props.selectedValue
+        if (!sel || sel.type !== 'gender') return 'none'
+        const isSelected = sel.value === d.label && sel.cohortId === d.series.cohortId
+        return isSelected ? '#2d3748' : 'none'
+      })
+      .attr('stroke-width', d => {
+        const sel = props.selectedValue
+        if (!sel || sel.type !== 'gender') return 0
+        const isSelected = sel.value === d.label && sel.cohortId === d.series.cohortId
+        return isSelected ? 2 : 0
+      })
+      .style('cursor', 'pointer')
+      .on('click', (_event, d) => {
+        emit('itemSelect', { type: 'gender', value: d.label, cohortId: d.series.cohortId })
+      })
 
     barSelection
       .transition()
@@ -171,7 +183,6 @@ const draw = () => {
       .attr('y', d => y(d.value))
       .attr('height', d => y(0) - y(d.value))
 
-    // Value labels (percentages)
     group
       .selectAll('text.value')
       .data(forLabel)
@@ -191,43 +202,65 @@ const draw = () => {
       .attr('y', d => y(d.value) - 6)
   })
 
-  // Legend
+  const LEGEND_MAX_CHARS = 20
+  const LEGEND_ITEM_GAP_X = 12
+  const LEGEND_ITEM_GAP_Y = 18
+
   const legend = svg
     .append('g')
-    .attr('transform', `translate(${MARGIN.left},${MARGIN.top - 14})`)
+    .attr('transform', `translate(${MARGIN.left},${MARGIN.top - 46})`)
 
-  const legendItem = legend
+  let lx = 0
+  let ly = 0
+  const maxLegendWidth = INNER_W
+
+  legend
     .selectAll('g.legend-item')
     .data(series)
     .enter()
     .append('g')
     .attr('class', 'legend-item')
-    .attr('transform', (_d, i) => `translate(${i * 80},0)`)
+    .each(function (d) {
+      const gItem = d3.select(this)
 
-  legendItem
-    .append('rect')
-    .attr('x', 0)
-    .attr('y', -9)
-    .attr('width', 12)
-    .attr('height', 12)
-    .attr('rx', 3)
-    .attr('fill', d => d.color)
+      gItem
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', -9)
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('rx', 3)
+        .attr('fill', d.color)
 
-  legendItem
-    .append('text')
-    .attr('x', 18)
-    .attr('y', 0)
-    .attr('dominant-baseline', 'central')
-    .style('font-size', '12px')
-    .text(d => d.cohortName)
+      const label = truncate(d.cohortName, LEGEND_MAX_CHARS)
+
+      const t = gItem
+        .append('text')
+        .attr('x', 18)
+        .attr('y', 0)
+        .attr('dominant-baseline', 'central')
+        .style('font-size', '12px')
+        .text(label)
+
+      t.append('title').text(d.cohortName)
+
+      const node = gItem.node() as SVGGElement | null
+      if (!node) return
+      const w = node.getBBox().width
+
+      if (lx + w > maxLegendWidth && lx > 0) {
+        lx = 0
+        ly += LEGEND_ITEM_GAP_Y
+      }
+
+      gItem.attr('transform', `translate(${lx},${ly})`)
+      lx += w + LEGEND_ITEM_GAP_X
+    })
 }
 
 onMounted(draw)
-watch(
-  () => props.series,
-  () => draw(),
-  { deep: true }
-)
+watch(() => props.series, draw, { deep: true })
+watch(() => props.selectedValue, draw, { deep: true })
 </script>
 
 <style scoped>

@@ -7,20 +7,11 @@
       </div>
 
       <div class="legend" v-if="groups && groups.length">
-        <div
-          v-for="g in groups"
-          :key="g.id"
-          class="legend-item"
-        >
-          <span
-            class="legend-swatch"
-            :style="{ backgroundColor: g.color }"
-          />
+        <div v-for="g in groups" :key="g.id" class="legend-item">
+          <span class="legend-swatch" :style="{ backgroundColor: g.color }" />
           <span class="legend-label">
             {{ g.name }}
-            <span class="legend-meta">
-              ({{ g.size.toLocaleString() }} cases)
-            </span>
+            <span class="legend-meta">({{ g.size.toLocaleString() }} cases)</span>
           </span>
         </div>
       </div>
@@ -30,7 +21,7 @@
       <svg
         ref="svgRef"
         class="svg-chart"
-        :viewBox="`0 0 ${VIEWBOX_WIDTH} ${H}`"
+        :viewBox="`0 0 ${computedWidth} ${H}`"
         preserveAspectRatio="none"
         role="img"
         aria-label="Line chart of monthly case counts by group"
@@ -55,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed, nextTick } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import * as d3 from 'd3'
 
 type Point = { date: Date; count: number }
@@ -77,22 +68,22 @@ const emit = defineEmits<{
 }>()
 
 const H = 200
-const VIEWBOX_WIDTH = 1000
 const MARGIN = { top: 20, right: 20, bottom: 46, left: 56 }
 const INNER_H = H - MARGIN.top - MARGIN.bottom
-const fmtMonth = d3.timeFormat('%b %Y')
 
 const svgRef = ref<SVGSVGElement | null>(null)
 
-const allMonthsCount = computed(() => {
-  const set = new Set<number>()
-  for (const g of props.groups ?? []) {
-    for (const p of g.series ?? []) {
-      set.add(p.date.getTime())
-    }
-  }
-  return set.size
-})
+const chartWidth = ref(900)
+const computedWidth = computed(() => chartWidth.value)
+
+const measureWidth = () => {
+  const el = svgRef.value
+  if (!el) return
+  const parent = el.parentElement
+  if (!parent) return
+  const rect = parent.getBoundingClientRect()
+  if (rect.width > 0) chartWidth.value = rect.width
+}
 
 const isEmpty = computed(() => {
   if (!props.groups || props.groups.length === 0) return true
@@ -107,7 +98,8 @@ const tooltipData = ref<any>(null)
 const showTooltip = (event: MouseEvent, data: any) => {
   tooltipData.value = data
   tooltipVisible.value = true
-  updatePosition(event)
+  tooltipX.value = event.clientX + 10
+  tooltipY.value = event.clientY - 10
 }
 
 const hideTooltip = () => {
@@ -119,11 +111,66 @@ const updatePosition = (event: MouseEvent) => {
   tooltipY.value = event.clientY - 10
 }
 
+const fmtTooltipMonth = d3.timeFormat('%b %Y')
+const fmtTickLong = d3.timeFormat('%b %Y')
+const fmtTickShort = d3.timeFormat('%b %y')
+const fmtTickYear = d3.timeFormat('%Y')
+
+const pickTickConfig = (x: d3.ScaleTime<number, number>, innerW: number) => {
+  const candidates: Array<{ every: d3.TimeInterval; fmt: (d: Date) => string }> = [
+    { every: d3.timeMonth, fmt: fmtTickLong },
+    { every: d3.timeMonth.every(2) ?? d3.timeMonth, fmt: fmtTickShort },
+    { every: d3.timeMonth.every(3) ?? d3.timeMonth, fmt: fmtTickShort },
+    { every: d3.timeMonth.every(6) ?? d3.timeMonth, fmt: fmtTickShort },
+    { every: d3.timeYear, fmt: fmtTickYear },
+    { every: d3.timeYear.every(2) ?? d3.timeYear, fmt: fmtTickYear },
+    { every: d3.timeYear.every(5) ?? d3.timeYear, fmt: fmtTickYear },
+  ]
+
+  const fontPx = 8
+  const pad = 8
+  const estTextWidth = (s: string) =>
+    Math.max(18, s.length * (fontPx * 0.62)) + pad
+
+  for (const c of candidates) {
+    const ticks = x.ticks(c.every)
+    if (ticks.length <= 1) return { every: c.every, fmt: c.fmt }
+
+    let ok = true
+    for (let i = 0; i < ticks.length; i++) {
+      const t = ticks[i] as Date
+      const txt = c.fmt(t)
+      const w = estTextWidth(txt)
+      const xt = x(t)
+
+      const left = xt - w / 2
+      const right = xt + w / 2
+
+      if (left < MARGIN.left - 1) { ok = false; break }
+      if (right > MARGIN.left + innerW + 1) { ok = false; break }
+
+      if (i > 0) {
+        const prev = ticks[i - 1] as Date
+        const prevTxt = c.fmt(prev)
+        const prevW = estTextWidth(prevTxt)
+        const xp = x(prev)
+        const prevRight = xp + prevW / 2
+        if (left < prevRight + 2) { ok = false; break }
+      }
+    }
+
+    if (ok) return { every: c.every, fmt: c.fmt }
+  }
+
+  return { every: d3.timeYear.every(5) ?? d3.timeYear, fmt: fmtTickYear }
+}
+
+
 const draw = () => {
   const el = svgRef.value
   if (!el) return
 
-  const W = VIEWBOX_WIDTH
+  const W = computedWidth.value
   const INNER_W = W - MARGIN.left - MARGIN.right
 
   const svg = d3.select(el)
@@ -131,18 +178,12 @@ const draw = () => {
 
   if (!props.groups || props.groups.length === 0 || isEmpty.value) return
 
-  // Flatten data to compute global domains
   const allPoints: Point[] = []
-  for (const g of props.groups) {
-    for (const p of g.series ?? []) {
-      allPoints.push(p)
-    }
-  }
+  for (const g of props.groups) for (const p of g.series ?? []) allPoints.push(p)
   if (!allPoints.length) return
 
-  const xDomain = d3.extent(allPoints, (d: Point) => d.date) as [Date, Date]
-  const rawMax = d3.max(allPoints, (d: Point) => d.count) ?? 0
-  const yMax = rawMax || 0
+  const xDomain = d3.extent(allPoints, d => d.date) as [Date, Date]
+  const yMax = (d3.max(allPoints, d => d.count) ?? 0) || 0
 
   const x = d3.scaleTime()
     .domain(xDomain)
@@ -153,18 +194,21 @@ const draw = () => {
     .nice()
     .range([MARGIN.top + INNER_H, MARGIN.top])
 
-  // Axes
-  const approxTickCount = Math.max(1, Math.ceil(allMonthsCount.value / 6))
-  svg.append('g')
+  const xAxisG = svg.append('g')
     .attr('transform', `translate(0,${MARGIN.top + INNER_H})`)
-    .call(
-      d3.axisBottom(x)
-        .ticks(d3.timeMonth.every(approxTickCount))
-        .tickFormat((d) => fmtMonth(d as Date))
-    )
-    .selectAll('text')
+
+  const tickCfg = pickTickConfig(x, INNER_W)
+
+  xAxisG.call(
+    d3.axisBottom(x)
+      .ticks(tickCfg.every)
+      .tickFormat((d) => tickCfg.fmt(d as Date))
+  )
+
+  xAxisG.selectAll('text')
     .style('font-size', '8px')
     .attr('transform', 'translate(0,4)')
+    .style('text-anchor', 'middle')
 
   svg.append('g')
     .attr('transform', `translate(${MARGIN.left},0)`)
@@ -173,11 +217,10 @@ const draw = () => {
     .style('font-size', '10px')
 
   const lineGen = d3.line<Point>()
-    .x((d: Point) => x(d.date))
-    .y((d: Point) => y(d.count))
+    .x(d => x(d.date))
+    .y(d => y(d.count))
     .curve(d3.curveMonotoneX)
 
-  // One line per group
   for (const g of props.groups) {
     const data = (g.series ?? []).slice().sort((a, b) => +a.date - +b.date)
     if (!data.length) continue
@@ -197,48 +240,30 @@ const draw = () => {
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', (d: Point) => x(d.date))
-      .attr('cy', (d: Point) => y(d.count))
+      .attr('cx', d => x(d.date))
+      .attr('cy', d => y(d.count))
       .attr('r', 2)
       .attr('fill', g.color || '#667eea')
       .attr('opacity', 0.9)
       .style('cursor', 'pointer')
       .on('mouseenter', function (event, d: Point) {
-        d3.select(this)
-          .transition()
-          .duration(150)
-          .attr('r', 4)
-          .attr('opacity', 1)
+        d3.select(this).transition().duration(150).attr('r', 4).attr('opacity', 1)
 
-        const pct = totalForGroup > 0
-          ? ((d.count / totalForGroup) * 100).toFixed(1)
-          : '0.0'
-
-        const tooltipContent = {
-          label: fmtMonth(d.date),
+        const pct = totalForGroup > 0 ? ((d.count / totalForGroup) * 100).toFixed(1) : '0.0'
+        showTooltip(event as MouseEvent, {
+          label: fmtTooltipMonth(d.date),
           count: d.count,
           groupName: g.name,
           extra: `${pct}% of this group's cases`,
-        }
-
-        nextTick(() => {
-          showTooltip(event as MouseEvent, tooltipContent)
         })
       })
-      .on('mousemove', (event) => {
-        updatePosition(event as MouseEvent)
-      })
+      .on('mousemove', (event) => updatePosition(event as MouseEvent))
       .on('mouseleave', function () {
-        d3.select(this)
-          .transition()
-          .duration(150)
-          .attr('r', 2)
-          .attr('opacity', 0.9)
+        d3.select(this).transition().duration(150).attr('r', 2).attr('opacity', 0.9)
         hideTooltip()
       })
   }
 
-  // Brush band (same semantics as single-series chart)
   const brushBandHeight = 24
   const bandBottom = MARGIN.top + INNER_H
   const bandTop = bandBottom - brushBandHeight
@@ -263,18 +288,14 @@ const draw = () => {
         return
       }
       const [x0, x1] = sel
-      const start = x.invert(x0)
-      const end = x.invert(x1)
-      emit('rangeChange', { start, end })
+      emit('rangeChange', { start: x.invert(x0), end: x.invert(x1) })
 
       svg.select<SVGGElement>('.brush').select<SVGRectElement>('.selection')
         .attr('y', MARGIN.top)
         .attr('height', INNER_H)
     })
 
-  const brushG = svg.append('g')
-    .attr('class', 'brush')
-    .call(brush)
+  const brushG = svg.append('g').attr('class', 'brush').call(brush)
 
   brushG.selectAll('.selection')
     .attr('fill', '#667eea')
@@ -282,12 +303,33 @@ const draw = () => {
     .attr('stroke', '#667eea')
     .attr('stroke-width', 1.5)
 
-  brushG.selectAll('.overlay')
-    .style('cursor', 'crosshair')
+  brushG.selectAll('.overlay').style('cursor', 'crosshair')
 }
 
-onMounted(draw)
-watch(() => props.groups, draw, { deep: true })
+onMounted(() => {
+  nextTick(() => {
+    measureWidth()
+    draw()
+  })
+  window.addEventListener('resize', measureWidth)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', measureWidth)
+})
+
+watch(
+  () => props.groups,
+  () => {
+    nextTick(() => {
+      measureWidth()
+      draw()
+    })
+  },
+  { deep: true }
+)
+
+watch(computedWidth, draw)
 </script>
 
 <style scoped>

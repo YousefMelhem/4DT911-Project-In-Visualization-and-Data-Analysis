@@ -4,7 +4,7 @@
       <h3>Filters</h3>
       <p class="filter-hint">Refine your search</p>
     </div>
-    
+
     <!-- Search -->
     <div class="filter-group search-group">
       <h4>Search</h4>
@@ -15,6 +15,7 @@
         @input="onQueryInput(($event.target as HTMLInputElement).value)"
       />
     </div>
+
     <!-- Gender -->
     <div class="filter-group push-bottom">
       <MultiSelect
@@ -30,16 +31,22 @@
       <h4>Age range</h4>
       <div class="range-group">
         <input
-          type="number"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
           :value="modelValue.ageMin ?? ''"
           placeholder="Min"
+          @keydown="digitsOnly"
           @input="onAgeMinInput(($event.target as HTMLInputElement).value)"
         />
         <span>–</span>
         <input
-          type="number"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
           :value="modelValue.ageMax ?? ''"
           placeholder="Max"
+          @keydown="digitsOnly"
           @input="onAgeMaxInput(($event.target as HTMLInputElement).value)"
         />
       </div>
@@ -95,42 +102,54 @@
 
     <!-- Word count -->
     <div class="filter-group">
-    <h4>Number of words</h4>
-    <div class="range-group">
+      <h4>Number of words</h4>
+      <div class="range-group">
         <input
-        type="number"
-        :value="modelValue.wordsMin ?? ''"
-        placeholder="Min"
-        @input="onWordsMinInput(($event.target as HTMLInputElement).value)"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          :value="modelValue.wordsMin ?? ''"
+          placeholder="Min"
+          @keydown="digitsOnly"
+          @input="onWordsMinInput(($event.target as HTMLInputElement).value)"
         />
         <span>–</span>
         <input
-        type="number"
-        :value="modelValue.wordsMax ?? ''"
-        placeholder="Max"
-        @input="onWordsMaxInput(($event.target as HTMLInputElement).value)"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          :value="modelValue.wordsMax ?? ''"
+          placeholder="Max"
+          @keydown="digitsOnly"
+          @input="onWordsMaxInput(($event.target as HTMLInputElement).value)"
         />
-    </div>
+      </div>
     </div>
 
     <!-- Image count -->
     <div class="filter-group">
-    <h4>Number of images</h4>
-    <div class="range-group">
+      <h4>Number of images</h4>
+      <div class="range-group">
         <input
-        type="number"
-        :value="modelValue.imageMin ?? ''"
-        placeholder="Min"
-        @input="onImageMinInput(($event.target as HTMLInputElement).value)"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          :value="modelValue.imageMin ?? ''"
+          placeholder="Min"
+          @keydown="digitsOnly"
+          @input="onImageMinInput(($event.target as HTMLInputElement).value)"
         />
         <span>–</span>
         <input
-        type="number"
-        :value="modelValue.imageMax ?? ''"
-        placeholder="Max"
-        @input="onImageMaxInput(($event.target as HTMLInputElement).value)"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          :value="modelValue.imageMax ?? ''"
+          placeholder="Max"
+          @keydown="digitsOnly"
+          @input="onImageMaxInput(($event.target as HTMLInputElement).value)"
         />
-    </div>
+      </div>
     </div>
 
     <div class="filters-footer">
@@ -162,6 +181,20 @@ const update = (patch: Partial<Filters>) => {
     ...props.modelValue,
     ...patch,
   })
+}
+
+/* digits-only input guard (blocks -, +, e, ., etc.) */
+const digitsOnly = (e: KeyboardEvent) => {
+  const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab']
+  if (allowed.includes(e.key)) return
+  if (!/^[0-9]$/.test(e.key)) e.preventDefault()
+}
+
+/* sanitize pasted / typed content */
+const sanitizePositiveInt = (raw: string) => {
+  if (raw === '') return null
+  const cleaned = raw.replace(/[^0-9]/g, '')
+  return cleaned === '' ? null : Number(cleaned)
 }
 
 const onQueryInput = (val: string) => {
@@ -196,35 +229,28 @@ const onTextSectionsChange = (vals: string[]) => {
 }
 
 const onAgeMinInput = (raw: string) => {
-  const num = raw === '' ? null : Number(raw)
-  update({ ageMin: Number.isFinite(num) ? num : null })
+  update({ ageMin: sanitizePositiveInt(raw) })
 }
 
 const onAgeMaxInput = (raw: string) => {
-  const num = raw === '' ? null : Number(raw)
-  update({ ageMax: Number.isFinite(num) ? num : null })
+  update({ ageMax: sanitizePositiveInt(raw) })
 }
 
 const onImageMinInput = (raw: string) => {
-  const num = raw === '' ? null : Number(raw)
-  update({ imageMin: Number.isFinite(num) ? num : null })
+  update({ imageMin: sanitizePositiveInt(raw) })
 }
 
 const onImageMaxInput = (raw: string) => {
-  const num = raw === '' ? null : Number(raw)
-  update({ imageMax: Number.isFinite(num) ? num : null })
+  update({ imageMax: sanitizePositiveInt(raw) })
 }
 
 const onWordsMinInput = (raw: string) => {
-  const num = raw === '' ? null : Number(raw)
-  update({ wordsMin: Number.isFinite(num) ? num : null })
+  update({ wordsMin: sanitizePositiveInt(raw) })
 }
 
 const onWordsMaxInput = (raw: string) => {
-  const num = raw === '' ? null : Number(raw)
-  update({ wordsMax: Number.isFinite(num) ? num : null })
+  update({ wordsMax: sanitizePositiveInt(raw) })
 }
-
 
 const onModalitiesChange = (vals: string[]) => {
   update({ modalities: vals })
@@ -244,7 +270,6 @@ const onDateMaxInput = (val: string) => {
 </script>
 
 <style scoped>
-
 .filters-panel {
   display: flex;
   flex-direction: column;

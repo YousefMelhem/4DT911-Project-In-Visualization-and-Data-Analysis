@@ -16,10 +16,16 @@
       <button
         type="button"
         class="create-btn"
-        :disabled="currentSelectionCount === 0"
-        @click="$emit('create-from-selection')"
+        :disabled="currentSelectionCount === 0 || cohorts.length >= MAX_COHORTS"
+        @click="handleCreate"
       >
-        + Create from selection
+        <span v-if="cohorts.length < MAX_COHORTS">
+          + Create from selection
+        </span>
+        <span v-else>
+          Max {{ MAX_COHORTS }} groups reached
+        </span>
+
         <span v-if="currentSelectionCount > 0" class="count-pill">
           {{ currentSelectionCount.toLocaleString() }}
         </span>
@@ -66,9 +72,27 @@
 
         <div class="cohort-main">
           <div class="cohort-name-row">
-            <h3 class="cohort-name">
+            <!-- display name OR edit input -->
+            <button
+              v-if="editingId !== cohort.id"
+              type="button"
+              class="cohort-name-btn"
+              @click.stop="startEditing(cohort.id)"
+            >
               {{ cohort.name }}
-            </h3>
+            </button>
+
+            <input
+              v-else
+              class="cohort-name-input"
+              type="text"
+              :data-cohort-name-input="cohort.id"
+              :value="cohort.name"
+              @click.stop
+              @keydown.enter.stop.prevent="commitName(cohort, ($event.target as HTMLInputElement).value)"
+              @keydown.esc.stop.prevent="stopEditing()"
+              @blur="commitName(cohort, ($event.target as HTMLInputElement).value)"
+            />
           </div>
           <p class="cohort-meta">
             {{ cohort.size.toLocaleString() }} cases
@@ -93,12 +117,17 @@
 </template>
 
 <script setup lang="ts">
+
+import { ref, watch, nextTick } from 'vue'
+
 type Cohort = {
   id: string
   name: string
   size: number
   color: string
 }
+
+const MAX_COHORTS = 8
 
 const props = defineProps<{
   cohorts: Cohort[]
@@ -112,7 +141,14 @@ const emit = defineEmits<{
   (e: 'toggle-cohort', id: string): void
   (e: 'remove-cohort', id: string): void
   (e: 'toggle-comparison-mode'): void
+  (e: 'rename-cohort', payload: { id: string; name: string }): void
 }>()
+
+const handleCreate = () => {
+  if (props.cohorts.length >= MAX_COHORTS) return
+  emit('create-from-selection')
+}
+
 
 const handleComparisonToggle = () => {
   if (props.cohorts.length < 2) {
@@ -120,6 +156,34 @@ const handleComparisonToggle = () => {
   }
   emit('toggle-comparison-mode')
 }
+
+const editingId = ref<string | null>(null)
+
+const startEditing = (id: string) => {
+  editingId.value = id
+}
+
+const stopEditing = () => {
+  editingId.value = null
+}
+
+const commitName = (cohort: Cohort, rawName: string) => {
+  const name = rawName.trim() || cohort.name // keep old name if blank
+  emit('rename-cohort', { id: cohort.id, name })
+  stopEditing()
+}
+
+watch(editingId, async (id) => {
+  if (!id) return
+  await nextTick()
+
+  const input = document.querySelector<HTMLInputElement>(
+    `input[data-cohort-name-input="${id}"]`
+  )
+
+  input?.focus()
+  input?.select()
+})
 </script>
 
 <style scoped>
@@ -334,4 +398,46 @@ const handleComparisonToggle = () => {
   font-size: 0.83rem;
   color: #a0aec0;
 }
+
+.cohort-name-input {
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3748;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+  outline: none;
+  background: #ffffff;
+}
+
+.cohort-name-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.18);
+}
+
+.cohort-name-btn {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: inline-block;
+  max-width: 100%;
+  text-align: left;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3748;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  cursor: text;
+}
+
+.cohort-name-btn:focus {
+  outline: none;
+}
+
 </style>

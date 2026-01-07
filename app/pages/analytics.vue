@@ -126,14 +126,16 @@ type TermItem = { term: string; weight: number }
 
 /**Brushing & linking selection**/
 type InteractionSelection =
-  | { type: 'gender'; value: string }
+  | { type: 'gender'; value: string; cohortId?: string }
   | { type: 'ageBin'; binStart: number; binEnd: number | 'Infinity' }
-  | { type: 'modality'; value: string }
-  | { type: 'region'; value: string }
-  | { type: 'section'; value: string }
+  | { type: 'modality'; value: string; cohortId?: string }
+  | { type: 'modality-pair'; a: string; b: string }
+  | { type: 'region'; value: string; cohortId?: string }
+  | { type: 'section'; value: string; cohortId?: string }
   | { type: 'modality-region'; modality: string; region: string }
 
 type TimeBrushRange = { start: Date; end: Date }
+type AgeBrushRange = { start: number; end: number }
 
 /* =========================
  * Utilities (pure)
@@ -312,7 +314,11 @@ const nextCohortColor = (): string => {
   return COHORT_COLORS[index] || '#667eea'
 }
 
-
+const handleRenameCohort = (payload: { id: string; name: string }) => {
+  const c = cohorts.value.find(x => x.id === payload.id)
+  if (!c) return
+  c.name = payload.name
+}
 
 
 // Shared filters + filtered data via composable
@@ -452,8 +458,7 @@ type AgeComparisonSeries = {
 const ageComparisonSeries = computed<AgeComparisonSeries[]>(() => {
   return cohorts.value
     .map(cohort => {
-      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
-      const rows = rawData.value.filter(row => idSet.has(row.id))
+      const rows = rowsForCohort(cohort)
 
       const values: number[] = []
       let unknown = 0
@@ -489,11 +494,9 @@ const modalityGroupMatrix = computed<ModalityGroupMatrix>(() => {
 
   const modalities = allModalities.value.slice()
 
-  // Build group metadata (static cohorts, using rawData)
   const groups = cohorts.value
     .map(cohort => {
-      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
-      const rows = rawData.value.filter(row => idSet.has(row.id))
+      const rows = rowsForCohort(cohort)
       return {
         id: cohort.id,
         name: cohort.name,
@@ -515,10 +518,9 @@ const modalityGroupMatrix = computed<ModalityGroupMatrix>(() => {
     const cohort = cohorts.value.find(c => c.id === groupMeta.id)
     if (!cohort) continue
 
-    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+    const rows = rowsForCohort(cohort)
 
-    for (const row of rawData.value) {
-      if (!idSet.has(row.id)) continue
+    for (const row of rows) {
       const rowMods = row.modalities ?? []
       if (!rowMods.length) continue
 
@@ -552,11 +554,9 @@ const sectionGroupMatrix = computed<SectionGroupMatrix>(() => {
     return { sections, groups: [], counts: [] }
   }
 
-  // Build group metadata (static cohorts, using rawData)
   const groups = cohorts.value
     .map(cohort => {
-      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
-      const rows = rawData.value.filter(row => idSet.has(row.id))
+      const rows = rowsForCohort(cohort)
       return {
         id: cohort.id,
         name: cohort.name,
@@ -580,7 +580,7 @@ const sectionGroupMatrix = computed<SectionGroupMatrix>(() => {
     const cohort = cohorts.value.find(c => c.id === groupMeta.id)
     if (!cohort) continue
 
-    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+    const rows = rowsForCohort(cohort)
 
     // helper so TS is happy with indexing
     const inc = (sectionIndex: number) => {
@@ -590,9 +590,7 @@ const sectionGroupMatrix = computed<SectionGroupMatrix>(() => {
       rowArr[gIdx] = current + 1
     }
 
-    for (const row of rawData.value) {
-      if (!idSet.has(row.id)) continue
-
+    for (const row of rows) {
       if (row.has_history)   inc(0)
       if (row.has_exam)      inc(1)
       if (row.has_findings)  inc(2)
@@ -614,11 +612,9 @@ const regionGroupMatrix = computed<RegionGroupMatrix>(() => {
     return { regions, groups: [], counts: [] }
   }
 
-  // Build group metadata (static cohorts, using rawData)
   const groups = cohorts.value
     .map(cohort => {
-      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
-      const rows = rawData.value.filter(row => idSet.has(row.id))
+      const rows = rowsForCohort(cohort)
       return {
         id: cohort.id,
         name: cohort.name,
@@ -645,11 +641,9 @@ const regionGroupMatrix = computed<RegionGroupMatrix>(() => {
     const cohort = cohorts.value.find(c => c.id === groupMeta.id)
     if (!cohort) continue
 
-    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+    const rows = rowsForCohort(cohort)
 
-    for (const row of rawData.value) {
-      if (!idSet.has(row.id)) continue
-
+    for (const row of rows) {
       const rowRegions = getCaseSubregions(row)
       if (!rowRegions.length) continue
 
@@ -787,8 +781,12 @@ const selectionFilteredData = computed<CaseSummary[]>(() => {
 // Brushing & Linking State (charts)
 const interactionSelection = ref<InteractionSelection | null>(null)
 const timeBrush = ref<TimeBrushRange | null>(null)
+const ageBrush = ref<AgeBrushRange | null>(null)
+
 /** Used to force re-mount time chart on clear */
 const chartResetKey = ref(0)
+
+const umapResetKey = ref(0)
 
 /** Cases after sidebar filters + cluster + UMAP + chart interactions */
 const interactionFilteredData = computed<CaseSummary[]>(() => {
@@ -804,12 +802,31 @@ const interactionFilteredData = computed<CaseSummary[]>(() => {
     })
   }
 
+  if (ageBrush.value) {
+    const { start, end } = ageBrush.value
+    rows = rows.filter(row => {
+      const age = row.patient_age
+      return typeof age === 'number' && Number.isFinite(age) && age >= start && age <= end
+    })
+  }
+
+
   const sel = interactionSelection.value
   if (!sel) return rows
 
   if (sel.type === 'gender') {
-    return rows.filter(row => normalizeGender(row.gender) === sel.value)
+    let out = rows.filter(row => normalizeGender(row.gender) === sel.value)
+
+    if (sel.cohortId) {
+      const cohort = cohorts.value.find(c => c.id === sel.cohortId)
+      if (!cohort) return []
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      out = out.filter(row => idSet.has(row.id))
+    }
+
+    return out
   }
+
 
   if (sel.type === 'ageBin') {
     const end = sel.binEnd === 'Infinity' ? Infinity : sel.binEnd
@@ -820,20 +837,51 @@ const interactionFilteredData = computed<CaseSummary[]>(() => {
   }
 
   if (sel.type === 'modality') {
-    return rows.filter(row => (row.modalities ?? []).includes(sel.value))
+    let out = rows.filter(row => (row.modalities ?? []).includes(sel.value))
+
+    if (sel.cohortId) {
+      const cohort = cohorts.value.find(c => c.id === sel.cohortId)
+      if (!cohort) return []
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      out = out.filter(row => idSet.has(row.id))
+    }
+
+    return out
   }
 
-  if (sel.type === 'region') {
+
+  if (sel.type === 'modality-pair') {
+    const a = sel.a
+    const b = sel.b
     return rows.filter(row => {
+      const mods = row.modalities ?? []
+      return mods.includes(a) && mods.includes(b)
+    })
+  }
+
+
+  if (sel.type === 'region') {
+    let out = rows.filter(row => {
       const mains = getCaseMainRegions(row)
       const subs = getCaseSubregions(row)
       return mains.includes(sel.value) || subs.includes(sel.value)
     })
+
+    if (sel.cohortId) {
+      const cohort = cohorts.value.find(c => c.id === sel.cohortId)
+      if (!cohort) return []
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      out = out.filter(row => idSet.has(row.id))
+    }
+
+    return out
   }
+
 
   if (sel.type === 'section') {
     const key = sel.value.toLowerCase()
-    return rows.filter(row => {
+
+    let out = rows.filter(row => {
       switch (key) {
         case 'history': return !!row.has_history
         case 'exam': return !!row.has_exam
@@ -844,7 +892,17 @@ const interactionFilteredData = computed<CaseSummary[]>(() => {
         default: return true
       }
     })
+
+    if (sel.cohortId) {
+      const cohort = cohorts.value.find(c => c.id === sel.cohortId)
+      if (!cohort) return []
+      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+      out = out.filter(row => idSet.has(row.id))
+    }
+
+    return out
   }
+
 
   if (sel.type === 'modality-region') {
     return rows.filter(row => {
@@ -858,6 +916,12 @@ const interactionFilteredData = computed<CaseSummary[]>(() => {
 
   return rows
 })
+
+function rowsForCohort(cohort: Cohort): CaseSummary[] {
+  const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
+  return interactionFilteredData.value.filter(row => idSet.has(row.id))
+}
+
 const selectedAgeBin = computed<{ binStart: number; binEnd: number } | null>(() => {
   const sel = interactionSelection.value
   if (!sel || sel.type !== 'ageBin') return null
@@ -894,11 +958,29 @@ const handleTimeBrushChange = (range: TimeBrushRange | null) => {
   timeBrush.value = range
 }
 
+const handleAgeBrushChange = (range: AgeBrushRange | null) => {
+  ageBrush.value = range
+}
+
+
 const handleClearInteractions = () => {
   interactionSelection.value = null
   timeBrush.value = null
+  ageBrush.value = null
   chartResetKey.value++
 }
+
+const resetEverythingAfterCohortCreate = () => {
+  resetFiltersLocal()
+  handleClearInteractions()
+  activeCohortId.value = null
+  selectedCluster.value = null
+  selectedUMAPPoints.value = []
+  selectedDiagnosisNames.value = new Set()
+
+  umapResetKey.value++
+}
+
 
 
 /* =========================
@@ -925,6 +1007,8 @@ const handleCreateCohortFromSelection = () => {
     createdAt: new Date().toISOString(),
     color: nextCohortColor(),   // <-- NEW
   })
+
+  resetEverythingAfterCohortCreate()
 }
 
 
@@ -963,11 +1047,7 @@ const genderComparisonSeries = computed<GenderComparisonSeries[]>(() => {
   if (!cohorts.value.length) return []
 
   return cohorts.value.map((cohort) => {
-    const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
-
-    // IMPORTANT: use rawData (full dataset), not effectiveRawData,
-    // so cohorts are static and ignore current filters.
-    const cases = rawData.value.filter(row => idSet.has(row.id))
+    const cases = rowsForCohort(cohort)
 
     const counts = { Female: 0, Male: 0, Unknown: 0 }
     for (const row of cases) {
@@ -999,8 +1079,7 @@ const comparisonGroupSummaries = computed<ComparisonGroupSummary[]>(() => {
 
   return cohorts.value
     .map((cohort) => {
-      const idSet = new Set<CaseSummary['id']>(cohort.caseIds)
-      const rows = rawData.value.filter(row => idSet.has(row.id))
+      const rows = rowsForCohort(cohort)
       if (!rows.length) return null
 
       const { typicalCases, atypicalCases } = buildUMAPSummaryForRows(rows)
@@ -1030,8 +1109,10 @@ const handleToggleComparisonMode = () => {
     comparisonMode.value = false
     return
   }
+
   comparisonMode.value = !comparisonMode.value
 }
+
 
 // If cohorts drop below 2, automatically exit comparison mode
 watch(
@@ -1217,12 +1298,7 @@ const finalModalityRegionMatrix = computed<ModalityRegionMatrix>(() =>
 
 const casesOverTimeComparisonSeries = computed<TimeComparisonSeries[] | null>(() => {
   if (!comparisonMode.value) return null
-  if (!cohorts.value.length || !rawData.value.length) return null
-
-  const idToRow = new Map<CaseSummary['id'], CaseSummary>()
-  for (const row of rawData.value) {
-    idToRow.set(row.id, row)
-  }
+  if (!cohorts.value.length) return null
 
   // Helper: parse added_on into a canonical month key
   const monthCountsPerCohort: {
@@ -1237,9 +1313,9 @@ const casesOverTimeComparisonSeries = computed<TimeComparisonSeries[] | null>(()
 
   for (const cohort of cohorts.value) {
     const counts = new Map<string, number>()
+    const rows = rowsForCohort(cohort)
 
-    for (const id of cohort.caseIds) {
-      const row = idToRow.get(id)
+    for (const row of rows) {
       if (!row?.added_on) continue
       const s = row.added_on.trim()
       const m = monthKeyRegex.exec(s)
@@ -1258,7 +1334,7 @@ const casesOverTimeComparisonSeries = computed<TimeComparisonSeries[] | null>(()
       cohortId: cohort.id,
       cohortName: cohort.name,
       color: cohort.color,
-      size: cohort.size,
+      size: rows.length,
       counts,
     })
   }
@@ -1807,7 +1883,7 @@ onMounted(() => {
             </div>
 
             <div
-              v-if="interactionSelection || timeBrush"
+              v-if="interactionSelection || timeBrush || ageBrush"
               class="interaction-banner"
             >
               <span>
@@ -1819,6 +1895,10 @@ onMounted(() => {
                 <span v-if="timeBrush">
                   • Time brushed
                 </span>
+                <span v-if="ageBrush">
+                  • Age brushed
+                </span>
+
               </span>
               <button
                 type="button"
@@ -1832,6 +1912,7 @@ onMounted(() => {
             <ClientOnly>
               <DiagnosisUMAP
                 v-if="umapMode === 'text'"
+                :key="`text-${umapResetKey}`"
                 :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
@@ -1842,8 +1923,10 @@ onMounted(() => {
                 @clusterClick="handleClusterClick"
                 @selectionChange="handleUMAPSelection"
               />
+
               <DiagnosisUMAP
                 v-else
+                :key="`image-${umapResetKey}`"
                 :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
@@ -1867,6 +1950,7 @@ onMounted(() => {
             @toggle-cohort="handleToggleCohort"
             @remove-cohort="handleRemoveCohort"
             @toggle-comparison-mode="handleToggleComparisonMode"
+            @rename-cohort="handleRenameCohort"
           />
 
 
@@ -1895,7 +1979,10 @@ onMounted(() => {
                 <GenderBarComparison
                   v-if="comparisonMode && genderComparisonSeries.length >= 2"
                   :series="genderComparisonSeries"
+                  :selected-value="interactionSelection?.type === 'gender' ? interactionSelection : null"
+                  @item-select="handleItemSelect"
                 />
+
                 <GenderBar
                   v-else
                   :items="displayGenderCounts"
@@ -1911,6 +1998,7 @@ onMounted(() => {
                 <AgeComparisonKDE
                   v-if="comparisonMode && ageComparisonSeries.length >= 2"
                   :series="ageComparisonSeries"
+                  @range-change="handleAgeBrushChange"
                 />
 
                 <!-- Normal mode: existing histogram -->
@@ -1956,9 +2044,10 @@ onMounted(() => {
                 <ModalityGroupHeatmap
                   v-else
                   :matrix="modalityGroupMatrix"
-                  :selected-value="interactionSelection?.type === 'modality' ? interactionSelection.value : null"
+                  :selected="interactionSelection?.type === 'modality' ? interactionSelection : null"
                   @item-select="handleItemSelect"
                 />
+
               </ClientOnly>
             </div>
 
@@ -1968,7 +2057,7 @@ onMounted(() => {
                 <ModalityHeatmap
                   v-if="!comparisonMode"
                   :matrix="displayModalityCooc"
-                  :selected-value="interactionSelection?.type === 'modality' ? interactionSelection.value : null"
+                  :selected-pair="interactionSelection?.type === 'modality-pair' ? interactionSelection : null"
                   @item-select="handleItemSelect"
                 />
 
@@ -1976,9 +2065,10 @@ onMounted(() => {
                 <SectionByGroupHeatmap
                   v-else
                   :matrix="sectionGroupMatrix"
-                  :selected-value="interactionSelection?.type === 'section' ? interactionSelection.value : null"
+                  :selected="interactionSelection?.type === 'section' ? interactionSelection : null"
                   @item-select="handleItemSelect"
                 />
+
               </ClientOnly>
             </div>
 
@@ -2009,7 +2099,7 @@ onMounted(() => {
               <ClientOnly>
                 <RegionGroupHeatmap
                   :matrix="regionGroupMatrix"
-                  :selected-value="interactionSelection?.type === 'region' ? interactionSelection.value : null"
+                  :selected="interactionSelection?.type === 'region' ? interactionSelection : null"
                   @item-select="handleItemSelect"
                 />
               </ClientOnly>
