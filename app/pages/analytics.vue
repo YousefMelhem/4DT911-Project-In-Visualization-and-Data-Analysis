@@ -786,6 +786,8 @@ const ageBrush = ref<AgeBrushRange | null>(null)
 /** Used to force re-mount time chart on clear */
 const chartResetKey = ref(0)
 
+const umapResetKey = ref(0)
+
 /** Cases after sidebar filters + cluster + UMAP + chart interactions */
 const interactionFilteredData = computed<CaseSummary[]>(() => {
   let rows = selectionFilteredData.value
@@ -968,6 +970,18 @@ const handleClearInteractions = () => {
   chartResetKey.value++
 }
 
+const resetEverythingAfterCohortCreate = () => {
+  resetFiltersLocal()
+  handleClearInteractions()
+  activeCohortId.value = null
+  selectedCluster.value = null
+  selectedUMAPPoints.value = []
+  selectedDiagnosisNames.value = new Set()
+
+  umapResetKey.value++
+}
+
+
 
 /* =========================
  * Cohort actions
@@ -993,6 +1007,8 @@ const handleCreateCohortFromSelection = () => {
     createdAt: new Date().toISOString(),
     color: nextCohortColor(),   // <-- NEW
   })
+
+  resetEverythingAfterCohortCreate()
 }
 
 
@@ -1093,8 +1109,10 @@ const handleToggleComparisonMode = () => {
     comparisonMode.value = false
     return
   }
+
   comparisonMode.value = !comparisonMode.value
 }
+
 
 // If cohorts drop below 2, automatically exit comparison mode
 watch(
@@ -1894,6 +1912,7 @@ onMounted(() => {
             <ClientOnly>
               <DiagnosisUMAP
                 v-if="umapMode === 'text'"
+                :key="`text-${umapResetKey}`"
                 :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
@@ -1904,8 +1923,10 @@ onMounted(() => {
                 @clusterClick="handleClusterClick"
                 @selectionChange="handleUMAPSelection"
               />
+
               <DiagnosisUMAP
                 v-else
+                :key="`image-${umapResetKey}`"
                 :width="1000"
                 :height="700"
                 :selectedCluster="selectedCluster"
