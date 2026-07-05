@@ -16,8 +16,8 @@ This repository contains a medical visual analytics system for exploring, search
 
 ### 1. Clone the repository
 ```bash
-git clone git@github.com:YousefMelhem/4DT911-Project-In-Visualization-and-Data-Analysis.git
-cd 4DT911-Project-In-Visualization-and-Data-Analysis
+git clone git@github.com:YousefMelhem/medical-visual-analytics.git
+cd medical-visual-analytics
 ```
 
 ---

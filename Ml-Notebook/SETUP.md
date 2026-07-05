@@ -5,7 +5,7 @@
 ### Step 1: Install All Packages
 
 ```bash
-cd /home/yousef/code/school/4DT911-project/Ml-Notebook
+cd /home/yousef/code/school/medical-visual-analytics/Ml-Notebook
 pip install -r requirements.txt
 ```
 
@@ -134,7 +134,7 @@ jupyter notebook
 
 1. **Open Jupyter Notebook:**
    ```bash
-   cd /home/yousef/code/school/4DT911-project/Ml-Notebook
+   cd /home/yousef/code/school/medical-visual-analytics/Ml-Notebook
    jupyter notebook
    ```
 
